@@ -5892,7 +5892,7 @@ class HTML_facileFormsProcessor {
         $accept = JRequest::getVar('mailbackConnectWith', array());
         $sender = JRequest::getVar('mailbackSender', array());
         $attachToUserMail = JRequest::getVar('attachToUserMail', array());
-
+        $addfiles = array();
         $mailbackfiles = array();
         $recipients = array();
         for ($i = 0; $i < $this->rowcount; $i++) {
@@ -5958,11 +5958,22 @@ class HTML_facileFormsProcessor {
                             }
                         }
                     }
+                    else{
+                    	// Das Mailbackfilefeld enthaelt keine E-mailadresse sondern einen Pfad
+                    	// Diese Datei wird spaeter allen recipients angehaengt
+                    	if(isset($mb[$x]) && trim($mb[$x]) != '' && file_exists(trim($mb[$x])))
+                    		$addfiles[]=trim($mb[$x]);
+                    }	
                 }
             }
         }
 
         $recipientsSize = count($recipients);
+        foreach($recipients as $rec){
+	        foreach($addfiles as $adf){
+    		    $mailbackfiles[$rec][]=$adf;
+	        }
+        }
 
         $subject = BFText::_('COM_BREEZINGFORMS_PROCESS_FORMRECRECEIVED');
         if ($this->formrow->mb_custom_mail_subject != '') {
@@ -6075,8 +6086,20 @@ class HTML_facileFormsProcessor {
                             break;
                         }
                     }
+                    else{
+                    	// Das Mailbackfilefeld enthaelt keine E-mailadresse sondern einen Pfad
+                    	// Diese Datei wird spaeter allen recipients angehaengt
+                    	if(isset($mb[$x]) && trim($mb[$x]) != '' && file_exists(trim($mb[$x])))
+                    		$addfiles[]=trim($mb[$x]);
                 }
             }
+        }
+        }
+        $recipientsSize = count($recipients);
+        foreach($recipients as $rec){
+        	foreach($addfiles as $adf){
+        		$mailbackfiles[$rec][]=$adf;
+        	}
         }
         
         if ($this->formrow->mb_email_type == 0) {
