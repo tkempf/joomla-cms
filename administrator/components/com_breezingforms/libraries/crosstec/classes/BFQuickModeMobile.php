@@ -555,71 +555,8 @@ class BFQuickModeMobile{
 									echo '<input '.($iEx[0] == 1 ? 'checked="checked" ' : '').' class="ff_elem" '.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="radio" name="ff_nm_'.$mdata['bfName'].'[]" value="'.htmlentities(trim($iEx[2]), ENT_QUOTES, 'UTF-8').'" id="ff_elem'.$mdata['dbId'].$idExt.'"/>'.$lblRight."\n";
 								}
 								else{
-									switch(trim($iEx[3])){
-										case 'kaiser':
-											// tarifradiodata Kaiserenergie hat folgende Elemente
-											// checked;gesamtpreis;tarifid;kaiser|elissa;tarifanzeigename;tarifinfo;preisbeschreibung;Arbeitspreis mit Beschreibung;Grundpreis mit Beschreibung; Bonus mit Beschreibung;
-											$tpreis=htmlentities(trim($iEx[1]), ENT_QUOTES, 'UTF-8');
-											$tid=htmlentities(trim($iEx[2]), ENT_QUOTES, 'UTF-8');
-											$tname=htmlentities(trim($iEx[4]), ENT_QUOTES, 'UTF-8');
-											$tinfo=trim($iEx[5]);
-											$tpreisbeschr=htmlentities(trim($iEx[6]), ENT_QUOTES, 'UTF-8');
-											$tarbeit=htmlentities(trim($iEx[7]), ENT_QUOTES, 'UTF-8');
-											$tgrund=htmlentities(trim($iEx[8]), ENT_QUOTES, 'UTF-8');
-											$tbonus=htmlentities(trim($iEx[9]), ENT_QUOTES, 'UTF-8');
-											$ttinhalt='<div class=\"bfToolTipLabel\"><b>Ihre Preisbestandteile ...</b><div/>'.$tarbeit.'<br>'.$tgrund.'<br>'.$tbonus;
-											echo '<div class="swTarif">'."\n";
-											echo '   <div class="swTitel">'.$tname.'</div>';
-											echo '   <div id="swPreis" class="swPreis"><span id="swPreisbestandteile'.$i.'" class="bfTooltip">'.$tpreis.'</span></div>'."\n";
-											echo '
-											<script type="text/javascript"><!--
-												JQuery(document).ready(function() {
-													JQuery("#swPreisbestandteile'.$i.'").qtip({
-														position: { adjust: { screen: true }},
-														content: "'.$ttinhalt.'",
-														style: { 
-															tip: !JQuery.browser.ie,
-															background: "#ffc",
-															color: "#000000",
-															border : {color: "#C0C0C0", width: 1 },
-															name: "cream"
-														}
-													});
-												});
-											//--></script>';
-											echo '   <div class="swPreisbeschreibung">'.$tpreisbeschr.'</div>'."\n";
-											echo '   <div class="swSeparator"></div>';
-											echo '   <div class="swText">'.$tinfo.'</div>'."\n";
-											echo '   <div class="swRadio"><input '.($iEx[0] == 1 ? 'checked="checked" ' : '').' class="ff_elem" '.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="radio" name="ff_nm_'.$mdata['bfName'].'[]" value="'.$tid.'" id="ff_elem'.$mdata['dbId'].$idExt.'"/>';
-											echo '      '.$tname."</div>\n";
-											echo '</div>'."\n";
-											break;										
-										case 'elissa':
-												// tarifradiodata Elissa hat folgende Elemente
-												// Elissa: oeko,tarifid,oekotarif,kaiser|elissa;tarifname;gesamtpreis,preisbeschreibung;bonusbeschreibung;tarifinfo;grundpreis;gpbeschreibung;arbeitspreis;apbeschreibung
-												$tid=htmlentities(trim($iEx[1]), ENT_QUOTES, 'UTF-8');
-												$tart=($iEx[2] == 1 ? 'oekotarif' : 'standardtarif');
-												$tname=htmlentities(trim($iEx[4]), ENT_QUOTES, 'UTF-8');
-												$tpreis=htmlentities(trim($iEx[5]), ENT_QUOTES, 'UTF-8');
-												$tpreisbeschr=htmlentities(trim($iEx[6]), ENT_QUOTES, 'UTF-8');
-												$tbonusbeschr=htmlentities(trim($iEx[7]), ENT_QUOTES, 'UTF-8');
-												$tinfo=trim($iEx[8]);
-												$tgrund=htmlentities(trim($iEx[9]), ENT_QUOTES, 'UTF-8');
-												$tgrundbeschr=htmlentities(trim($iEx[10]), ENT_QUOTES, 'UTF-8');
-												$tarbeit=htmlentities(trim($iEx[11]), ENT_QUOTES, 'UTF-8');
-												$tarbeitbeschr=htmlentities(trim($iEx[12]), ENT_QUOTES, 'UTF-8');
-												echo '<div class="swTarif" id="'.$tart.'">'."\n";
-												echo '   <div class="swPreis">'.$tpreis.'</div>'."\n";
-												echo '   <div class="swPreisbeschreibung">'.$tpreisbeschr.'</div>'."\n";
-												echo '   <div class="swBonus">'.$tbonusbeschr.'</div>'."\n";
-												echo '   <div class="swText">'.$tinfo.'</div>'."\n";
-												echo '   <div class="swEinzelpreise"><p>'.$tgrund.'</p><p>'.$tarbeit."</p></div>\n";
-												echo '   <div class="swEinzelpreisbeschreibung"><p>'.$tgrundbeschr.'</p><p>'.$tarbeitbeschr."</p></div>\n";
-												echo '   <div class="swRadio"><input '.($iEx[0] == 1 ? 'checked="checked" ' : '').' class="ff_elem" '.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.($readonly ? ' disabled="disabled" ' : '').'type="radio" name="ff_nm_'.$mdata['bfName'].'[]" value="'.$tid.'" id="ff_elem'.$mdata['dbId'].$idExt.'"/>';
-												echo '      '.$tid."</div>\n";
-												echo '</div>'."\n";
-											break;
-									}
+									require_once(JPATH_SITE.'/media/breezingforms/tarifrechner/'.trim($iEx[3]).'mobile.php');
+									break;
 								}				
 							}
 							echo $wrapClose;
