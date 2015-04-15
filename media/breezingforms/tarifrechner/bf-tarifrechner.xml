@@ -3,12 +3,12 @@
 	<name>Tarifrechner</name>
 	<title>Tarifrechner</title>
 	<version>1.0</version>
-	<creationDate>2015-03-20 14:14:56</creationDate>
+	<creationDate>2015-03-20 16:06:00</creationDate>
 	<author>Thomas Kempf</author>
 	<authorEmail>tkempf@hueper.de</authorEmail>
 	<authorUrl>http://www.hueper.de</authorUrl>
 	<description>Die Formulare für den Tarifrechner</description>
-	<copyright>This FacileForms package is released under the GNU/GPL license</copyright>
+	<copyright>This BreezingForms package is released under the GNU/GPL license</copyright>
 	<script id="90">
 		<package>Tarifrechner</package>
 		<name>checkEnter</name>
@@ -289,7 +289,7 @@
 		<runmode>1</runmode>
 		<package>Tarifrechner</package>
 		<name>stromtarifrechner</name>
-		<title>Tarifrechner Stromtarifrechner</title>
+		<title>Stromtarifrechner</title>
 		<description>Der Tarifrechner für XXX. Bisherige E-Mail Empfaenger: multimedia@hueper.deAchtung auf Seite 3 im Backoffice Email ist noch ein Empfänger: multimedia@hueper.de</description>
 		<width>90</width>
 		<widthmode>1</widthmode>
