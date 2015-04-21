@@ -1,0 +1,660 @@
+@charset "utf-8";
+/* CSS Document */
+/* CSS STYLE */
+/* Farben CI:
+   grün #6ac123  
+   grau #383431
+   blau #13244e
+*/
+
+/* Template Styles Bootstrap aus Master - Template FINGER WEG*/
+/* Eigene Styles ab Zeile 190 */
+html {overflow-y: scroll;}
+body {
+    background-color: #FFFFFF;
+    font-family:'Roboto', sans-serif;
+	font-weight:300;
+    font-size: 14px;
+	color: #383431;
+	padding-bottom: 0px;
+}
+
+
+
+img {max-width: 100% }
+
+#main .main-box {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 0px solid #E5E5E5; /* border 1, if you have front component*/
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+p {
+	line-height: 1.6;
+}
+
+a, a:hover, a:focus {
+	color: #6ac123;
+	-moz-transition: all .2s ease-in;
+    -o-transition: all .2s ease-in;
+    -webkit-transition: all .2s ease-in;
+    transition: all .2s ease-in;
+}
+a:hover, a:focus {
+	color: #13244e;
+	text-decoration: none;
+	-moz-transition: all .2s ease-out;
+    -o-transition: all .2s ease-out;
+    -webkit-transition: all .2s ease-out;
+    transition: all .2s ease-out;
+}
+
+#main {
+    margin-top: 50px;
+}
+
+/* Breadcrumbs */
+#breadcrumbs .moduletable {
+    border: 0;
+    padding: 0;
+}
+#fullwidth {
+    margin-top: -20px;
+    overflow: hidden;
+}
+#fullwidth .moduletable {
+    border: 0;
+    padding: 0;
+}
+.black .moduletable {
+    background: none repeat scroll 0 0 #222222;
+    border-color: #222222;
+    color: #AAAAAA;
+}
+.moduletable {
+    /*    background: none repeat scroll 0 0 #FFFFFF;;
+    border: 1px solid #E5E5E5;*/
+    margin-bottom: 20px;
+    padding: 10px;
+}
+.panel.moduletable {    padding: 0 }
+.panel .moduletable {
+    box-shadow: none;
+    margin: 0px 10px;
+    padding: 10px;
+}
+#brand {
+    float: left;
+    padding-left: 15px;
+    padding-top: 5px;
+}
+img.brand {
+	max-width: 380px;
+}
+.page-header {margin: 10px 0 20px }
+.hasTooltip {display: inline !important }
+.noMainbody {display: none !important }
+ul.unstyled,
+ol.unstyled {
+    list-style: outside none none;
+    margin-left: 0;
+    padding: 0;
+}
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+    float: left;
+    position: relative !important;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+label,
+input,
+button,
+select,
+textarea {
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 18px;
+}
+label,
+select,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+input[type="radio"],
+input[type="checkbox"] {cursor: pointer }
+.contact-form .uneditable-input,
+.contact-form input,
+.contact-form textarea {width: 100% !important }
+.email-copy-input {float: left }
+#pop-print {
+    float: right;
+    margin: 10px;
+}
+html,
+body {
+    /* The html and body elements cannot have any padding or margin. */
+}
+/* Wrapper for page content to push down footer */
+#wrap {
+    height: auto !important;
+    margin: 0 auto -60px;
+    min-height: 100%;
+    padding: 0 0 60px;
+}
+/* Set the fixed height of the footer here */
+#footer {
+    /*  height: 80px;;
+    background-color: #f5f5f5;*/
+}
+#footer.well {
+    border-radius: 0;
+    border: 0;
+    margin: 0;
+	padding:0;
+}
+#footer .moduletable {
+    background: transparent;
+    border: 0;
+    margin-bottom: 0;
+}
+#push {    height: 60px }
+/* LAYOUT */
+/* Floats */
+.float-left {float: left }
+.float-right {float: right }
+.group:before,
+.group:after {
+    content: "";
+    display: table;
+}
+.group:after {clear: both }
+.ie7 .group {zoom: 1 }
+
+
+
+
+/* JOOMLA */
+.form-horizontal .control-label {text-align: inherit }
+.cols-1 {
+    display: block;
+    float: none !important;
+    margin: 0 !important;
+}
+.cols-2 .column-1 {
+    float: left;
+    width: 46%;
+}
+.cols-2 .column-2 {
+    float: right;
+    margin: 0;
+    width: 46%;
+}
+.cols-3 .column-1 {
+    float: left;
+    margin-right: 4%;
+    padding: 0 5px;
+    width: 29%;
+}
+.cols-3 .column-2 {
+    float: left;
+    margin-left: 0;
+    padding: 0 5px;
+    width: 29%;
+}
+.cols-3 .column-3 {
+    float: right;
+    padding: 0 5px;
+    width: 29%;
+}
+.items-row {
+    margin-bottom: 10px !important;
+    overflow: hidden;
+}
+.column-1,
+.column-2,
+.column-3 {padding: 10px 5px }
+.column-2 {
+    margin-left: 40%;
+    width: 55%;
+}
+.column-3 {width: 30% }
+.blog-more {padding: 10px 5px }
+
+
+
+
+
+/* Tauber-Energie */
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	font-weight: 300;
+	color: #13244e;
+}
+
+h1 {
+    font-size: 25px;
+    font-weight: 200;
+}
+
+h2 {
+	margin-top: 0;
+    font-size: 25px;
+    font-weight: 200;
+}
+
+h3 {
+	font-size: 18px;
+	padding-bottom: 10px;
+	color: #6ac123;
+}
+
+b, strong {
+    font-weight: 400;
+    font-size: 13px;
+    margin: 20px 5px 5px 0px;
+	color: #13244E;
+}
+
+a.tariflink {
+	color: #13244E;
+    font-size: 23px;
+    padding: 20px;
+}
+
+.btn {
+    border: medium none;
+    border-radius: 0px;
+    background-color: rgb(106, 193, 35);
+}
+
+.btn:hover {
+        background-color: rgb(106, 193, 35);
+}
+
+/*TO TOP*/
+.back-to-top {
+    position: fixed;
+    bottom: 9px;
+    right: 0px;
+    text-decoration: none;
+    color: #000;
+    background-color: #E3E3E3;
+    font-size: 12px;
+    padding: 1em;
+    display: none;
+    margin-right: 15px;
+}
+.back-to-top:hover {background-color: rgba(135, 135, 135, 0.50) }
+/*Ende TO TOP*/
+/* Top */
+#top {
+    /*    background: none repeat scroll 0 0 #444444;*/
+    color: #ddd;
+    font-size: 12px;
+    /*margin-bottom: 16px;*/
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+#top .container .separator {
+    border-left: 1px solid #CCCCCC;
+    display: inline-block;
+    height: 10px;
+    margin: 0 20px;
+    width: 1px;
+}
+
+#top div.logo, #top div.service-hotline {
+	padding: 40px 0px 50px;
+}
+
+/*Service-Hotline*/
+div.service-hotline { 
+	text-align: right;
+}
+
+div.service-hotline h2 {
+	color: #13244e;
+	font-sitze:30px;
+	font-weight: 300;
+	margin-top: 0; 
+}
+
+div.service-hotline h3 {
+	color: #6ac123;
+	font-size:18px;
+	font-weight: 400;
+	margin-top: 0; 
+}
+
+div.service-hotline h3 i {
+	color: #383431;
+}
+/*Ende Service-Hotline*/
+/*Ende Top*/		
+
+/*Navigation*/
+
+.navbar-nav > li > a {
+	color: #13244e;
+	text-transform: capitalize;
+	font-size: 15px;
+	font-weight: 300;
+	padding: 15px 30px 15px 0px;
+}
+
+.navbar-collapse {
+	padding: 0px;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+	outline: medium none;     
+	color: #6ac123 !important;
+	background-color: #f7f7f7 !important;
+ }
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {outline: medium none;     color: #6ac123 !important;
+ }
+
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+	background: none;
+}
+
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    color: #FFF;
+    text-decoration: none;
+    background-color: #13244E;
+}
+
+.dropdown-menu {
+    padding: 0px!important;
+    border-radius: 0!important;
+}
+.navigation .caret {
+    display: none;
+}
+
+/*Ende Navigation*/
+
+/*Suche*/
+.suche {
+	float: right;
+	padding: 11px 0 0;
+}
+.suche input {
+    border: 1px solid #E7E7E7;
+    padding: 4px;
+    color: #777;
+	-webkit-appearance:none;
+	border-radius: 0 !important;	
+}
+.suche .btn {
+    border: medium none;
+    border-radius: 0px;
+    padding: 4px 15px;
+    vertical-align: top;
+    background-color: rgb(106, 193, 35);
+}
+
+.suche-mobil {
+	display: none;
+}
+#top #mod-finder-searchform {
+    float: right;
+	padding-bottom: 20px;
+}
+
+/*Erweiterte Suche ausblenden*/
+.finder #search-form .word a.btn {
+    display: none;
+}
+
+
+/*Ende Suche/
+
+
+/*Sidebar2 (2=rechte sidebar)*/
+#sidebar-2 {
+    border-left: 1px solid #efefef;
+	font-size: 13px;
+	line-height: 1.7em;
+}
+
+#sidebar-2 .moduletable {
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+
+#sidebar-2 p {
+	margin: 0;
+}
+
+#sidebar-2 h3.title {
+	font-weight: 200;
+	font-size: 25px;
+    margin: 0px 0px 10px 0px;
+}
+
+#sidebar-2 h4 {
+	font-weight: 400;
+    font-size: 13px;
+    margin: 20px 5px 5px 0px;
+}
+
+/*Ende Sidebar2*/
+
+/*Content*/
+
+/*Ende Cotnent*/
+.page-header {
+	border-bottom: none;
+	margin-top: 0;
+	padding-bottom:0px;
+}
+.page-header h1 {
+    font-size: 25px;
+    font-weight: 200;
+	margin-top: 0px;
+}
+/*Footer*/
+
+#footer .nav > li {
+	float: left;
+}
+#footer .nav > li > a {
+	float: left;
+	color: #13244E;
+}
+
+#footer .copyright {
+	float: left;
+	color: #13244E;
+}
+
+/*Ende Footer*/
+
+/* FAQ */
+
+.faq .fancypantsaccordionholder .accordion {
+	padding-left: 0px;
+}
+
+.faq h3 {
+	color: #13244e;
+}
+
+.faq .moduletable {
+	padding: 10px 10px 10px 0px;
+}
+
+
+.faq a {
+	color: #383431 !important;
+}
+	.faq a:hover, .faq a:focus {
+		color: #6ac123 !important;
+	}
+	
+.faq .fancypantsaccordionholder .accordion .accordion-item .headerlink span {
+	background: none;
+}
+	
+/* Ende FAQ */
+
+
+/* Tarifrechner */
+
+.whTarif {
+    background-color: #6ac123;
+	font-weight:600;
+	color: #fff;
+    width: 200px;
+    height: 200px;
+    top: 100px;
+    left: 250px;
+  	display: table-cell; 
+  	vertical-align: middle; 
+ 	text-align: center;     
+	border-radius: 100px;
+}
+
+/* Ende Tarifrechner */
+
+/* Media Queries */
+@media screen and (-webkit-min-device-pixel-ratio: 2), screen and (max--moz-device-pixel-ratio: 2) { 
+}
+
+@media (max-width: 1200px) { 
+.suche.suche-mobil{
+	display:block;
+}
+.suche {
+	display: none;
+}
+#top div.logo, #top div.service-hotline {
+    padding: 40px 0px 0px;
+}
+
+}
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) { 
+#top #mod-finder-searchform {
+	float:right;
+}
+
+}
+@media (max-width: 979px) {
+/*Footer mobil*/
+#footer .copyright {
+	text-align: center;
+	width: 100%;
+}
+
+#footer .footer-menu.pull-right {
+    float: none !important;
+    margin: 0px auto;
+    width: 325px;
+}
+
+#footer .nav > li {
+	padding: 0px;
+}
+
+#footer .nav > li > a {
+	padding: 10px 5px;
+}
+/*Ende Footer mobil*/
+
+a.tariflink {
+	padding:0;
+}
+
+@media (max-width: 767px) { 
+/*Navi mobil*/
+.navbar-nav > li > a {
+    padding: 10px 30px;
+	color: #777;
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border: none;
+}
+
+#top div.logo, #top div.service-hotline {
+	padding: 10px 10px 10px 10px;
+	margin;: 10px 0 0 0;
+	width: 100%
+}
+#top div.service-hotline {
+	margin-bottom: 0;
+}
+
+#top #mod-finder-searchform {
+    float: left;
+	padding-left:10px;
+}
+/*Ende Navi mobil*/
+
+/*Servicehotline mobil*/
+div.service-hotline {
+    text-align: left;
+	float: left !important;
+	font-size: 14px;
+}
+/*Ende Servicehotline mobil*/
+
+#main {
+	margin-top: 20px;
+}
+
+/*margin formular seiten */
+#main-box.form {
+	margin-top: -20px;
+}
+
+
+#sidebar-2 {
+	margin-top: 30px;
+}
+
+@media (max-width: 480px) { 
+
+
+/* Top Module */
+#top div.logo, #top div.service-hotline {
+	padding: 10px 10px 10px 10px;
+	margin;: 10px 0 0 0;
+	width: 100%
+}
+
+/* Servicehotline */
+div.service-hotline h3, div.service-hotline h2 {
+	font-size: 14px;
+}
+
+.nav > li {
+    display: block;
+    position: relative;
+    padding: 0px 20px;
+}
+
+nav {
+	overflow:hidden;
+}
+
+img.brand {
+	max-width: 100%;
+}
+
+/*Ende Media-Queries*/
+
+
+
