@@ -510,23 +510,7 @@ div.service-hotline h3 i {
 /* Ende FAQ */
 
 
-/* Tarifrechner */
 
-.whTarif {
-    background-color: #6ac123;
-	font-weight:600;
-	color: #fff;
-    width: 200px;
-    height: 200px;
-    top: 100px;
-    left: 250px;
-  	display: table-cell; 
-  	vertical-align: middle; 
- 	text-align: center;     
-	border-radius: 100px;
-}
-
-/* Ende Tarifrechner */
 
 /* Media Queries */
 @media screen and (-webkit-min-device-pixel-ratio: 2), screen and (max--moz-device-pixel-ratio: 2) { 
