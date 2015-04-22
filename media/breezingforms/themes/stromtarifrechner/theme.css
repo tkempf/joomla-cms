@@ -207,3 +207,40 @@ body#print {
     float: left !important;
 	overflow: visible;
 }
+
+/*  Tarifrechnerergebnis */
+
+
+.whTarifWrapper {
+	float: left;
+    float: left;
+    width: 33%;
+    min-width: 160px;
+}
+
+
+.whTarif {
+	color: #fff;
+  	display: table-cell; 
+  	vertical-align: middle; 
+ 	text-align: center;     
+	border-radius: 100px;
+    position: relative; 
+    height: 150px; 
+    width: 150px; 
+	background-color: #6AC123;
+    border-radius: 150px; 
+}
+
+.whTitel {
+	font-weight: 600;
+	line-height: 0.6;
+	font-size: 16px;
+}
+
+.whPreis {
+	line-height: 1.4;
+}
+
+
+/* Ende Tarifrechnerergebnis */
