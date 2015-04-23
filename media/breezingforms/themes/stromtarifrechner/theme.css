@@ -201,9 +201,11 @@ body#print {
 	 border: none;
 }
 
-/* button seite 2 */
+/* button seite 2, 3, 4, 5, 6 */
 
-#bfElemWrap2416, #bfElemWrap2415 {
+#bfElemWrap2416, #bfElemWrap2415, #bfElemWrap2428, #bfElemWrap2428, 
+#bfElemWrap2436, #bfElemWrap2436, #bfElemWrap2437, #bfElemWrap2437
+#bfElemWrap2456, #bfElemWrap2456 {
     float: left !important;
 	overflow: visible;
 }
