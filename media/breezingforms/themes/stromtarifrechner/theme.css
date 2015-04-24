@@ -262,3 +262,17 @@ body#print {
 
 /* Ende Tarifrechnerergebnis */
 
+/* Validierung IBAN*/
+
+input[name="ff_nm_Kontonummer[]"] {
+    	background:url(img/unchecked.png)no-repeat right;
+			background-size: 20px 20px;
+}
+
+input[name="ff_nm_Kontonummer[]"].valid {
+    	background:url(img/checked.png)no-repeat right;
+			background-size: 20px 20px;	
+}
+
+/* Ende Validierung IBAN*/
+
