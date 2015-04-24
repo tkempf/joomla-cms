@@ -210,6 +210,13 @@ body#print {
 	overflow: visible;
 }
 
+
+/* Vollmacht */
+
+#bfPage4 .bfLabelRight label, #bfPage5 .bfLabelRight label  {
+	width: 54% !important;
+}
+
 /*  Tarifrechnerergebnis */
 
 
@@ -251,12 +258,12 @@ body#print {
 
 input[name="ff_nm_Kontonummer[]"] {
     	background:url(img/unchecked.png)no-repeat right;
-			background-size: 20px 20px;
+		background-size: 20px 20px;
 }
 
 input[name="ff_nm_Kontonummer[]"].valid {
     	background:url(img/checked.png)no-repeat right;
-			background-size: 20px 20px;	
+		background-size: 20px 20px;	
 }
 
 /* Ende Validierung IBAN*/
