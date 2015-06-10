@@ -268,3 +268,18 @@ input[name="ff_nm_Kontonummer[]"].valid {
 
 /* Ende Validierung IBAN*/
 
+/* Bilder Stromzähler */
+
+#stromzaehler {
+    display: inline-block;
+    padding-left: 45%;
+}
+
+@media (max-width: 767px) { 
+
+#stromzaehler {
+    display: inline-block;
+    padding-left: 0;
+}
+}
+
