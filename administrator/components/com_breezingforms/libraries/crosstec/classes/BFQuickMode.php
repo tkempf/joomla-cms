@@ -1301,8 +1301,7 @@ display:none;
 									}
 								}
 								else{
-									require_once(JPATH_SITE.'/media/breezingforms/tarifrechner/'.trim($iEx[3]).'.php');
-									break;
+									require(JPATH_SITE.'/media/breezingforms/tarifrechner/'.trim($iEx[3]).'.php');
 								}				
 							}
 							echo $wrapClose;

@@ -555,8 +555,7 @@ class BFQuickModeMobile{
 									echo '<input '.($iEx[0] == 1 ? 'checked="checked" ' : '').' class="ff_elem" '.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="radio" name="ff_nm_'.$mdata['bfName'].'[]" value="'.htmlentities(trim($iEx[2]), ENT_QUOTES, 'UTF-8').'" id="ff_elem'.$mdata['dbId'].$idExt.'"/>'.$lblRight."\n";
 								}
 								else{
-									require_once(JPATH_SITE.'/media/breezingforms/tarifrechner/'.trim($iEx[3]).'mobile.php');
-									break;
+									require(JPATH_SITE.'/media/breezingforms/tarifrechner/'.trim($iEx[3]).'mobile.php');
 								}				
 							}
 							echo $wrapClose;

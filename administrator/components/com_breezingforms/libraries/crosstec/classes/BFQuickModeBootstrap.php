@@ -1312,8 +1312,7 @@ display:none;
 									echo trim($iEx[1]).'</label>'.($i + 1 < $lines && $mdata['wrap'] ? '<div style="clear:both;"></div>' : '');
 								}
 								else{
-									require_once(JPATH_SITE.'/media/breezingforms/tarifrechner/'.trim($iEx[3]).'bootstrap.php');
-									break;
+									require(JPATH_SITE.'/media/breezingforms/tarifrechner/'.trim($iEx[3]).'bootstrap.php');
 								}
 								
 							}
