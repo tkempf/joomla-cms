@@ -9,7 +9,7 @@ $table="plz_nb_".strtolower(mysql_real_escape_string($_POST['energieart']));
 $plz= mysql_real_escape_string($_POST['plz']);
 //$table="plz_nb_strom";
 //$plz="89547";
-$rs = mysql_query("SELECT DISTINCT gemeinde,ort,netzbetreiber,ka,netzentgelt,sonstige
+$rs = mysql_query("SELECT DISTINCT *
 					FROM $table
 					WHERE plz='$plz'
 					AND ({$table}.gueltigab <= CURRENT_DATE())
