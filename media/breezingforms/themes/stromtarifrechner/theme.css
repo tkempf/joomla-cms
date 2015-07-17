@@ -247,6 +247,9 @@ body#print {
 	font-size: 15px;
 }
 
+whTarifInfo {
+	background: url("img/icon_info.png") no-repeat scroll left;
+}
 .whPreis {
 	line-height: 1.4;
 }
