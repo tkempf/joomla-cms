@@ -25,7 +25,6 @@ function wh_showTarifInfo(id){
 	   JQuery("#tarifinfo").html(myHTML).show();
 	   JQuery(".whTarif").removeClass('active');
 	   JQuery("#whTarif" + id).addClass('active');
-	   //window.parent.JQuery(".breezingforms_iframe").iframeAutoHeight({heightOffset: 15, debug: false, diagnostics: false});
 }
 //-->
 </script>
