@@ -236,7 +236,6 @@ body#print {
   	display: table-cell; 
   	vertical-align: middle; 
  	text-align: center;     
-	border-radius: 100px;
     position: relative; 
     height: 150px; 
     width: 150px; 
@@ -245,7 +244,7 @@ body#print {
 	cursor:pointer;
 }
 
-.whTarif:hover {
+.whTarif.active, .whTarif:hover {
 	background-color: #13244E;
 }
 
