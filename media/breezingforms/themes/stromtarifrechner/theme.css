@@ -219,12 +219,15 @@ body#print {
 
 /*  Tarifrechnerergebnis */
 
+#bfElementGroup2396 {
+	min-width: 100% !important;
+}
 
 .whTarifWrapper {
-	float: left;
-    float: left;
-    width: 33%;
+	float:left;
     min-width: 160px;
+	width: 33.33%;
+	margin-bottom: 20px;
 }
 
 
@@ -238,8 +241,12 @@ body#print {
     height: 150px; 
     width: 150px; 
 	background-color: #6AC123;
-    border-radius: 150px; 
-    cursor:pointer;
+    border-radius: 150px;
+	cursor:pointer;
+}
+
+.whTarif:hover {
+	background-color: #13244E;
 }
 
 .whTitel {
@@ -248,12 +255,6 @@ body#print {
 	font-size: 15px;
 }
 
-.whTarifInfo {
-	background: url("img/icon_info.png") no-repeat scroll left;
-	display: block;
-	width:20px;
-	height:20px;
-}
 .whTarifInfoHTML, .whRadio {
 	display:none;
 }
@@ -262,6 +263,26 @@ body#print {
 	line-height: 1.4;
 }
 
+
+/* Tarifinfo im Tarifrechnerergebniss */
+#tarifinfo {
+	margin-top: 60px;
+}
+
+#tarifinfo p {
+	line-height:1.6;
+}
+
+#tarifinfo h3 {
+	font-weight: 400;
+	font-size: 13px;
+	margin: 20px 5px 5px 0px;
+	color: #13244E;
+}
+
+.whTarifFooter button {
+	margin: 10px 0px 0px 0px;
+}
 
 /* Ende Tarifrechnerergebnis */
 

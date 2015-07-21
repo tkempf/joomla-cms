@@ -33,7 +33,6 @@ $tinfobutton='<div class="whTarifFooter">
 	<div class="whTarif" onClick="wh_showTarifInfo('<?php echo $tid?>')">
 		<p class="whTitel"><?php echo $tname?></p>
 		<div class="whPreis"><?php echo $tpreis?></div>
-		<div class="whTarifInfo"></div>
 		<div class="whRadio">
 			<input type="radio" name="ff_nm_<?php echo $mdata['bfName']?>[]" value="<?php echo $tid?>" id="ff_elem<?php echo $mdata['dbId'].$idExt?>"/>
 		</div>
