@@ -21,30 +21,32 @@ echo '   <div class="whRadio"><input '.($tchecked ? 'checked="checked" ' : '').'
 echo '      '.$tname."</div>\n";
 echo '</div>'."\n";
 */
-$modalParams = array();
-$modalParams['title']  = $tname;
-$modalParams['height'] = "400";
-$modalParams['width']  = "80%";
+
+$tinfobutton='<div class="whTarifFooter">
+				<button id="wechselbutton'.$tid.'" class="ff_elem bfCustomSubmitButton" onClick="JQuery(\'#ff_elem'.$mdata['dbId'].$idExt.'\').prop(\'checked\',true);ff_validate_nextpage(this,\'click\');">Jetzt zu "'.$tname.'" wechseln</button>
+			  </div>';
+
 
 ?>
 <div class="whTarifWrapper">
-	<a href="#modal<?php echo $tid?>" data-toggle="modal" role="button" class="btn btn-success">
-	<div class="whTarif">
+	<div class="whTarifInfoHTML" id="whTarifInfo<?php echo $tid?>"><?php echo ($tinfo.$tinfobutton);?></div>	
+	<div class="whTarif" onClick="wh_showTarifInfo('<?php echo $tid?>')">
 		<p class="whTitel"><?php echo $tname?></p>
 		<div class="whPreis"><?php echo $tpreis?></div>
 		<div class="whTarifInfo"></div>
-	</div>
-	</a>
-	<div class="whRadio">
-		<input <?php echo ($tchecked ? 'checked="checked" ' : '')?> class="ff_elem" <?php echo $tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly ?>
-		type="radio" name="ff_nm_<?php echo $mdata['bfName']?>[]" value="<?php echo $tid?>" id="ff_elem<?php echo $mdata['dbId'].$idExt?>"/><?php echo $tname?>
+		<div class="whRadio">
+			<input type="radio" name="ff_nm_<?php echo $mdata['bfName']?>[]" value="<?php echo $tid?>" id="ff_elem<?php echo $mdata['dbId'].$idExt?>"/>
+		</div>
 	</div>
 </div>
-<?php 
-$modalBody='
-		<div>
-			<p>'.$tinfo.'</p>
-		</div>
-';
-echo JHtml::_('bootstrap.renderModal', 'modal'.$tid , $modalParams, $modalBody);
-?>		
+<?php if(!$fdeclared){$fdeclared=true;?>
+<script type="text/javascript">
+<!--
+function wh_showTarifInfo(id){
+	   var myHTML=JQuery("#whTarifInfo" + id).html();
+	   JQuery("#tarifinfo").html(myHTML).show();
+	   //window.parent.JQuery(".breezingforms_iframe").iframeAutoHeight({heightOffset: 15, debug: false, diagnostics: false});
+}
+//-->
+</script>
+<?php }?>

@@ -239,6 +239,7 @@ body#print {
     width: 150px; 
 	background-color: #6AC123;
     border-radius: 150px; 
+    cursor:pointer;
 }
 
 .whTitel {
@@ -247,9 +248,16 @@ body#print {
 	font-size: 15px;
 }
 
-whTarifInfo {
+.whTarifInfo {
 	background: url("img/icon_info.png") no-repeat scroll left;
+	display: block;
+	width:20px;
+	height:20px;
 }
+.whTarifInfoHTML, .whRadio {
+	display:none;
+}
+
 .whPreis {
 	line-height: 1.4;
 }
