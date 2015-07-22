@@ -288,9 +288,9 @@ body#print {
 
 /* Ende Tarifrechnerergebnis */
 
-/* Validierung IBAN*/
+/* Validierung IBAN/BIC*/
 
-input[name="ff_nm_IBAN[]"] {
+input.invalid {
     	background:url(img/unchecked.png)no-repeat right;
 		background-size: 20px 20px;
 }
@@ -299,7 +299,7 @@ input.valid {
 		background-size: 20px 20px;	
 }
 
-/* Ende Validierung IBAN*/
+/* Ende Validierung IBAN/BIC*/
 
 /* Bilder Stromzähler */
 
