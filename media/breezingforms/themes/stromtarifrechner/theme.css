@@ -290,12 +290,11 @@ body#print {
 
 /* Validierung IBAN*/
 
-input[name="ff_nm_Kontonummer[]"] {
+input[name="ff_nm_IBAN[]"] {
     	background:url(img/unchecked.png)no-repeat right;
 		background-size: 20px 20px;
 }
-
-input[name="ff_nm_Kontonummer[]"].valid {
+input.valid {
     	background:url(img/checked.png)no-repeat right;
 		background-size: 20px 20px;	
 }
