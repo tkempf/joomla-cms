@@ -14,7 +14,7 @@ $rs = mysql_query("SELECT DISTINCT *
 					WHERE plz='$plz'
 					AND ({$table}.gueltigab <= CURRENT_DATE())
 					AND ({$table}.gueltigbis >= CURRENT_DATE())
-					ORDER BY gemeinde,ort,netzbetreiber") or die(mysql_error());
+					ORDER BY ort,netzentgelt,netzentgeltwaerme,netzbetreiber") or die(mysql_error());
 while($obj = mysql_fetch_object($rs)) {
 	$arr[] = $obj;
 }
