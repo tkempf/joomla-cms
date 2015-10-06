@@ -7,7 +7,7 @@ mysql_query('SET CHARACTER SET utf8') or die(mysql_error());
 $arr = array();
 $table="plz_nb_".strtolower(mysql_real_escape_string($_POST['energieart']));
 $plz= mysql_real_escape_string($_POST['plz']);
-$rs = mysql_query("SELECT DISTINCT *
+$rs = mysql_query("SELECT DISTINCT *, '' as nbunknown
 					FROM $table
 					WHERE plz='$plz'
 					AND ({$table}.gueltigab <= CURRENT_DATE())
@@ -17,7 +17,7 @@ $lastobj->ort='';
 $found=false;
 while($obj = mysql_fetch_object($rs)) {
 	if($lastobj->ort==$obj->ort and !$found){
-		$lastobj->netzbetreiber='Netzbetreiber ist mir nicht bekannt';
+		$lastobj->nbunknown='Netzbetreiber ist mir nicht bekannt';
 		array_splice($arr,-1,0,array($lastobj));
 		$found=true;
 	}
