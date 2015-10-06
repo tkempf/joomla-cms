@@ -11,7 +11,8 @@ $tinfo='<h1>'.$tname.'</h1>'.trim($iEx[5]);
 $tarbeitspreis='Verbrauchspreis HT: '.htmlentities(trim($iEx[6]), ENT_QUOTES, 'UTF-8').' Cent pro kWh.';
 $tarbeitspreisnt=($iEx[7] == 0) ? '' : 'Verbrauchspreis NT: '.htmlentities(trim($iEx[7]), ENT_QUOTES, 'UTF-8').' Cent pro kWh.';
 $tgrund='Grundpreis: '.htmlentities(trim($iEx[8]), ENT_QUOTES, 'UTF-8').' EUR pro Jahr';
-$tpreise='<h3>'.$tgrund.'<br>'.$tarbeitspreis.'<br>'.$tarbeitspreisnt.'</h3>';
+$tbonus=($iEx[9]==0) ? '' : '<br>'.htmlentities(trim($iEx[10]), ENT_QUOTES, 'UTF-8').': '.htmlentities(trim($iEx[9]), ENT_QUOTES, 'UTF-8'). ' EUR';
+$tpreise='<h3>'.$tgrund.'<br>'.$tarbeitspreis.'<br>'.$tarbeitspreisnt.$tbonus.'</h3>';
 $tinfobutton='<div class="whTarifFooter">
 				<button id="wechselbutton'.$tid.'" class="ff_elem bfCustomSubmitButton" onClick="JQuery(\'#ff_elem'.$mdata['dbId'].$idExt.'\').prop(\'checked\',true);ff_validate_nextpage(this,\'click\');">Jetzt wechseln</button>
 			  </div>';
