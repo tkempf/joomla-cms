@@ -9,6 +9,17 @@
 
 /* Template Styles Bootstrap aus Master - Template FINGER WEG*/
 /* Eigene Styles ab Zeile 190 */
+
+/* 
+* {
+	text-rendering:optimizelegibility;
+	transition:all ease-in-out .3s;
+	-webkit-transition:all ease-in-out .3s;
+	-moz-transition:all ease-in-out .3s;
+	-ms-transition:all ease-in-out .3s;
+	-o-transition:all ease-in-out .3s;
+}
+*/
 html {overflow-y: scroll;}
 body {
     background-color: #FFFFFF;
@@ -19,7 +30,10 @@ body {
 	padding-bottom: 0px;
 }
 
-
+/* Gepunkteter Border bei Bildlinks Global entfernen */
+a {
+   outline: 0 !important;
+}
 
 img {max-width: 100% }
 
@@ -292,6 +306,13 @@ a.tariflink {
     margin-right: 15px;
 }
 .back-to-top:hover {background-color: rgba(135, 135, 135, 0.50) }
+
+@media (max-width: 767px) { 
+	.back-to-top {
+		display:none !important;
+	}
+}
+
 /*Ende TO TOP*/
 /* Top */
 #top {
@@ -509,7 +530,9 @@ div.service-hotline h3 i {
 	
 /* Ende FAQ */
 
-
+.ansprechpartner {
+	min-height: 610px;
+}
 
 
 /* Media Queries */
@@ -525,6 +548,10 @@ div.service-hotline h3 i {
 }
 #top div.logo, #top div.service-hotline {
     padding: 40px 0px 0px;
+}
+
+.ansprechpartner {
+	min-height: 620px;
 }
 
 }
@@ -561,6 +588,12 @@ a.tariflink {
 	padding:0;
 }
 
+.ansprechpartner {
+	min-height: 620px;
+}
+
+}
+
 @media (max-width: 767px) { 
 /*Navi mobil*/
 .navbar-nav > li > a {
@@ -574,7 +607,7 @@ a.tariflink {
 
 #top div.logo, #top div.service-hotline {
 	padding: 10px 10px 10px 10px;
-	margin;: 10px 0 0 0;
+	margin: 10px 0 0 0;
 	width: 100%
 }
 #top div.service-hotline {
@@ -609,13 +642,24 @@ div.service-hotline {
 	margin-top: 30px;
 }
 
+ul {
+	font-size:12px;
+}
+
+.ansprechpartner {
+	max-width: 270px;
+	min-height: 580px;
+
+}
+
+}
 @media (max-width: 480px) { 
 
 
 /* Top Module */
 #top div.logo, #top div.service-hotline {
 	padding: 10px 10px 10px 10px;
-	margin;: 10px 0 0 0;
+	margin: 10px 0 0 0;
 	width: 100%
 }
 
@@ -638,7 +682,65 @@ img.brand {
 	max-width: 100%;
 }
 
+ul {
+	font-size:12px;
+}
+
+.ansprechpartner {
+	min-height: 580px;
+}
+
+}
+
 /*Ende Media-Queries*/
 
 
+/* Start Ansprechpartner */
 
+.service_ansprechpartner .row div {
+	padding-bottom: 20px;
+}
+
+.ansprechpartner {
+	border: 1px solid #EFEFEF;
+	padding: 10px;
+
+}
+
+
+.ansprechpartner h3 {
+    padding: 10px 0px 0px;
+}
+
+.ansprechparner img {
+	min-width: 100% !important;
+	height:	auto;
+}
+
+.ansprechpartner ul li {
+	list-style-type:disc;
+	list-style-position:outside;
+}
+
+.ansprechpartner ul {
+	margin-left:6px;
+	padding-left:6px;
+}
+
+
+/* Cookies Alert */
+
+#cadre_alert_cookies .pull-left {
+	margin: 16px 0px 0px;
+	opacity: 1 !important;
+}
+
+#cadre_alert_cookies  .cadre_bouton {
+	padding:0px;
+	margin: 9px;
+	opacity: 1 !important;
+}
+
+.cadre_inner_alert_cookies {
+	opacity: 0.9 !important;
+}
