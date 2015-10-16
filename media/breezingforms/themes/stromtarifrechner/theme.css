@@ -76,6 +76,10 @@ body#print {
 	border-radius: 0;
 }
 
+.bfQuickMode select {
+	padding-right: 40px;
+}
+
 .bfQuickMode textarea:hover, .bfQuickMode input[type='text']:hover, .bfQuickMode input[type='password']:hover, .bfQuickMode select:hover {
 
 }
@@ -252,9 +256,9 @@ body#print {
     font-weight: 600;
     line-height: 1.3;
     font-size: 15px;
-    max-width: 139px;
+    max-width: 126px;
+	min-height:40px;
     margin: 0 auto;
-    padding-bottom: 5px;
 }
 
 .whTarifInfoHTML, .whRadio {
