@@ -331,10 +331,13 @@ a.tariflink {
     width: 1px;
 }
 
-#top div.logo, #top div.service-hotline {
+#top div.logo {
 	padding: 40px 0px 50px;
 }
 
+ #top div.service-hotline {
+	 padding-top: 40px;
+ }
 /*Service-Hotline*/
 div.service-hotline { 
 	text-align: right;
@@ -743,4 +746,22 @@ ul {
 
 .cadre_inner_alert_cookies {
 	opacity: 0.9 !important;
+}
+
+/* Schriftgröße anpassen Buttons */
+
+.jfontsize {
+    margin-top: -19px;
+    float: right;
+    margin-right: -10px;
+}
+
+@media (max-width: 767px) { 
+
+.jfontsize {
+    margin-top: -19px;
+    float: left;
+    margin-left: -10px;
+}
+
 }

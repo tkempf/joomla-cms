@@ -32,6 +32,7 @@
 	</files>
     <positions>
 		<position>top</position>
+		<position>font-size</position>
         <position>breadcrumbs</position>
 		<position>navigation</position>
 		<position>suche</position>
