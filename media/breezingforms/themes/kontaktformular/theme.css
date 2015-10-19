@@ -5,8 +5,8 @@
  ########################################
 */
 
-@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700italic,900,700,900italic);
 
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700italic,900,700,900italic);
 
 
 body#print {
@@ -36,7 +36,7 @@ body#print {
 
 
 .bfQuickMode fieldset {
-    border: 1px solid #EFEFEF;
+
 }
 
 .bfQuickMode legend {
@@ -73,11 +73,7 @@ body#print {
 	color: #777;
 	font-weight: 300;
 	-webkit-appearance:none;
-	border-radius: 0;
-}
-
-.bfQuickMode select {
-	padding-right: 40px;
+	border-radius: 0;	
 }
 
 .bfQuickMode textarea:hover, .bfQuickMode input[type='text']:hover, .bfQuickMode input[type='password']:hover, .bfQuickMode select:hover {
@@ -153,7 +149,7 @@ body#print {
 
 }
 
-.bfQuickMode .bfNextButton, .bfQuickMode .bfSubmitButton, .bfQuickMode .bfCancelButton, .bfCustomSubmitButton {
+.bfQuickMode .bfNextButton, .bfQuickMode .bfSubmitButton, .bfQuickMode .bfCancelButton {
 	float: left;
 	border: none;
 	border-radius: none;
@@ -161,7 +157,6 @@ body#print {
 	color: #fff;
 	padding: 4px 10px;
 	margin:10px 0 0 5px;
-	float: left;
 }
 
 .bfQuickMode .bfPrevButton {
@@ -185,140 +180,12 @@ body#print {
 	 -webkit-appearance: none;  /*Removes default chrome and safari style*/
      -moz-appearance: none;  /*Removes default style Firefox*/
 	 background:url(img/select.png)no-repeat right;
-	 width:46.4% !important;
 }
 
 .bfQuickMode select::-moz-focus-inner {
   border: 0;
 }
 
-/* Geburtstag / Kalender */
-
-.bfQuickMode button.bfCalendar {
-    height: 27px;
-	width: 30px;
-    margin: 3px 10px 0px 0px;
-    float: left;
-	background:url(img/cal.png)no-repeat right;
-	 -webkit-appearance: none;  /*Removes default chrome and safari style*/
-     -moz-appearance: none;  /*Removes default style Firefox*/
-	 border: none;
-}
-
-/* button seite 2, 3, 4, 5, 6 */
-
-#bfElemWrap2416, #bfElemWrap2415, #bfElemWrap2428, #bfElemWrap2428, 
-#bfElemWrap2436, #bfElemWrap2436, #bfElemWrap2437, #bfElemWrap2437
-#bfElemWrap2456, #bfElemWrap2456 {
-    float: left !important;
-	overflow: visible;
-}
-
-
-/* Vollmacht */
-
-#bfPage4 .bfLabelRight label, #bfPage5 .bfLabelRight label  {
-	width: 54% !important;
-}
-
-/*  Tarifrechnerergebnis */
-
-#bfElementGroup2396 {
-	min-width: 100% !important;
-}
-
-.whTarifWrapper {
-	float:left;
-    min-width: 160px;
-	width: 33.33%;
-	margin-bottom: 20px;
-}
-
-
-.whTarif {
-	color: #fff;
-  	display: table-cell; 
-  	vertical-align: middle; 
- 	text-align: center;     
-    position: relative; 
-    height: 150px; 
-    width: 150px; 
-	background-color: #6AC123;
-    border-radius: 150px;
-	cursor:pointer;
-}
-
-.whTarif.active, .whTarif:hover {
-	background-color: #13244E;
-}
-
-.whTitel {
-    font-weight: 600;
-    line-height: 1.3;
-    font-size: 15px;
-    max-width: 126px;
-	min-height:40px;
-    margin: 0 auto;
-}
-
-.whTarifInfoHTML, .whRadio {
-	display:none;
-}
-
-.whPreis {
-	line-height: 1.4;
-}
-
-
-/* Tarifinfo im Tarifrechnerergebniss */
-#tarifinfo {
-	margin-top: 60px;
-}
-
-#tarifinfo p {
-	line-height:1.6;
-}
-
-#tarifinfo h3 {
-	font-weight: 400;
-	font-size: 13px;
-	margin: 20px 5px 5px 0px;
-	color: #13244E;
-}
-
-.whTarifFooter button {
-	margin: 10px 0px 0px 0px;
-}
-
-/* Ende Tarifrechnerergebnis */
-
-/* Validierung IBAN/BIC*/
-
-input.invalid {
-    	background:url(img/unchecked.png)no-repeat right;
-		background-size: 20px 20px;
-}
-input.valid {
-    	background:url(img/checked.png)no-repeat right;
-		background-size: 20px 20px;	
-}
-
-/* Ende Validierung IBAN/BIC*/
-
-/* Bilder Stromzähler */
-
-#stromzaehler {
-    display: inline-block;
-    padding-left: 45%;
-}
-
-@media (max-width: 767px) { 
-
-#stromzaehler {
-    display: inline-block;
-    padding-left: 0;
-}
-}
 
 /* Cookie Meldung ausblenden*/
 .cadre_alert_cookies, #cadre_alert_cookies .pull-left {
