@@ -329,3 +329,31 @@ input.valid {
 	background-color: #fff;	
 }
 
+/* letzte Seite */
+#Vbedhtml a img {
+	vertical-align: middle;
+	padding-right: 10px;
+	display: table-cell;
+}
+
+#Vbedhtml a {
+	vertical-align: middle;
+	text-decoration:none;
+	display: table-cell;
+	float: left;
+}
+
+
+#bfPage6 .bfLabelRight label {
+	width: 97%;
+	float: right;
+	padding-bottom: 15px
+}
+
+
+.bfQuickMode .bfSectionDescription {
+    float: left;
+    width: 100%;
+}
+
+
