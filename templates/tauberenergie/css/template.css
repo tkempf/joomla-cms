@@ -765,3 +765,8 @@ ul {
 }
 
 }
+
+/* Galerie */
+#main-box kbd {
+    background: none;
+}
