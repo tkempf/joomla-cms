@@ -1,6 +1,5 @@
 /** See /media/breezingforms/themes-bootstrap/stasis/script.php for Google Font inclusion **/
 @import url(http://fonts.googleapis.com/css?family=Maven+Pro:500&subset=latin,greek,latin-ext,cyrillic);
-
 .bfQuickMode .bfPage{
     background-color: #ffffff;
     padding: 10px;
@@ -580,4 +579,6 @@
     -moz-opacity:1.0;
     opacity: 1.0;
 }
+
+
 

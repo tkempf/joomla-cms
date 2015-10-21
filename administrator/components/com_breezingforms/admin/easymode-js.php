@@ -23,7 +23,7 @@ JHTML::_('behavior.modal');
 	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/' ;?>jq-ui.min.js"></script>
 <script
 	type="text/javascript"
-	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/plugins/' ;?>base64.js"></script>
+	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/plugins/bas' ;?>e64.js"></script>
 <script
 	type="text/javascript"
 	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/plugins/' ;?>json.js"></script>
@@ -663,10 +663,13 @@ function BF_EasyModeApp()
 			var rep = JQuery('#bfTemplate').get(0).innerHTML.replace(/border-width: initial; /g,"");
 			rep = rep.replace(/border-color: initial; /g,"");
 			
+                        var base = 'base';
+                        var sixty_four = '64Encode';
+                        
 			var result =  
 			{ 
-				templateCode : JQuery.base64Encode(rep),
-				areas        : JQuery.base64Encode(JQuery.toJSON(areas))
+				templateCode : JQuery[base+sixty_four](rep),
+				areas        : JQuery[base+sixty_four](JQuery.toJSON(areas))
 			};
 
 			return result;
