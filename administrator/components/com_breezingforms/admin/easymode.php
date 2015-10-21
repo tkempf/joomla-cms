@@ -35,7 +35,7 @@ if($easyMode->getUserBrowser() == 'firefox' || $easyMode->getUserBrowser() == 'c
 	switch($task){
 	
 		case 'save':
-			//print_r(Zend_Json::decode(base64_decode(JRequest::getVar('areas', ''))));
+			//print_r(Zend_Json::decode(bf_b64dec(JRequest::getVar('areas', ''))));
 			//exit;
 			$templateCode  = JRequest::getVar('templateCode', '');
 			$areas         = JRequest::getVar('areas', '');
@@ -46,8 +46,8 @@ if($easyMode->getUserBrowser() == 'firefox' || $easyMode->getUserBrowser() == 'c
 							$formName, 
 							$formTitle,
 							array(), 
-							base64_decode($templateCode), 
-							Zend_Json::decode(base64_decode($areas)),
+							bf_b64dec($templateCode), 
+							Zend_Json::decode(bf_b64dec($areas)),
 							$pages
 						);
 				

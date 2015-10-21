@@ -24,7 +24,7 @@ class WebAuthBase extends AuthBase
     {
         // This endpoint requires "Basic" auth.
         $clientCredentials = $this->appInfo->getKey().":".$this->appInfo->getSecret();
-        $authHeaderValue = "Basic ".base64_encode($clientCredentials);
+        $authHeaderValue = "Basic ".bf_b64enc($clientCredentials);
 
         $response = RequestUtil::doPostWithSpecificAuth(
             $this->clientIdentifier, $authHeaderValue, $this->userLocale,

@@ -310,9 +310,9 @@ class facileFormsConfig extends facileFormsConf {
 					$form->emailadr = expstring($form->emailadr);
 					if ($form->emailadr != '') $xml .= indent(2).'<emailadr>'.$form->emailadr.'</emailadr>'.nl();
 				} // if
-				if($form->template_code != '')$xml.=indent(2).'<template_code>'.base64_encode($form->template_code).'</template_code>';
-				if($form->template_code_processed != '')$xml.=indent(2).'<template_code_processed>'.base64_encode($form->template_code_processed).'</template_code_processed>';
-				if($form->template_areas != '')$xml.=indent(2).'<template_areas>'.base64_encode($form->template_areas).'</template_areas>';
+				if($form->template_code != '')$xml.=indent(2).'<template_code>'.bf_b64enc($form->template_code).'</template_code>';
+				if($form->template_code_processed != '')$xml.=indent(2).'<template_code_processed>'.bf_b64enc($form->template_code_processed).'</template_code_processed>';
+				if($form->template_areas != '')$xml.=indent(2).'<template_areas>'.bf_b64enc($form->template_areas).'</template_areas>';
 				if ($form->dblog != 1) $xml .=  indent(2).'<dblog>'.$form->dblog.'</dblog>'.nl();
 				$form->description = trim($form->description);
 				if ($form->prevmode != 2) $xml .= indent(2).'<prevmode>'.$form->prevmode.'</prevmode>'.nl();

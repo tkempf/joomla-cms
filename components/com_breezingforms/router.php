@@ -49,7 +49,7 @@ function BreezingformsBuildRoute(&$query) {
     } else {
         
         foreach($query As $key => $value){
-            if( !in_array($key, array('option', 'Itemid')) ){
+            if( !in_array($key, array('option', 'Itemid', 'lang')) ){
                 $segments[] = $key;
                 $segments[] = $value;
             }
