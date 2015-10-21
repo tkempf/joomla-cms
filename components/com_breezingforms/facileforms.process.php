@@ -6217,7 +6217,7 @@ class HTML_facileFormsProcessor {
                             $this->getFieldTranslated('label', $DATA[_FF_DATA_NAME], $trans_title);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $DATA[_FF_DATA_TITLE], $subject);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : $DATA[_FF_DATA_TITLE], $subject);
-                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', $DATA[_FF_DATA_VALUE], $subject);
+                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', urldecode($DATA[_FF_DATA_VALUE]), $subject);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . '}', $DATA[_FF_DATA_VALUE], $subject);
                             $DATA[_FF_DATA_TITLE] = $trans_title != '' ? $trans_title : $DATA[_FF_DATA_TITLE];
                             $MAILDATA[] = $DATA;
@@ -6277,7 +6277,7 @@ class HTML_facileFormsProcessor {
                         $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $trans_title);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}',urldecode($data[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                         if (!in_array($data[_FF_DATA_NAME], $filter)) {
                             $body .= $data[_FF_DATA_TITLE] . ": " . $data[_FF_DATA_VALUE] . nl();
@@ -6382,7 +6382,7 @@ class HTML_facileFormsProcessor {
                     $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $trans_title);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                     if (!in_array($data[_FF_DATA_NAME], $filter)) {
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $body);
