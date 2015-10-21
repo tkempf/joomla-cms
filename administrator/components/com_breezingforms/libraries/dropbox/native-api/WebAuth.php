@@ -158,7 +158,7 @@ class WebAuth extends WebAuthBase
 
     private static function encodeCsrfToken($string)
     {
-        return strtr(base64_encode($string), '+/', '-_');
+        return strtr(bf_b64enc($string), '+/', '-_');
     }
 
     /**

@@ -223,8 +223,8 @@ function _recaptcha_aes_encrypt($val,$ky) {
 }
 
 
-function _recaptcha_mailhide_urlbase64 ($x) {
-	return strtr(base64_encode ($x), '+/', '-_');
+function _recaptcha_mailhide_urlb64 ($x) {
+	return strtr(bf_b64enc ($x), '+/', '-_');
 }
 
 /* gets the reCAPTCHA Mailhide url for a given email, public key and private key */
@@ -238,7 +238,7 @@ function recaptcha_mailhide_url($pubkey, $privkey, $email) {
 	$ky = pack('H*', $privkey);
 	$cryptmail = _recaptcha_aes_encrypt ($email, $ky);
 	
-	return "http://mailhide.recaptcha.net/d?k=" . $pubkey . "&c=" . _recaptcha_mailhide_urlbase64 ($cryptmail);
+	return "http://mailhide.recaptcha.net/d?k=" . $pubkey . "&c=" . _recaptcha_mailhide_urlb64 ($cryptmail);
 }
 
 /**

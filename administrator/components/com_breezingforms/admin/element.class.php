@@ -547,6 +547,7 @@ class facileFormsElement
 			"select * from #__facileforms_elements where form=$form and page=$page order by ordering"
 		);
 		$rows = $database->loadObjectList();
+                
 		if ($database->getErrorNum()) {
 			echo $database->stderr();
 			return false;

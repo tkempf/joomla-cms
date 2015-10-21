@@ -70,6 +70,10 @@ class BFQuickMode{
             $version = new JVersion();
             if(version_compare($version->getShortVersion(), '3.0', '<')){
                 JHTML::_('behavior.mootools');
+            } else {
+                JHtml::_('behavior.framework', true);
+                // force jquery to be loaded after mootools but before any other js (since J! 3.4)
+                JHtml::_('jquery.framework');
             }
             JFactory::getDocument()->addStyleDeclaration('
 
@@ -847,7 +851,7 @@ display:none;
                 JFactory::getDocument()->addScriptDeclaration('<!--');
                 
                 $this->p = $p;
-		$this->dataObject = Zend_Json::decode( base64_decode($this->p->formrow->template_code) );
+		$this->dataObject = Zend_Json::decode( bf_b64dec($this->p->formrow->template_code) );
 		$this->rootMdata = $this->dataObject['properties'];
                 
                 /* translatables */
@@ -1423,6 +1427,7 @@ display:none;
 							$flashUploader = "
                                                         <span id=\"bfUploadContainer".$mdata['dbId']."\">
 							<img alt=\"\" style=\"cursor: pointer;\" id=\"bfPickFiles".$mdata['dbId']."\" src=\"".$this->uploadImagePath."\" width=\"".(isset($mdata['flashUploaderWidth']) && is_numeric($mdata['flashUploaderWidth']) && $mdata['flashUploaderWidth'] > 0 ? intval($mdata['flashUploaderWidth']) : '64')."\" height=\"".(isset($mdata['flashUploaderHeight']) && is_numeric($mdata['flashUploaderHeight']) && $mdata['flashUploaderHeight'] > 0 ? intval($mdata['flashUploaderHeight']) : '64')."\"/>
+                                                        <div id=\"bfPickFiles".$mdata['dbId']."holder\" style=\"display:none;\">&nbsp;</div>
                                                         </span>
                                                         <span id=\"bfUploader".$mdata['bfName']."\"></span>
                                                         <div class=\"bfFlashFileQueueClass\" id=\"bfFlashFileQueue".$mdata['dbId']."\"></div>
@@ -1506,6 +1511,14 @@ display:none;
                                                                                         for( var i = 0; i < bfUploaders_.length; i++ ){
                                                                                             bfUploaders_[i].start();
                                                                                         }
+                                                                                        // re-enable button if there is none left
+                                                                                        if( ".( isset($mdata['flashUploaderMulti']) && $mdata['flashUploaderMulti'] ? 'true' : 'false' )." == false ){
+                                                                                            var the_size = JQuery('#bfFlashFileQueue".$mdata['dbId']." .bfFileQueueItem').size();
+                                                                                            if( the_size == 0 ){
+                                                                                                JQuery('#bfPickFiles".$mdata['dbId']."').css('display','block');
+                                                                                                JQuery('#bfPickFiles".$mdata['dbId']."holder').css('display','none');
+                                                                                            }
+                                                                                        }
                                                                                     } 
                                                                                 );
                                                                                 var thebytes = ".(isset($mdata['flashUploaderBytes']) && is_numeric($mdata['flashUploaderBytes']) && $mdata['flashUploaderBytes'] > 0 ? intval($mdata['flashUploaderBytes']) : '0').";
@@ -1532,6 +1545,14 @@ display:none;
                                                                                     bfFlashUploadersLength++;
                                                                                 }
                                                                                 bfUploadImageThumb(files[i]);
+                                                                            }
+                                                                        }
+                                                                        // disable the button if no multi upload
+                                                                        if( ".( isset($mdata['flashUploaderMulti']) && $mdata['flashUploaderMulti'] ? 'true' : 'false' )." == false ){
+                                                                            var the_size = JQuery('#bfFlashFileQueue".$mdata['dbId']." .bfFileQueueItem').size();
+                                                                            if( the_size > 0 ){
+                                                                                JQuery('#bfPickFiles".$mdata['dbId']."').css('display','none');
+                                                                                JQuery('#bfPickFiles".$mdata['dbId']."holder').css('display','block');
                                                                             }
                                                                         }
                                                                 });
@@ -1853,10 +1874,58 @@ display:none;
 						echo '<button type="button" id="ff_elem'.$mdata['dbId'].'_calendarButton" type="submit" class="bfCalendar" value="'.htmlentities($right, ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities($right, ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 						echo '</span>'."\n";
                                                 
-                                                $container = '';
+                                                $container = 'JQuery("body").append("<div class=\"bfCalendarResponsiveContainer'.$mdata['dbId'].'\" style=\"display:block;position:absolute;left:-9999px;\"></div>");';
+                                                
+                                                $c = '';
+                                                
                                                 if(!$this->hasResponsiveDatePicker){
-                                                    $container = 'JQuery("body").append("<div class=\"bfCalendarResponsiveContainer\" style=\"display:block;position:absolute;left:-9999px;\"></div>");';
+                                                    ob_start();
+                                                    ?>
+                                                    <script type="text/javascript">
+                                                    <!--
+                                                    function bf_add_yearscroller( fieldname ){
+                                                        if(!JQuery("#bfCalExt"+fieldname).length){
+                                                            // prev
+                                                            if( JQuery(".bfCalendarResponsiveContainer"+fieldname+" .picker__select--year").get(0).selectedIndex > 0 ){
+                                                                JQuery(".bfCalendarResponsiveContainer"+fieldname+" .picker__select--year").before('<img id="bfCalExt'+fieldname+'" onclick="JQuery(\'.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year\').get(0).selectedIndex=JQuery(\'.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year\').get(0).selectedIndex-1;JQuery(\'.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year\').trigger(\'change\')" border="0" src="<?php echo Juri::root(true) . '/components/com_breezingforms/libraries/jquery/pickadate/minusyear.png' ?>" style="width: 30px; vertical-align: top; cursor:pointer;" />');
+                                                            }
+                                                            // next
+                                                            if( JQuery(".bfCalendarResponsiveContainer"+fieldname+" .picker__select--year").get(0).selectedIndex + 1 < JQuery(".bfCalendarResponsiveContainer"+fieldname+" .picker__select--year").get(0).options.length ){
+                                                                JQuery(".bfCalendarResponsiveContainer"+fieldname+" .picker__select--year").after('<img id="bfCalExt'+fieldname+'" onclick="JQuery(\'.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year\').get(0).selectedIndex=JQuery(\'.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year\').get(0).selectedIndex+1;JQuery(\'.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year\').trigger(\'change\')" border="0" src="<?php echo Juri::root(true) . '/components/com_breezingforms/libraries/jquery/pickadate/plusyear.png' ?>" style="width: 30px; vertical-align: top; cursor:pointer;" />');
+                                                            }
+                                                            
+                                                            JQuery('.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year').on('change', function(){
+                                                                bf_add_yearscroller( fieldname );
+                                                            }); 
+                                                            JQuery('.bfCalendarResponsiveContainer'+fieldname+' .picker__select--month').on('change', function(){
+                                                                bf_add_yearscroller( fieldname );
+                                                            });
+                                                            
+                                                            var myVal = JQuery('.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year').val();
+                                                            var myInterval = setInterval(function(){
+                                                                if( myVal != JQuery('.bfCalendarResponsiveContainer'+fieldname+' .picker__select--year').val() ){
+                                                                    clearInterval(myInterval);
+                                                                    bf_add_yearscroller( fieldname );
+                                                                }
+                                                            }, 200);
+                                                            
+                                                            var myVal = JQuery('.bfCalendarResponsiveContainer'+fieldname+' .picker__select--month').val();
+                                                            var myInterval = setInterval(function(){
+                                                                if( myVal != JQuery('.bfCalendarResponsiveContainer'+fieldname+' .picker__select--month').val() ){
+                                                                    clearInterval(myInterval);
+                                                                    bf_add_yearscroller( fieldname );
+                                                                }
+                                                            }, 200);
+                                                        }
+                                                    }
+                                                    //-->
+                                                    </script>
+                                                    <?php 
+                                                    $c = ob_get_contents();
+                                                    ob_end_clean();
                                                 }
+                                                
+                                                echo $c;
                                                 
                                                 echo '<script type="text/javascript">
                                                 <!--
@@ -1868,7 +1937,10 @@ display:none;
                                                         selectMonths: true,
                                                         editable: true,
                                                         firstDay: 1,
-                                                        container: ".bfCalendarResponsiveContainer",
+                                                        container: ".bfCalendarResponsiveContainer'.$mdata['dbId'].'",
+                                                        onOpen: function() {
+                                                            bf_add_yearscroller( '.json_encode($mdata['dbId']).' );
+                                                        },
                                                         onSet: function() {
                                                             JQuery("#ff_elem'.$mdata['dbId'].'").val(this.get("value"));
                                                         }

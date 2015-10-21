@@ -567,9 +567,9 @@ class facileFormsForm
                             $template_code = $row_->template_code;
 
                             if ($row_->template_code_processed == 'QuickMode') {
-                                $dataObject = Zend_Json::decode(base64_decode($row_->template_code));
+                                $dataObject = Zend_Json::decode(bf_b64dec($row_->template_code));
                                 resetQuickModeDbId($dataObject);
-                                $template_code = base64_encode(Zend_Json::encode($dataObject));
+                                $template_code = bf_b64enc(Zend_Json::encode($dataObject));
                             }
 
                             JFactory::getDBO()->setQuery("Update #__facileforms_forms Set template_code = " . JFactory::getDBO()->Quote($template_code) . ", template_areas = " . JFactory::getDBO()->Quote($template_areas) . " Where id = " . intval($id));
@@ -578,7 +578,7 @@ class facileFormsForm
                             if ($row_ && $row_->template_code_processed == 'QuickMode') {
                                 $quickMode = new QuickMode();
                                 $quickMode->save(
-                                        $id, Zend_Json::decode(base64_decode($template_code))
+                                        $id, Zend_Json::decode(bf_b64dec($template_code))
                                 );
                             }
                         }

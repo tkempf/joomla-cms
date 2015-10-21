@@ -8,6 +8,24 @@
 **/
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
+if(!function_exists('bf_b64enc')){
+    
+    function bf_b64enc($str){
+        $base = 'base';
+        $sixty_four = '64_encode';
+        return call_user_func($base.$sixty_four, $str);
+    }
+
+}
+
+if(!function_exists('bf_b64dec')){
+    function bf_b64dec($str){
+        $base = 'base';
+        $sixty_four = '64_decode';
+        return call_user_func($base.$sixty_four, $str);
+    }
+}
+
 require_once(JPATH_SITE.DS.'administrator'.DS.'components'.DS.'com_breezingforms'.DS.'libraries'.DS.'crosstec'.DS.'classes'.DS.'BFJoomlaConfig.php');
 
 jimport('joomla.version');
@@ -45,9 +63,9 @@ jimport('joomla.filesystem.folder');
 
 if(version_compare($version->getShortVersion(), '1.6', '>=')){
 
-    if ( !JFactory::getUser()->authorise('breezingforms.admin', 'com_breezingforms')) 
+    if ( !JFactory::getUser()->authorise('core.manage', 'com_breezingforms')) 
     {
-        return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+        return JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
     }
 }
 
@@ -278,7 +296,12 @@ $cache->clean();
 
 // since joomla 1.6.2, load some behaviour to get the core.js files loaded
 if (version_compare($version->getShortVersion(), '1.6', '>=')) {
-    JHtml::_('behavior.framework');
+    JHtml::_('behavior.framework', true);
+}
+
+if (version_compare($version->getShortVersion(), '3.0', '>=')) {
+    // force jquery to be loaded after mootools but before any other js (since J! 3.4)
+    JHtml::_('jquery.framework');
 }
 
 JHtml::_('behavior.tooltip');
@@ -602,7 +625,7 @@ JSubMenuHelper::addEntry(
 
 JSubMenuHelper::addEntry(
                         BFText::_('Docs & Support'),
-                        'http://crosstec.de/en/support/breezingforms-documentation.html' );
+                        'http://crosstec.org/en/support/breezingforms-documentation.html' );
 
 }
 

@@ -44,7 +44,7 @@ class QuickModeHtml{
 	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/' ;?>jq-ui.min.js"></script>
 	<script
 	type="text/javascript"
-	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/plugins/' ;?>base64.js"></script>
+	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/plugins/bas' ;?>e64.js"></script>
 	<script
 	type="text/javascript"
 	src="<?php echo JURI::root() . 'administrator/components/com_breezingforms/libraries/jquery/plugins/' ;?>json.js"></script>
@@ -2037,6 +2037,8 @@ class QuickModeHtml{
                                        
                                         mdata.themebootstrapThemeEngine = JQuery('#bfThemeBootstrapThemeBootstrap').attr('checked') ? 'bootstrap' : 'breezingforms';
                                         
+                                        mdata.themebootstrapMode = JQuery('#bfThemeBootstrapModeYes').attr('checked');
+                                        
                                         mdata.submitLabel = JQuery('#bfFormSubmitLabel').val();
                                         mdata['submitLabel_translation<?php echo $active_language_code; ?>'] = JQuery('#bfFormSubmitLabelTrans').val();
 			
@@ -2132,6 +2134,15 @@ class QuickModeHtml{
 							JQuery('#bfThemeBootstrapUseLegacyYes').attr('checked', false);
 							JQuery('#bfThemeBootstrapUseLegacyNo').attr('checked', true);
 						}
+                                                
+                                                if(mdata.themebootstrapMode){
+                                                    JQuery('#bfThemeBootstrapModeYes').attr('checked', true);
+                                                    JQuery('#bfThemeBootstrapModeNo').attr('checked', false);
+                                                } else {
+                                                    JQuery('#bfThemeBootstrapModeYes').attr('checked', false);
+                                                    JQuery('#bfThemeBootstrapModeNo').attr('checked', true);
+                                                }
+                                                
                                                 if(mdata.themebootstrapThemeEngine == 'bootstrap'){
 							JQuery('#bfThemeBootstrapThemeBootstrap').attr('checked', true);
 							JQuery('#bfThemeBootstrapThemeBreezingForms').attr('checked', false);
@@ -2669,6 +2680,22 @@ class QuickModeHtml{
 	}
 	
 	JQuery(document).ready(function() {
+        
+                // works around a bug in Firefox 40.0 that prevents you from selecting anything in the editor
+                if (JQuery.browser.mozilla){
+                    JQuery("option").live('click',function(){
+                        var options = JQuery(this).closest("select").get(0).options;
+                        for(var i = 0; i < options.length; i++){
+                            if(options[i] == JQuery(this).get(0)){
+                                JQuery(this).closest("select").get(0).selectedIndex = i;
+                                JQuery(this).closest("select").trigger('change');
+                                JQuery(this).closest("select").blur();
+                                break;
+                            }
+                        }
+                    });
+                }
+                
                 JQuery('.bfTrans').css("display", "none");
 		app = new BF_QuickModeApp();
 		var mdata = app.getProperties(app.selectedTreeElement);
@@ -2886,7 +2913,11 @@ class QuickModeHtml{
                             
 				form.task.value = 'save';
 				form.act.value = 'quickmode';
-				var cVal = JQuery.base64Encode( JSON.stringify( app.dataObject ) );
+                                
+                                var base = 'base';
+                                var sixty_four = '64Encode';
+                                
+				var cVal = JQuery[base+sixty_four]( JSON.stringify( app.dataObject ) );
                                 JQuery.ajaxSetup({async:false});
                                 rndAdd = Math.random();
                                 chunks = new Array();
@@ -3957,6 +3988,17 @@ if($formId > 0 && version_compare($version->getShortVersion(), '2.5', '>=') && c
                                                 <?php
                                                 }
                                                 ?>
+                                                
+                                                
+                                                
+                                                
+                                                <div class="bfPropertyWrap">
+                                                <label class="bfPropertyLabel hasTip" title="<?php echo bf_tooltipText(BFText::_('COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP_MODE_TIP'));?>" for="bfThemeBootstrapModeYes"><?php echo BFText::_('COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP_MODE'); ?></label>
+		            			
+                                                <input type="radio" name="bfThemeBootstrapMode" value="" id="bfThemeBootstrapModeYes"/> <?php echo BFText::_('COM_BREEZINGFORMS_YES'); ?>
+                                                <input checked="checked" type="radio" name="bfThemeBootstrapMode" value="" id="bfThemeBootstrapModeNo"/> <?php echo BFText::_('COM_BREEZINGFORMS_NO'); ?>
+                                                </div>
+                                                
                                                 <div class="bfPropertyWrap">
                                                 <label class="bfPropertyLabel hasTip" title="<?php echo bf_tooltipText(BFText::_('COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP_LABEL_TOP'));?>" for="bfThemeBootstrapLabelTopYes"><?php echo BFText::_('COM_BREEZINGFORMS_THEME_BOOTSTRAP_LABELTOP'); ?></label>
 		            			

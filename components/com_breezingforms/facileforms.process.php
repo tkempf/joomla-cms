@@ -1534,9 +1534,9 @@ class HTML_facileFormsProcessor {
         $code.= "function ff_submitForm2()" . nl() .
                 "{if(document.getElementById('bfSubmitButton')){document.getElementById('bfSubmitButton').disabled = true;} if(typeof JQuery != 'undefined'){JQuery('.bfCustomSubmitButton').prop('disabled', true);} " . nl();
         if ($this->inline)
-            $code .= "    submitform('submit');" . nl();
+            $code .= " if(typeof bf_ajax_submit != 'undefined') { bf_ajax_submit() } else { submitform('submit'); }" . nl();
         else
-            $code .= "    document." . $this->form_id . ".submit();" . nl();
+            $code .= " if(typeof bf_ajax_submit != 'undefined') { bf_ajax_submit() } else { document." . $this->form_id . ".submit(); }" . nl();
         $code .= "} // ff_submitForm";
         $library[] = array('ff_submitForm', $code);
 
@@ -2295,7 +2295,7 @@ class HTML_facileFormsProcessor {
             require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
             require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/crosstec/functions/helpers.php');
 
-            $dataObject = Zend_Json::decode( base64_decode($this->formrow->template_code) );
+            $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             $rootMdata = $dataObject['properties'];
             $is_device = false;
             $useragent = $_SERVER['HTTP_USER_AGENT'];
@@ -2496,6 +2496,11 @@ class HTML_facileFormsProcessor {
                                                                                    }
 									           bfShowErrors("' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '");
 									        }
+                                                                                if(typeof ladda_button != "undefined"){
+                                                                                    
+                                                                                    bf_restore_submitbutton();
+                                                                                }
+                                                                                
 											document.getElementById(\'ff_capimgValue\').src = \'' . JURI::root(true) . (JFactory::getApplication()->isAdmin() ? '/administrator' : '') . '/components/com_breezingforms/images/captcha/securimage_show.php?bfMathRandom=\' + Math.random();
 											document.getElementById(\'bfCaptchaEntry\').value = "";
 											if(ff_currentpage != ' . $row->page . ')ff_switchpage(' . $row->page . ');
@@ -2571,6 +2576,10 @@ class HTML_facileFormsProcessor {
                                                                     document.getElementById("bfSubmitButton").disabled = false;
                                                                 }
                                                                 if(typeof JQuery != "undefined"){jQuery(".bfCustomSubmitButton").prop("disabled", false);}
+                                                                if(typeof ladda_button != "undefined"){
+                                                                    bf_restore_submitbutton();
+                                                                }
+                                                                
                                                         }
                                                     }
                                                     else{
@@ -2594,6 +2603,10 @@ class HTML_facileFormsProcessor {
                                                                 document.getElementById("bfSubmitButton").disabled = false;
                                                             }
                                                             if(typeof JQuery != "undefined"){jQuery(".bfCustomSubmitButton").prop("disabled", false);}
+                                                            if(typeof ladda_button != "undefined"){
+                                                                bf_restore_submitbutton();
+                                                            }
+                                                            
                                                             
                                                         }else{
                
@@ -3889,10 +3902,23 @@ class HTML_facileFormsProcessor {
                 // nothing
                 
             }else{
+                //if(true){
+                 
                 if(isset($rootMdata['themebootstrapThemeEngine']) && $rootMdata['themebootstrapThemeEngine'] == 'bootstrap'){
-                    require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickModeBootstrap.php');
-                    $quickMode = new BFQuickModeBootstrap($this);
+                    
+                    if( isset($rootMdata['themebootstrapMode']) && $rootMdata['themebootstrapMode'] ){
+                        
+                        require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickModeOnePage.php');
+                        $quickMode = new BFQuickModeOnePage($this);
+                        
+                    }else{
+                    
+                        require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickModeBootstrap.php');
+                        $quickMode = new BFQuickModeBootstrap($this);
+                    }
+                    
                     $this->quickmode = $quickMode;
+                    
                 }else{
                     require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickMode.php');
                     $quickMode = new BFQuickMode($this);
@@ -4014,6 +4040,7 @@ class HTML_facileFormsProcessor {
             case _FF_RUNMODE_FRONTEND:
                 echo indentc(1) . '<input type="hidden" name="ff_contentid" value="' . JRequest::getInt('ff_contentid', 0) . '"/>' . nl() .
                 indentc(1) . '<input type="hidden" name="ff_applic" value="' . JRequest::getWord('ff_applic', '') . '"/>' . nl() .
+                indentc(1) . '<input type="hidden" name="ff_record_id" value="' . $this->record_id . '"/>' . nl() .
                 indentc(1) . '<input type="hidden" name="ff_module_id" value="' . JRequest::getInt('ff_module_id', 0) . '"/>' . nl();
                 echo indentc(1) . '<input type="hidden" name="ff_form" value="' . htmlentities($this->form, ENT_QUOTES, 'UTF-8') . '"/>' . nl() .
                 indentc(1) . '<input type="hidden" name="ff_task" value="submit"/>' . nl();
@@ -4050,6 +4077,7 @@ class HTML_facileFormsProcessor {
                 indentc(1) . '<input type="hidden" name="ff_task" value="submit"/>' . nl() .
                 indentc(1) . '<input type="hidden" name="ff_contentid" value="' . JRequest::getInt('ff_contentid', 0) . '"/>' . nl() .
                 indentc(1) . '<input type="hidden" name="ff_applic" value="' . JRequest::getWord('ff_applic', '') . '"/>' . nl() .
+                indentc(1) . '<input type="hidden" name="ff_record_id" value="' . $this->record_id . '"/>' . nl() .
                 indentc(1) . '<input type="hidden" name="ff_module_id" value="' . JRequest::getInt('ff_module_id', 0) . '"/>' . nl() .
                 indentc(1) . '<input type="hidden" name="ff_runmode" value="' . htmlentities($this->runmode, ENT_QUOTES, 'UTF-8') . '"/>' . nl();
                 if ($this->target > 1)
@@ -4084,6 +4112,7 @@ class HTML_facileFormsProcessor {
                     indentc(1) . '<input type="hidden" name="ff_task" value="submit"/>' . nl() .
                     indentc(1) . '<input type="hidden" name="ff_contentid" value="' . JRequest::getInt('ff_contentid', 0) . '"/>' . nl() .
                     indentc(1) . '<input type="hidden" name="ff_applic" value="' . JRequest::getWord('ff_applic', '') . '"/>' . nl() .
+                    indentc(1) . '<input type="hidden" name="ff_record_id" value="' . $this->record_id . '"/>' . nl() .
                     indentc(1) . '<input type="hidden" name="ff_module_id" value="' . JRequest::getInt('ff_module_id', 0) . '"/>' . nl() .
                     indentc(1) . '<input type="hidden" name="ff_runmode" value="' . htmlentities($this->runmode, ENT_QUOTES, 'UTF-8') . '"/>' . nl();
                     if ($this->page != 1)
@@ -5688,6 +5717,7 @@ class HTML_facileFormsProcessor {
             if (count($this->maildata)) {
                 foreach ($this->maildata as $DATA) {
                     if( strtolower($DATA[_FF_DATA_NAME]) == strtolower($field) ){
+                        
                         if(isset($froms[1])){
                             $valuepairs = explode(',', $froms[1]);
                             foreach($valuepairs As $valuepair){
@@ -5812,7 +5842,7 @@ class HTML_facileFormsProcessor {
         if (trim($this->formrow->template_code_processed) == 'QuickMode') {
             require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
             require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
-            $dataObject = Zend_Json::decode( base64_decode($this->formrow->template_code) );
+            $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             $rootMdata = $dataObject['properties'];
             $language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
                            
@@ -5835,7 +5865,7 @@ class HTML_facileFormsProcessor {
             if($dataObject === null && $childrenLength == 0){
                 require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
                 require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
-                $dataObject = Zend_Json::decode( base64_decode($this->formrow->template_code) );
+                $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             }
             
             if(isset($dataObject['attributes']) && isset($dataObject['properties']) ){
@@ -6563,7 +6593,7 @@ class HTML_facileFormsProcessor {
             $emailField = trim($this->formrow->mailchimp_email_field);
             $mergeVarFields = explode(',', str_replace(' ', '', $this->formrow->mailchimp_mergevars));
             $api = new MCAPI(trim($this->formrow->mailchimp_api_key));
-            $list_id = trim($this->formrow->mailchimp_list_id);
+            $list_ids = explode(',', trim($this->formrow->mailchimp_list_id));
 
             if ($checkboxField != '') {
                 $box = JRequest::getVar('ff_nm_' . $checkboxField, array(''));
@@ -6602,21 +6632,23 @@ class HTML_facileFormsProcessor {
                 }
             }
 
-            if ($email != '' && $checked) {
-                if ($api->listSubscribe($list_id, $email, count($mergeVars) == 0 ? '' : $mergeVars, $htmlTextMobile, $this->formrow->mailchimp_double_optin, $this->formrow->mailchimp_update_existing, $this->formrow->mailchimp_replace_interests, $this->formrow->mailchimp_send_welcome) !== true) {
-                    if ($this->formrow->mailchimp_send_errors) {
-                        $from = $this->formrow->alt_mailfrom != '' ? $this->formrow->alt_mailfrom : $mainframe->getCfg('mailfrom');
-                        $fromname = $this->formrow->alt_fromname != '' ? $this->formrow->alt_fromname : $mainframe->getCfg('fromname');
-                        $this->sendMail($from, $fromname, $from, 'MailChimp API Error', 'Could not send data to MailChimp for email: ' . $email . "\n\nReason (code " . $api->errorCode . "): " . $api->errorMessage);
+            foreach($list_ids As $list_id){
+                if ($email != '' && $checked) {
+                    if ($api->listSubscribe(trim($list_id), $email, count($mergeVars) == 0 ? '' : $mergeVars, $htmlTextMobile, $this->formrow->mailchimp_double_optin, $this->formrow->mailchimp_update_existing, $this->formrow->mailchimp_replace_interests, $this->formrow->mailchimp_send_welcome) !== true) {
+                        if ($this->formrow->mailchimp_send_errors) {
+                            $from = $this->formrow->alt_mailfrom != '' ? $this->formrow->alt_mailfrom : $mainframe->getCfg('mailfrom');
+                            $fromname = $this->formrow->alt_fromname != '' ? $this->formrow->alt_fromname : $mainframe->getCfg('fromname');
+                            $this->sendMail($from, $fromname, $from, 'MailChimp API Error', 'Could not send data to MailChimp for email: ' . $email . "\n\nReason (code " . $api->errorCode . "): " . $api->errorMessage);
+                        }
                     }
                 }
-            }
-            if ($email != '' && $unsubsribe) {
-                if ($api->listUnsubscribe($list_id, $email, $this->formrow->mailchimp_delete_member, $this->formrow->mailchimp_send_goodbye, $this->formrow->mailchimp_send_notify) !== true) {
-                    if ($this->formrow->mailchimp_send_errors) {
-                        $from = $this->formrow->alt_mailfrom != '' ? $this->formrow->alt_mailfrom : $mainframe->getCfg('mailfrom');
-                        $fromname = $this->formrow->alt_fromname != '' ? $this->formrow->alt_fromname : $mainframe->getCfg('fromname');
-                        $this->sendMail($from, $fromname, $from, 'MailChimp API Error', 'Could not send unsubscribe data to MailChimp for email: ' . $email . "\n\nReason (code " . $api->errorCode . "): " . $api->errorMessage);
+                if ($email != '' && $unsubsribe) {
+                    if ($api->listUnsubscribe(trim($list_id), $email, $this->formrow->mailchimp_delete_member, $this->formrow->mailchimp_send_goodbye, $this->formrow->mailchimp_send_notify) !== true) {
+                        if ($this->formrow->mailchimp_send_errors) {
+                            $from = $this->formrow->alt_mailfrom != '' ? $this->formrow->alt_mailfrom : $mainframe->getCfg('mailfrom');
+                            $fromname = $this->formrow->alt_fromname != '' ? $this->formrow->alt_fromname : $mainframe->getCfg('fromname');
+                            $this->sendMail($from, $fromname, $from, 'MailChimp API Error', 'Could not send unsubscribe data to MailChimp for email: ' . $email . "\n\nReason (code " . $api->errorCode . "): " . $api->errorMessage);
+                        }
                     }
                 }
             }
@@ -7321,7 +7353,7 @@ class HTML_facileFormsProcessor {
                                     require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/crosstec/functions/helpers.php');
 
                                     if(trim($this->formrow->template_code_processed) == 'QuickMode'){
-                                        $dataObject = Zend_Json::decode( base64_decode($this->formrow->template_code) );
+                                        $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
                                         $qmelement = $this->findQuickModeElement($dataObject, $row->name);
 
                                         if($qmelement !== null && isset($qmelement['properties']['is_html']) && $qmelement['properties']['is_html']){
@@ -7484,7 +7516,7 @@ class HTML_facileFormsProcessor {
             require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
             require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/crosstec/functions/helpers.php');
 
-            $dataObject = Zend_Json::decode( base64_decode($this->formrow->template_code) );
+            $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             $rootMdata = $dataObject['properties'];
             
             if(JRequest::getVar('ff_applic','') != 'mod_facileforms' && JRequest::getInt('ff_frame', 0) != 1 && bf_is_mobile())
@@ -7640,6 +7672,7 @@ class HTML_facileFormsProcessor {
                             if ($this->formrow->mb_emailntf > 0 && ( $cbEmailNotifications || $cbEmailUpdateNotifications )) { // CONTENTBUILDER
                                 $this->sendMailbackNotification();
                             }
+                                     
                             // DROPBOX
                             if(version_compare(phpversion(), '5.3.0', '>=') && $this->formrow->dropbox_submission_enabled){
                                 if( $this->formrow->dropbox_email ){
@@ -8022,7 +8055,7 @@ class HTML_facileFormsProcessor {
             if($cbRecordId){
                 $return = JRequest::getVar('return','');
                 if( $return ){
-                    $return = base64_decode($return);
+                    $return = bf_b64dec($return);
                     if( JURI::isInternal($return) ){
                         JFactory::getApplication()->redirect($return, $msg);
                     }
@@ -8144,6 +8177,7 @@ class HTML_facileFormsProcessor {
 
             echo indentc(1) . '<input type="hidden" name="ff_contentid" value="' . JRequest::getInt('ff_contentid', 0) . '"/>' . nl() .
             indentc(1) . '<input type="hidden" name="ff_applic" value="' . JRequest::getWord('ff_applic', '') . '"/>' . nl() .
+            indentc(1) . '<input type="hidden" name="ff_record_id" value="' . $this->record_id . '"/>' . nl() .
             indentc(1) . '<input type="hidden" name="ff_module_id" value="' . JRequest::getInt('ff_module_id', 0) . '"/>' . nl() .
             indentc(1) . '<input type="hidden" name="ff_status" value="' . htmlentities($this->status, ENT_QUOTES, 'UTF-8') . '"/>' . nl() .
             indentc(1) . '<input type="hidden" name="ff_message" value="' . htmlentities(addcslashes($message, "\0..\37!@\@\177..\377"), ENT_QUOTES, 'UTF-8') . '"/>' . nl() .

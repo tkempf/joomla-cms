@@ -23,12 +23,12 @@ namespace Dropbox;
  *     function get()
  *     {
  *         $value = $this->memcache->get($this->getKey());
- *         return $value === false ? null : base64_decode($value);
+ *         return $value === false ? null : bf_b64dec($value);
  *     }
  *
  *     function set($value)
  *     {
- *         $this->memcache->set($this->key, base64_encode($value));
+ *         $this->memcache->set($this->key, bf_b64enc($value));
  *     }
  *
  *     function clear()

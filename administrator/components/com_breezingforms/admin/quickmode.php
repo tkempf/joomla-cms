@@ -42,7 +42,7 @@ switch($task){
                 
                 $formId = $quickMode->save(
 			$form,
-			Zend_Json::decode( base64_decode( $contents ))
+			Zend_Json::decode( bf_b64dec( $contents ))
 		);
                 
                 ob_start();
@@ -101,7 +101,7 @@ switch($task){
 			$formDesc      = $fOptions->description;
 		}
 
-		echo QuickModeHtml::showApplication($formId, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $quickMode->getTemplateCode($formId), $quickMode->getElementScripts(), $quickMode->getThemes(), $quickMode->getThemesBootstrap());
+                echo QuickModeHtml::showApplication($formId, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $quickMode->getTemplateCode($formId), $quickMode->getElementScripts(), $quickMode->getThemes(), $quickMode->getThemesBootstrap());
 		break;
 
 	default:

@@ -34,12 +34,15 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 /**
  * A ReCaptchaResponse is returned from checkAnswer().
  */
-class ReCaptchaResponse
-{
-    public $success;
-    public $errorCodes;
+if(!class_exists('ReCaptchaResponse')){
+    class ReCaptchaResponse
+    {
+        public $success;
+        public $errorCodes;
+    }
 }
 
+if(!class_exists('ReCaptcha')){
 class ReCaptcha
 {
     private static $_signupUrl = "https://www.google.com/recaptcha/admin";
@@ -81,6 +84,19 @@ class ReCaptcha
         return $req;
     }
 
+    private function file_get_contents_curl($url) {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        return $data;
+    }
+    
     /**
      * Submits an HTTP GET to a reCAPTCHA server.
      *
@@ -92,8 +108,12 @@ class ReCaptcha
     private function _submitHTTPGet($path, $data)
     {
         $req = $this->_encodeQS($data);
-        $response = file_get_contents($path . $req);
-        return $response;
+        $res = file_get_contents($path . $req);
+        if($res === false && function_exists('curl_init')){
+            $res = $this->file_get_contents_curl($path . $req);
+        }
+        
+        return $res;
     }
 
     /**
@@ -136,6 +156,8 @@ class ReCaptcha
 
         return $recaptchaResponse;
     }
+}
+
 }
 
 ?>

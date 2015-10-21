@@ -96,7 +96,7 @@ class QuickMode{
 		}
 		$mdata = $dataObject['properties'];
 
-		return $this->save2($form, $mdata['name'], $mdata['title'], $mdata['description'], base64_encode(Zend_Json::encode( $dataObject )), $areas->container, count($dataObject['children']));
+		return $this->save2($form, $mdata['name'], $mdata['title'], $mdata['description'], bf_b64enc(Zend_Json::encode( $dataObject )), $areas->container, count($dataObject['children']));
 	}
 
 	public function getDefaultElement(){
@@ -391,7 +391,7 @@ class QuickMode{
 
 	public function save2($form, $formName, $formTitle, $formDescription, $templateCode, array $areas, $pages = 1){
 
-		$dataObject = Zend_Json::decode(base64_decode($templateCode));
+		$dataObject = Zend_Json::decode(bf_b64dec($templateCode));
 		$mdata = $dataObject['properties'];
 
 		$this->db->setQuery("Select id From #__facileforms_forms Where id = ".$this->db->Quote($form)."");
@@ -711,7 +711,7 @@ class QuickMode{
 
                 // preventing mysql has gone away errors by splitting the template code string into chunks
                 // and sending each chunk in a seperate query
-                $templateCode = base64_encode( Zend_Json::encode( $dataObject ) );
+                $templateCode = bf_b64enc( Zend_Json::encode( $dataObject ) );
                 $length = strlen($templateCode);
                 $chunks = array();
                 $chunk = '';
@@ -773,7 +773,7 @@ class QuickMode{
 		$objListCount = count($objList);
 
 		if($objListCount == 1){
-			return base64_decode($objList[0]->template_code);
+			return bf_b64dec($objList[0]->template_code);
 		}
 
 		return '';

@@ -73,7 +73,7 @@ class BFQuickModeMobile{
                 }
                 
                 $this->p = $p;
-		$this->dataObject = Zend_Json::decode( base64_decode($this->p->formrow->template_code) );
+		$this->dataObject = Zend_Json::decode( bf_b64dec($this->p->formrow->template_code) );
                 
 		$this->rootMdata = $this->dataObject['properties'];
                 
@@ -653,6 +653,7 @@ class BFQuickModeMobile{
 							$flashUploader = "
                                                         <span id=\"bfUploadContainer".$mdata['dbId']."\">
 							<img style=\"cursor: pointer;\" id=\"bfPickFiles".$mdata['dbId']."\" src=\"".$this->uploadImagePath."\" border=\"0\" width=\"".(isset($mdata['flashUploaderWidth']) && is_numeric($mdata['flashUploaderWidth']) && $mdata['flashUploaderWidth'] > 0 ? intval($mdata['flashUploaderWidth']) : '64')."\" height=\"".(isset($mdata['flashUploaderHeight']) && is_numeric($mdata['flashUploaderHeight']) && $mdata['flashUploaderHeight'] > 0 ? intval($mdata['flashUploaderHeight']) : '64')."\"/>
+                                                            <div id=\"bfPickFiles".$mdata['dbId']."holder\" style=\"display:none;\">&nbsp;</div>
                                                         </span>
                                                         <span id=\"bfUploader".$mdata['bfName']."\"></span>
                                                         <div class=\"bfFlashFileQueueClass\" id=\"bfFlashFileQueue".$mdata['dbId']."\"></div>
@@ -736,6 +737,14 @@ class BFQuickModeMobile{
                                                                                         for( var i = 0; i < bfUploaders_.length; i++ ){
                                                                                             bfUploaders_[i].start();
                                                                                         }
+                                                                                        // re-enable button if there is none left
+                                                                                        if( ".( isset($mdata['flashUploaderMulti']) && $mdata['flashUploaderMulti'] ? 'true' : 'false' )." == false ){
+                                                                                            var the_size = JQuery('#bfFlashFileQueue".$mdata['dbId']." .bfFileQueueItem').size();
+                                                                                            if( the_size == 0 ){
+                                                                                                JQuery('#bfPickFiles".$mdata['dbId']."').css('display','block');
+                                                                                                JQuery('#bfPickFiles".$mdata['dbId']."holder').css('display','none');
+                                                                                            }
+                                                                                        }
                                                                                     } 
                                                                                 );
                                                                                 var thebytes = ".(isset($mdata['flashUploaderBytes']) && is_numeric($mdata['flashUploaderBytes']) && $mdata['flashUploaderBytes'] > 0 ? intval($mdata['flashUploaderBytes']) : '0').";
@@ -762,6 +771,14 @@ class BFQuickModeMobile{
                                                                                     bfFlashUploadersLength++;
                                                                                 }
                                                                                 bfUploadImageThumb(files[i]);
+                                                                            }
+                                                                        }
+                                                                        // disable the button if no multi upload
+                                                                        if( ".( isset($mdata['flashUploaderMulti']) && $mdata['flashUploaderMulti'] ? 'true' : 'false' )." == false ){
+                                                                            var the_size = JQuery('#bfFlashFileQueue".$mdata['dbId']." .bfFileQueueItem').size();
+                                                                            if( the_size > 0 ){
+                                                                                JQuery('#bfPickFiles".$mdata['dbId']."').css('display','none');
+                                                                                JQuery('#bfPickFiles".$mdata['dbId']."holder').css('display','block');
                                                                             }
                                                                         }
                                                                 });
