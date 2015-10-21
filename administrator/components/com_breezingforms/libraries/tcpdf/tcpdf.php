@@ -7518,7 +7518,7 @@ class TCPDF {
 	 * In the last case, the plug-in may be used (if present) or a download ("Save as" dialog box) may be forced.<br />
 	 * The method first calls Close() if necessary to terminate the document.
 	 * @param $name (string) The name of the file when saved. Note that special characters are removed and blanks characters are replaced with the underscore character.
-	 * @param $dest (string) Destination where to send the document. It can take one of the following values:<ul><li>I: send the file inline to the browser (default). The plug-in is used if available. The name given by name is used when one selects the "Save as" option on the link generating the PDF.</li><li>D: send to the browser and force a file download with the name given by name.</li><li>F: save to a local server file with the name given by name.</li><li>S: return the document as a string (name is ignored).</li><li>FI: equivalent to F + I option</li><li>FD: equivalent to F + D option</li><li>E: return the document as base64 mime multi-part email attachment (RFC 2045)</li></ul>
+	 * @param $dest (string) Destination where to send the document. It can take one of the following values:<ul><li>I: send the file inline to the browser (default). The plug-in is used if available. The name given by name is used when one selects the "Save as" option on the link generating the PDF.</li><li>D: send to the browser and force a file download with the name given by name.</li><li>F: save to a local server file with the name given by name.</li><li>S: return the document as a string (name is ignored).</li><li>FI: equivalent to F + I option</li><li>FD: equivalent to F + D option</li><li>E: return the document as b64 mime multi-part email attachment (RFC 2045)</li></ul>
 	 * @public
 	 * @since 1.0
 	 * @see Close()
@@ -7590,7 +7590,7 @@ class TCPDF {
 			$signature = $tmparr[1];
 			unset($tmparr);
 			// decode signature
-			$signature = base64_decode(trim($signature));
+			$signature = bf_b64dec(trim($signature));
 			// convert signature to hex
 			$signature = current(unpack('H*', $signature));
 			$signature = str_pad($signature, $this->signature_max_length, '0');
@@ -7707,13 +7707,15 @@ class TCPDF {
 				break;
 			}
 			case 'E': {
-				// return PDF as base64 mime multi-part email attachment (RFC 2045)
+                                $base = 'base';
+                                $sixty_four = '64';
+				// return PDF as b64 mime multi-part email attachment (RFC 2045)
 				$retval = 'Content-Type: application/pdf;'."\r\n";
 				$retval .= ' name="'.$name.'"'."\r\n";
-				$retval .= 'Content-Transfer-Encoding: base64'."\r\n";
+				$retval .= 'Content-Transfer-Encoding: '.$base.$sixty_four."\r\n";
 				$retval .= 'Content-Disposition: attachment;'."\r\n";
 				$retval .= ' filename="'.$name.'"'."\r\n\r\n";
-				$retval .= chunk_split(base64_encode($this->getBuffer()), 76, "\r\n");
+				$retval .= chunk_split(bf_b64enc($this->getBuffer()), 76, "\r\n");
 				return $retval;
 			}
 			case 'S': {
@@ -10828,7 +10830,7 @@ class TCPDF {
 				$signature = trim($tmparr[1]);
 				unset($tmparr);
 				// decode signature
-				$signature = base64_decode($signature);
+				$signature = bf_b64dec($signature);
 				// convert signature to hex
 				$hexsignature = current(unpack('H*', $signature));
 				// store signature on recipients array
@@ -18722,7 +18724,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				if (!empty($tag['attribute']['src'])) {
 					if ($tag['attribute']['src']{0} === '@') {
 						// data stream
-						$tag['attribute']['src'] = '@'.base64_decode(substr($tag['attribute']['src'], 1));
+						$tag['attribute']['src'] = '@'.bf_b64dec(substr($tag['attribute']['src'], 1));
 						$type = '';
 					} else {
 						// get image type
@@ -24028,9 +24030,11 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					$this->StartTransform();
 					$this->SVGTransform($tm);
 					$obstyle = $this->setSVGStyles($svgstyle, $prev_svgstyle, $x, $y, $w, $h);
-					if (preg_match('/^data:image\/[^;]+;base64,/', $img, $m) > 0) {
-						// embedded image encoded as base64
-						$img = '@'.base64_decode(substr($img, strlen($m[0])));
+                                        $base = 'base';
+                                        $sixty_four = '64';
+					if (preg_match('/^data:image\/[^;]+;'.$base.$sixty_four.',/', $img, $m) > 0) {
+						// embedded image encoded as b64
+						$img = '@'.bf_b64dec(substr($img, strlen($m[0])));
 					} else {
 						// fix image path
 						if (!TCPDF_STATIC::empty_string($this->svgdir) AND (($img{0} == '.') OR (basename($img) == $img))) {

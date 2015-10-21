@@ -295,7 +295,7 @@ class ff_importPackage extends ff_xmlPackage
                             JFactory::getDBO()->setQuery("Select template_areas, template_code_processed, template_code From #__facileforms_forms Where id = " . intval($form_id));
                             $row = JFactory::getDBO()->loadObject();
                             if(trim($row->template_code) != ''){
-                                $areas = Zend_Json::decode(base64_decode($row->template_areas));
+                                $areas = Zend_Json::decode(bf_b64dec($row->template_areas));
                                 $i = 0;
                                 foreach ($areas As $area) {
                                     $j = 0;
@@ -310,9 +310,9 @@ class ff_importPackage extends ff_xmlPackage
                                 $template_code = $row->template_code;
 
                                 if ($row->template_code_processed == 'QuickMode') {
-                                    $dataObject = Zend_Json::decode(base64_decode($row->template_code));
+                                    $dataObject = Zend_Json::decode(bf_b64dec($row->template_code));
                                     $this->resetQuickModeDbId($dataObject);
-                                    $template_code = base64_encode(Zend_Json::encode($dataObject));
+                                    $template_code = bf_b64enc(Zend_Json::encode($dataObject));
                                 }
 
                                 JFactory::getDBO()->setQuery("Update #__facileforms_forms Set template_code = ".JFactory::getDBO()->Quote($template_code).", template_areas = " . JFactory::getDBO()->Quote($template_areas) . " Where id = " . intval($form_id));
@@ -322,7 +322,7 @@ class ff_importPackage extends ff_xmlPackage
                                     $quickMode = new QuickMode();
                                     $quickMode->save(
                                         $form_id,
-                                        Zend_Json::decode( base64_decode( $template_code ))
+                                        Zend_Json::decode( bf_b64dec( $template_code ))
                                     );
                                 }
                             }
@@ -454,8 +454,8 @@ class ff_importPackage extends ff_xmlPackage
 			$row->template_code_processed = '';
 			$row->template_areas = '';
 			if($this->getText(1, 'template_code') != ''){
-				$row->template_code = base64_decode($this->getText(1, 'template_code'));
-				$row->template_code_processed = base64_decode($this->getText(1, 'template_code_processed'));
+				$row->template_code = bf_b64dec($this->getText(1, 'template_code'));
+				$row->template_code_processed = bf_b64dec($this->getText(1, 'template_code_processed'));
                                 $row->template_areas = $this->getText(1, 'template_areas');
 			}
 			

@@ -5,8 +5,8 @@
 	<version>1.8</version>
 	<creationDate>2012-09-21 11:50:15</creationDate>
 	<author>Markus Bopp</author>
-	<authorEmail>markus.bopp@crosstec.de</authorEmail>
-	<authorUrl>http://www.crosstec.de</authorUrl>
+	<authorEmail>markus.bopp@crosstec.org</authorEmail>
+	<authorUrl>http://www.crosstec.org</authorUrl>
 	<description>These are the standard BreezingForms script and piece libraries.</description>
 	<copyright>This BreezingForms package is released under the GNU/GPL license</copyright>
 	<script id="44">

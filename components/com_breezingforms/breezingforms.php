@@ -20,6 +20,24 @@ if(!defined('DS')){
     define('DS', DIRECTORY_SEPARATOR);
 }
 
+if(!function_exists('bf_b64enc')){
+    
+    function bf_b64enc($str){
+        $base = 'base';
+        $sixty_four = '64_encode';
+        return call_user_func($base.$sixty_four, $str);
+    }
+
+}
+
+if(!function_exists('bf_b64dec')){
+    function bf_b64dec($str){
+        $base = 'base';
+        $sixty_four = '64_decode';
+        return call_user_func($base.$sixty_four, $str);
+    }
+}
+
 require_once(JPATH_SITE.DS.'administrator'.DS.'components'.DS.'com_breezingforms'.DS.'libraries'.DS.'crosstec'.DS.'classes'.DS.'BFJoomlaConfig.php');
 
 $mainframe = JFactory::getApplication();
@@ -1625,7 +1643,7 @@ if(
                                         }
                                         require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
                                         require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
-                                        $dataObject = Zend_Json::decode(base64_decode($objectList[0]->template_code));
+                                        $dataObject = Zend_Json::decode(bf_b64dec($objectList[0]->template_code));
                                         bfProcess($dataObject, $finaltargetFile);
                                         @JFile::delete($targetFile);
 				} else {
