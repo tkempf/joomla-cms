@@ -5460,7 +5460,7 @@ class HTML_facileFormsProcessor {
                     foreach ($this->maildata as $DATA) {
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', $DATA[_FF_DATA_TITLE], $subject);
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', $DATA[_FF_DATA_TITLE], $subject);
-                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', $DATA[_FF_DATA_VALUE], $subject);
+                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', urldecode($DATA[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . '}', $DATA[_FF_DATA_VALUE], $subject);
                         $MAILDATA[] = $DATA;
                     }
@@ -5513,7 +5513,7 @@ class HTML_facileFormsProcessor {
                     foreach ($this->maildata as $data) {
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $data[_FF_DATA_TITLE], $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $data[_FF_DATA_TITLE], $subject);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                         $body .= $data[_FF_DATA_TITLE] . ": " . $data[_FF_DATA_VALUE] . nl();
                     }
@@ -5610,13 +5610,13 @@ class HTML_facileFormsProcessor {
                 foreach ($this->maildata as $data) {
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $data[_FF_DATA_TITLE], $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $data[_FF_DATA_TITLE], $subject);
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                     $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $data[_FF_DATA_TITLE], $body);
                     if ($this->formrow->email_custom_html) {
-                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),$data[_FF_DATA_VALUE]), $body);
+                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),urldecode($data[_FF_DATA_VALUE])), $body);
                     } else {
-                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $body);
+                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $body);
                     }
                 }
             }
