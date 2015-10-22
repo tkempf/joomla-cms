@@ -6387,9 +6387,9 @@ class HTML_facileFormsProcessor {
                     if (!in_array($data[_FF_DATA_NAME], $filter)) {
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $body);
                         if ($this->formrow->mb_email_custom_html) {
-                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),$data[_FF_DATA_VALUE]), $body);
+                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),urldecode($data[_FF_DATA_VALUE])), $body);
                         } else {
-                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $body);
+                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $body);
                         }
                     } else {
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', '', $body);
