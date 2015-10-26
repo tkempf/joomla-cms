@@ -333,13 +333,11 @@ input.valid {
 #Vbedhtml a img {
 	vertical-align: middle;
 	padding-right: 10px;
-	display: table-cell;
 }
 
 #Vbedhtml a {
 	vertical-align: middle;
 	text-decoration:none;
-	display: table-cell;
 	float: left;
 }
 
