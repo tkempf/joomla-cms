@@ -1,10 +1,6 @@
 <?php
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
-/*
-<?php if ($RECORD_ID != ''): ?>
-	<?=$PROCESS_RECORDSAVEDID?><?=$RECORD_ID ?><?=$NL ?><br />
-<?php endif; ?>
-*/
+
 foreach ($MAILDATA as $DATA)
 	 $maildata[$DATA[_FF_DATA_NAME]]=$DATA[_FF_DATA_VALUE];
 ?>
@@ -24,31 +20,41 @@ gemachten Schätzung der benötigten Energiemenge beruht und daher vom tatsächl
 Jahresgesamtpreis abweichen kann.</p>
 <p>Sie erhalten von uns nach erfolgter Prüfung eine Auftragsbestätigung zusammen mit <br>
 Ihren Vertragsunterlagen per Post zugesandt</p>
-<h3>Vielen Dank für Ihren Online-Auftrag vom <?php echo $SUBMITTED ?>.</h3>
+<h3>Vielen Dank für Ihren Online-Auftrag vom <?php echo strftime('%d.%m.%Y'); ?>.</h3>
 <p>Gesamtpreis in EUR/Jahr: <?php echo $maildata['Gesamtpreis']?><br>
 <p>Grundpreis in EUR/Jahr: <?php echo $maildata['Grundpreis']?><br>
-Arbeitspreis HT in Cent/kWh: <?php echo $maildata['Arbeitspreis']?><br>
+<?php if ($maildata['energieart']=='Strom'):?>
+	Arbeitspreis <?php if($maildata['tarifart']=='zweitarif'):?>HT <?php endif?>in Cent/kWh: <?php echo $maildata['Arbeitspreis']?><br>
+<?php else :?>
+	Arbeitspreis in Cent/kWh: <?php echo $maildata['Arbeitspreis']?><br>
+<?php endif?>	
 <?php if($maildata['ArbeitspreisNT'] > 0) : ?>
 	Arbeitspreis NT in Cent/kWh: <?php echo $maildata['ArbeitspreisNT']?><br>
 <?php endif ?>	
 <?php if($maildata['SLPpreis'] > 0):?>
 	Mehr-/Mindermengenpreis in Cent/kWh: <?php echo $maildata['SLPpreis']. ' Stand: '.$maildata['SLPtext'];?><br>
 <?php endif?>
-<?php if($maildata['Bonuspreis'] > 0) : ?>
-    <?php echo $maildata['Bonustext'].': '.$maildata['Bonuspreis'];?><br>
+<?php if($maildata['Bonus'] > 0) : ?>
+    <?php echo ('Einmaliger '.$maildata['Bonustext'].' in EUR: '.$maildata['Bonus']);?><br>
 	<br>Ihren Bonus schreiben wir Ihnen mit Ihrer ersten Verbrauchsabrechnung auf Ihrem Konto gut.<br>
 <?php endif ?>
-Mindestabnahme in kWh: <?php  echo $maildata['Mindestabnahme']?><br>
+<?php if($maildata['Mindestabnahme'] > 0) : ?>
+	Mindestabnahme in kWh: <?php  echo $maildata['Mindestabnahme']?><br>
+<?php endif?>	
 Vertragslaufzeit in Monaten: <?php  echo $maildata['Laufzeit']?></p>
-
 <h3>Folgende Daten haben Sie uns übermittelt:</h3>
-<p>Energiebedarf<?php if($maildata['verbrauchnt']>0) : ?> HT<?php endif?>: <?php echo $maildata['verbrauch']?> kWh/Jahr<br>
-<?php if($maildata['verbrauchnt']>0) : ?>
+<p>Postleitzahl: <?php echo $maildata['Postleitzahl']?><br>
+Energiebedarf<?php if($maildata['tarifart']=='zweitarif' and $maildata['energieart']=='Strom') : ?> HT<?php endif?>: <?php echo $maildata['verbrauch']?> kWh/Jahr<br>
+<?php if($maildata['tarifart']=='zweitarif') : ?>
 Energiebedarf NT: <?php echo $maildata['verbrauchnt']?> kWh/Jahr<br>
-<?php endif ?>	
-Postleitzahl: <?php echo $maildata['Postleitzahl']?></p>
+<?php endif ?>
+</p>	
 <p>Persönliche Angaben<br>
-<?php echo $maildata['Anrede']?> <?php echo $maildata['Vorname']?> <?php echo $maildata['Nachname']?><br>
+<?php if($maildata['nutzung']=='gewerbe'): ?>
+	<?php echo ($maildata['Anrede'].' '.$maildata['Nachname']);?><br>
+<?php else:?>
+	<?php echo ($maildata['Anrede'].' '.$maildata['Vorname'].' '.$maildata['Nachname']);?><br>
+<?php endif?>	
 E-Mail: <?php echo $maildata['Email']?><br>
 Vorwahl: <?php echo $maildata['Vorwahl']?><br>
 Telefon: <?php echo $maildata['Telefon']?><br>
@@ -59,7 +65,7 @@ Straße: <?php echo $maildata['Str']?><br>
 Hausnummer: <?php echo $maildata['Hnr']?><?php echo $maildata['HnrZusatz']?><br>
 PLZ, (Wohn-)Ort: <?php echo $maildata['Postleitzahl']?>, <?php echo $maildata['Wohnort']?><br>
 Zählernummer: <?php echo $maildata['Zaehlernr']?><br>
-Name des Netzbetreibers: <?php echo $maildata['Liefaltnetz']?></p>
+Name des Netzbetreibers: <?php echo $maildata['netzbetreiber']?></p>
 <p>Bisheriger Lieferant<br>
 Name: <?php echo $maildata['Liefaltname']?><br>
 Kundennummer: <?php echo $maildata['Liefaltnr']?><br>
