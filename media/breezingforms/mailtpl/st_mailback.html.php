@@ -9,6 +9,10 @@ foreach ($MAILDATA as $DATA)
     h1,h2,h3,p, ul, li, a, td {
       font-family: arial,helvetica,sans-serif;
     }
+    td.preis {
+    	text-align: right;
+    	padding-left: 10px;
+    }
 </style>
 <h2>Tauberenergie | Kuhn</h2>
 <h2>Ihre Eingangsbestätigung</h2>
@@ -21,27 +25,33 @@ Jahresgesamtpreis abweichen kann.</p>
 <p>Sie erhalten von uns nach erfolgter Prüfung eine Auftragsbestätigung zusammen mit <br>
 Ihren Vertragsunterlagen per Post zugesandt</p>
 <h3>Vielen Dank für Ihren Online-Auftrag vom <?php echo strftime('%d.%m.%Y'); ?>.</h3>
-<p>Gesamtpreis in EUR/Jahr: <?php echo $maildata['Gesamtpreis']?><br>
-<p>Grundpreis in EUR/Jahr: <?php echo $maildata['Grundpreis']?><br>
+<table>
+	<tr><td>Gesamtpreis in EUR/Jahr:</td><td class="preis"><?php echo $maildata['Gesamtpreis']?></td></tr>
+	<tr><td>Grundpreis in EUR/Jahr:</td><td class="preis"><?php echo $maildata['Grundpreis']?></td></tr>
 <?php if ($maildata['energieart']=='Strom'):?>
-	Arbeitspreis <?php if($maildata['tarifart']=='zweitarif'):?>HT <?php endif?>in Cent/kWh: <?php echo $maildata['Arbeitspreis']?><br>
+	<tr><td>Arbeitspreis <?php if($maildata['tarifart']=='zweitarif'):?>HT <?php endif?>in Cent/kWh:</td><td class="preis"><?php echo $maildata['Arbeitspreis']?></td></tr>
 <?php else :?>
-	Arbeitspreis in Cent/kWh: <?php echo $maildata['Arbeitspreis']?><br>
+	<tr><td>Arbeitspreis in Cent/kWh:</td><td class="preis"><?php echo $maildata['Arbeitspreis']?></td></tr>
 <?php endif?>	
 <?php if($maildata['ArbeitspreisNT'] > 0) : ?>
-	Arbeitspreis NT in Cent/kWh: <?php echo $maildata['ArbeitspreisNT']?><br>
+	<tr><td>Arbeitspreis NT in Cent/kWh:</td><td class="preis"><?php echo $maildata['ArbeitspreisNT']?></td></tr>
 <?php endif ?>	
 <?php if($maildata['SLPpreis'] > 0):?>
-	Mehr-/Mindermengenpreis in Cent/kWh: <?php echo $maildata['SLPpreis']. ' Stand: '.$maildata['SLPtext'];?><br>
+	<tr><td>Mehr-/Mindermengenpreis<br>Stand <?php echo $maildata['SLPtext']?> in Cent/kWh:</td><td class="preis"><?php echo $maildata['SLPpreis']?></td></tr>
 <?php endif?>
 <?php if($maildata['Bonus'] > 0) : ?>
-    <?php echo ('Einmaliger '.$maildata['Bonustext'].' in EUR: '.$maildata['Bonus']);?><br>
-	<br>Ihren Bonus schreiben wir Ihnen mit Ihrer ersten Verbrauchsabrechnung auf Ihrem Konto gut.<br>
+    <tr><td>Einmaliger '<?php echo $maildata['Bonustext']?>' in EUR:</td><td class="preis"><?php echo $maildata['Bonus']?></td></tr>
+	<tr><td>Ihren Bonus schreiben wir Ihnen mit Ihrer<br>ersten Verbrauchsabrechnung auf Ihrem Konto gut.</td><td></td></tr>
 <?php endif ?>
+</table>
+<p>Alle Preise verstehen sich inkl. derzeit gültiger Umsatzsteuer.</p>
+<p>
 <?php if($maildata['Mindestabnahme'] > 0) : ?>
 	Mindestabnahme in kWh: <?php  echo $maildata['Mindestabnahme']?><br>
 <?php endif?>	
-Vertragslaufzeit in Monaten: <?php  echo $maildata['Laufzeit']?></p>
+<?php if($maildata['Laufzeit'] > 0) : ?>
+	Vertragslaufzeit in Monaten: <?php  echo $maildata['Laufzeit']?></p>
+<?php endif?>	
 <h3>Folgende Daten haben Sie uns übermittelt:</h3>
 <p>Postleitzahl: <?php echo $maildata['Postleitzahl']?><br>
 Energiebedarf<?php if($maildata['tarifart']=='zweitarif' and $maildata['energieart']=='Strom') : ?> HT<?php endif?>: <?php echo $maildata['verbrauch']?> kWh/Jahr<br>
@@ -71,9 +81,11 @@ Name: <?php echo $maildata['Liefaltname']?><br>
 Kundennummer: <?php echo $maildata['Liefaltnr']?><br>
 Kündigungsfrist: <?php echo $maildata['Liefaltkfrist']?><br>
 Bereits gekündigt: <?php echo $maildata['Liefaltkuend']?></p>
-
 <p>Grund des Wechsels: <?php echo $maildata['Wechselgrund']?><br>
-Datum Neueinzug: <?php echo $maildata['Einzugsdatum']?></p>
+<?php if($maildata['Wechselgrund']=='Neueinzug' or $maildata['Wechselgrund']=='Umzug'):?>
+Einzugsdatum: <?php echo $maildata['Einzugsdatum']?>
+<?php endif?>
+</p>
 
 <p>Bankverbindung<br>
 Kontoinhaber: <?php echo $maildata['Kontoinhaber']?> <br>
