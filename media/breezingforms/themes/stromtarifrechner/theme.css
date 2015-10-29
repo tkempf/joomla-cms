@@ -352,13 +352,16 @@ input.valid {
 	float: left;
 }
 
-
 #bfPage6 .bfLabelRight label {
 	width: 97%;
 	float: right;
 	padding-bottom: 15px
 }
 
+#bfPage6 td.preis {
+    padding-left: 20px;
+    text-align: right;
+}
 
 .bfQuickMode .bfSectionDescription {
     float: left;
