@@ -269,7 +269,14 @@ body#print {
 	line-height: 1.4;
 }
 
+ .whPreisbestandteile td.whPreistitel {
+	padding-right: 10px;
+	font-weight: 400;
+	font-size: 16px;
+	color: #13244E;
+}
 
+ 
 /* Tarifinfo im Tarifrechnerergebniss */
 #tarifinfo {
 	margin-top: 60px;
