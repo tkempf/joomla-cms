@@ -276,6 +276,10 @@ body#print {
 	color: #13244E;
 }
 
+.whPreisbestandteile td.whPreiszahl {
+	text-align: right;
+}
+
  
 /* Tarifinfo im Tarifrechnerergebniss */
 #tarifinfo {
