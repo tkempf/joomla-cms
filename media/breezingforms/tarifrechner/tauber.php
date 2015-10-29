@@ -2,18 +2,19 @@
 // tarifradiodata Tauberenergie hat folgende Elemente
 // checked;gesamtpreis;tarifid;tauber;tarifanzeigename;tarifinfo;Endpreisbeschreibung;Arbeitspreis mit Beschreibung;ArbeitspreisNT mit Beschreibung;Grundpreis mit Beschreibung; 
 $tchecked=($iEx[0] == 1);
+$tarifart=$iEx[12];
 $tpreis=htmlentities(trim($iEx[1]), ENT_QUOTES, 'UTF-8');
 $tpreisbeschr=' EUR/Jahr';
 $tid='tarif'.htmlentities(trim($iEx[2]), ENT_QUOTES, 'UTF-8');
 // $iEx[3] enthält	 den Selektor für das Template
 $tname=htmlentities(trim($iEx[4]), ENT_QUOTES, 'UTF-8');
 $tinfo='<h1>'.$tname.'</h1>'.trim($iEx[5]);
-$tarbeitspreis='Verbrauchspreis HT: '.htmlentities(trim($iEx[6]), ENT_QUOTES, 'UTF-8').' Cent pro kWh';
-$tarbeitspreisnt=($iEx[7] == 0) ? '' : '<br>Verbrauchspreis NT: '.htmlentities(trim($iEx[7]), ENT_QUOTES, 'UTF-8').' Cent pro kWh';
-$tgrund='Grundpreis: '.htmlentities(trim($iEx[8]), ENT_QUOTES, 'UTF-8').' EUR pro Jahr';
-$tslp=($iEx[9]==0) ? '' : '<br>Mehr-/Mindermengenpreis Stand '.$iEx[10].': '.$iEx[9].' Cent pro kWh';
-$tbonus=($iEx[11]==0) ? '' : '<br>'.htmlentities(trim($iEx[12]), ENT_QUOTES, 'UTF-8').': '.htmlentities(trim($iEx[11]), ENT_QUOTES, 'UTF-8'). ' EUR';
-$tpreise='<h3>'.$tgrund.'<br>'.$tarbeitspreis.$tarbeitspreisnt.$tslp.$tbonus.'</h3>';
+$tarbeitspreis='<tr><td>Verbrauchspreis'.(($tarifart=='zweitarif') ? ' HT: ' : ':</td><td>').htmlentities(trim($iEx[6]), ENT_QUOTES, 'UTF-8').' Cent pro kWh</td></tr>';
+$tarbeitspreisnt=($tarifart=='zweitarif') ? '<tr><td>Verbrauchspreis NT:</td><td>'.htmlentities(trim($iEx[7]), ENT_QUOTES, 'UTF-8').' Cent pro kWh</td></tr>' : '';
+$tgrund='<tr><td>Grundpreis:</td><td>'.htmlentities(trim($iEx[8]), ENT_QUOTES, 'UTF-8').' EUR pro Jahr</td><tr>';
+$tslp=($iEx[9]==0) ? '' : '<tr><td>Mehr-/Mindermengenpreis<br>Stand '.$iEx[10].':</td><td>'.$iEx[9].' Cent pro kWh<br>zzgl. Umsatzsteuer</td></tr>';
+$tbonus=($iEx[11]==0) ? '' : '<tr><td>'.htmlentities(trim($iEx[12]), ENT_QUOTES, 'UTF-8').':</td><td>'.htmlentities(trim($iEx[11]), ENT_QUOTES, 'UTF-8'). ' EUR</td></tr>';
+$tpreise='<div class="whPreisbestandteile"><table>'.$tgrund.$tarbeitspreis.$tarbeitspreisnt.$tslp.$tbonus.'</table></div>';
 $tinfobutton='<div class="whTarifFooter">
 				<button id="wechselbutton'.$tid.'" class="ff_elem bfCustomSubmitButton" onClick="JQuery(\'#ff_elem'.$mdata['dbId'].$idExt.'\').prop(\'checked\',true);ff_validate_nextpage(this,\'click\');">Jetzt wechseln</button>
 			  </div>';
