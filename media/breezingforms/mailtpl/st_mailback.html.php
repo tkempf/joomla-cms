@@ -28,8 +28,8 @@ Ihren Vertragsunterlagen per Post zugesandt</p>
 <table>
 	<tr><td>Gesamtpreis in EUR/Jahr:</td><td class="preis"><?php echo $maildata['Gesamtpreis']?></td></tr>
 	<tr><td>Grundpreis in EUR/Jahr:</td><td class="preis"><?php echo $maildata['Grundpreis']?></td></tr>
-<?php if ($maildata['energieart']=='Strom'):?>
-	<tr><td>Arbeitspreis <?php if($maildata['tarifart']=='zweitarif'):?>HT <?php endif?>in Cent/kWh:</td><td class="preis"><?php echo $maildata['Arbeitspreis']?></td></tr>
+<?php if ($maildata['tarifart']=='zweitarif'):?>
+	<tr><td>Arbeitspreis HT in Cent/kWh:</td><td class="preis"><?php echo $maildata['Arbeitspreis']?></td></tr>
 <?php else :?>
 	<tr><td>Arbeitspreis in Cent/kWh:</td><td class="preis"><?php echo $maildata['Arbeitspreis']?></td></tr>
 <?php endif?>	
