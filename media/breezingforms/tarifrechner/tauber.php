@@ -9,7 +9,7 @@ $tid='tarif'.htmlentities(trim($iEx[2]), ENT_QUOTES, 'UTF-8');
 // $iEx[3] enthält	 den Selektor für das Template
 $tname=htmlentities(trim($iEx[4]), ENT_QUOTES, 'UTF-8');
 $tinfo='<h1>'.$tname.'</h1>'.trim($iEx[5]);
-$tarbeitspreis='<tr><td class="whPreistitel">Verbrauchspreis'.(($tarifart=='zweitarif') ? ' HT:</td><td class="whPreiszahl">' : ':</td><td>').htmlentities(trim($iEx[6]), ENT_QUOTES, 'UTF-8').'</td><td>Cent pro kWh</td></tr>';
+$tarbeitspreis='<tr><td class="whPreistitel">Verbrauchspreis'.(($tarifart=='zweitarif') ? ' HT' : '').':</td><td class="whPreiszahl">'.htmlentities(trim($iEx[6]), ENT_QUOTES, 'UTF-8').'</td><td>Cent pro kWh</td></tr>';
 $tarbeitspreisnt=($tarifart=='zweitarif') ? '<tr><td class="whPreistitel">Verbrauchspreis NT:</td><td class="whPreiszahl">'.htmlentities(trim($iEx[7]), ENT_QUOTES, 'UTF-8').'</td><td>Cent pro kWh</td></tr>' : '';
 $tgrund='<tr><td class="whPreistitel">Grundpreis:</td><td class="whPreiszahl">'.htmlentities(trim($iEx[8]), ENT_QUOTES, 'UTF-8').'</td><td>EUR pro Jahr</td><tr>';
 $tbonus=($iEx[11]==0) ? '' : '<tr><td class="whPreistitel">'.htmlentities(trim($iEx[12]), ENT_QUOTES, 'UTF-8').':</td><td class="whPreiszahl">'.htmlentities(trim($iEx[11]), ENT_QUOTES, 'UTF-8'). '</td><td>EUR</td></tr>';
