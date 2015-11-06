@@ -41,7 +41,8 @@ Ihren Vertragsunterlagen per Post zugesandt</p>
 <?php endif?>
 <?php if($maildata['Bonus'] > 0) : ?>
     <tr><td>Einmaliger '<?php echo $maildata['Bonustext']?>' in EUR:</td><td class="preis"><?php echo $maildata['Bonus']?></td></tr>
-	<tr><td>Ihren Bonus schreiben wir Ihnen mit Ihrer<br>ersten Verbrauchsabrechnung auf Ihrem Konto gut.</td><td></td></tr>
+    <tr><td>Der '<?php echo $maildata['Bonustext']?>' wurde bei der Berechnung der angegebenen Jahresgesamtkosten bereits berücksichtigt.</td></tr>
+	<tr><td>Ihren '<?php echo $maildata['Bonustext']?>' schreiben wir Ihnen mit Ihrer<br>ersten Verbrauchsabrechnung auf Ihrem Konto gut.</td><td></td></tr>
 <?php endif ?>
 </table>
 <p>Alle Preise verstehen sich inkl. derzeit gültiger Umsatzsteuer.</p>

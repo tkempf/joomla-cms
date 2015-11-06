@@ -14,7 +14,15 @@ $tarbeitspreisnt=($tarifart=='zweitarif') ? '<tr><td class="whPreistitel">Verbra
 $tgrund='<tr><td class="whPreistitel">Grundpreis:</td><td class="whPreiszahl">'.htmlentities(trim($iEx[8]), ENT_QUOTES, 'UTF-8').'</td><td>EUR pro Jahr</td><tr>';
 $tbonus=($iEx[11]==0) ? '' : '<tr><td class="whPreistitel">'.htmlentities(trim($iEx[12]), ENT_QUOTES, 'UTF-8').':</td><td class="whPreiszahl">'.htmlentities(trim($iEx[11]), ENT_QUOTES, 'UTF-8'). '</td><td>EUR</td></tr>';
 $tslp=($iEx[9]==0) ? '' : '<p>Die angezeigten Verbrauchspreise wurden mit einem Mehr-/Mindermengenpreis von '.$iEx[9].' Cent pro kWh (Stand '.$iEx[10].') berechnet.</p>';
-$tpreise='<div class="whPreisbestandteile"><p>Ihr Verbrauchspreis setzt sich wie folgt zusammen:</p><table>'.$tgrund.$tarbeitspreis.$tarbeitspreisnt.$tbonus.'</table>'.$tslp.'<p>Alle Preise verstehen sich inkl. derzeit gültiger Umsatzsteuer.</p></div>';
+$tpreise='<div class="whPreisbestandteile"><p>Ihr Verbrauchspreis setzt sich wie folgt zusammen:</p><table>'.$tgrund.$tarbeitspreis.$tarbeitspreisnt.$tbonus.'</table>'.$tslp;
+if(($iEx[11]==0)){
+	$tpreise.='<p>';
+}
+else{
+	$tpreise.='<p>Der '.htmlentities(trim($iEx[12]), ENT_QUOTES, 'UTF-8').' wurde bei der Berechnung der angezeigten Jahreskosten bereits berücksichtigt.<br>';
+}
+$tpreise.='Alle Preise verstehen sich inkl. derzeit gültiger Umsatzsteuer.</p></div>';
+		
 $tinfobutton='<div class="whTarifFooter">
 				<button id="wechselbutton'.$tid.'" class="ff_elem bfCustomSubmitButton" onClick="JQuery(\'#ff_elem'.$mdata['dbId'].$idExt.'\').prop(\'checked\',true);ff_validate_nextpage(this,\'click\');">Jetzt wechseln</button>
 			  </div>';
