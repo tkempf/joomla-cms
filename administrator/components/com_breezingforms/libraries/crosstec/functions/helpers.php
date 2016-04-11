@@ -303,13 +303,45 @@ function bf_createMail( $from='', $fromname='', $subject, $body, $alt_sender = '
     
 	$mail = JFactory::getMailer();
         
-        $mail->setSender(array($alt_sender ? $alt_sender : $_mailfrom, $fromname ? $fromname : $_fromname));
+        try{
+            
+            $mail->setSender(array($alt_sender ? $alt_sender : $_mailfrom, $fromname ? $fromname : $_fromname));
+        
+        } catch( Exception $e ){
+            
+        }
+        
         $mail->setSubject($subject);
         $mail->setBody($body);
         
-        $mail->SetFrom($from ? $from : '', $fromname ? $fromname : '');
+        try{
         
-        $mail->addReplyTo( array( $from ? $from : $_mailfrom, $fromname ? $fromname : $_fromname ) );
+            $mail->SetFrom($from ? $from : '', $fromname ? $fromname : '');
+            
+        } catch(Exception $e){
+            
+        }
+        
+        try{
+        
+            if(version_compare($version, '3.0', '<')){
+
+                $mail->addReplyTo( array( $from ? $from : $_mailfrom, $fromname ? $fromname : $_fromname ) );
+
+            } else {
+
+                $newfrom = $from ? $from : $_mailfrom;
+                $newfromname = $fromname ? $fromname : $_fromname;
+
+                if ( !empty($newfrom) ) {
+
+                    $mail->addReplyTo( $from ? $from : $_mailfrom, $fromname ? $fromname : $_fromname );
+                }
+            }
+        
+        } catch(Exception $e){
+            
+        }
         
 	return $mail;
 }

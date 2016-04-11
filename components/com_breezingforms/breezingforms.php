@@ -16,6 +16,8 @@
  **/
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
+@error_reporting(E_ALL ^ E_DEPRECATED);
+
 if(!defined('DS')){
     define('DS', DIRECTORY_SEPARATOR);
 }
@@ -389,7 +391,7 @@ if(
 			echo "\n<!-- BreezingForms V".$ff_version." Copyright(c) 2008-2013 by Markus Bopp | FacileForms Copyright 2004-2006 by Peter Koch, Chur, Switzerland.  All rights reserved. -->\n";
 			// END OF COPYRIGHT
 			echo '<div class="bfClearfix" style="'.$divstyle.'">'."\n".
-				 "<iframe class=\"breezingforms_iframe\" ".$params.">\n".
+				 "<iframe class=\"breezingforms_iframe\" ".$params." sandbox=\"allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-popups allow-top-navigation\">\n".
 				 "<p>Sorry, your browser cannot display frames!</p>\n".
 				 "</iframe>\n".
 				 "</div>\n";

@@ -69,6 +69,30 @@ if(version_compare($version->getShortVersion(), '1.6', '>=')){
     }
 }
 
+// ffexports / packages cleanup
+// SECURITY UPDATE 2016-02-16
+
+// purge ajax save
+$sourcePath = JPATH_SITE . DS . 'components' . DS . 'com_breezingforms' . DS . 'exports'.DS;
+if (@file_exists($sourcePath) && @is_readable($sourcePath) && @is_dir($sourcePath) && $handle = @opendir($sourcePath)) {
+    while (false !== ($file = @readdir($handle))) {
+        if($file!="." && $file!=".."&& $file!="index.html") {
+            @JFile::delete($sourcePath.$file);
+        }
+    }
+    @closedir($handle);
+}
+
+$sourcePath = JPATH_SITE . DS . 'administrator' . DS . 'components' . DS . 'com_breezingforms' . DS . 'packages'.DS;
+if (@file_exists($sourcePath) && @is_readable($sourcePath) && @is_dir($sourcePath) && $handle = @opendir($sourcePath)) {
+    while (false !== ($file = @readdir($handle))) {
+        if($file!="." && $file!=".." && $file!="index.html" && $file!="stdlib.english.xml") {
+            @JFile::delete($sourcePath.$file);
+        }
+    }
+    @closedir($handle);
+}
+
 // 1.7.5 to 1.8 cleanup
 
 if(JFile::exists(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_breezingforms'.DS.'install.secimage.php')){
@@ -127,6 +151,25 @@ if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'uploads')){
             JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'uploads'.DS.'index.html', 
             JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'uploads'.DS.'index.html'
     );
+}
+
+// Default upload folder is now htaccess protected 2016-02-16
+
+if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'uploads'.DS.'.htaccess')){
+    $def = 'deny from all';
+    JFile::write(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'uploads'.DS.'.htaccess', $def);
+}
+
+#### PAYMENT CACHE
+
+if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'payment_cache')){
+    JFolder::create(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'payment_cache');
+    
+}
+
+if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'payment_cache'.DS.'.htaccess')){
+    $def = 'deny from all';
+    JFile::write(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'payment_cache'.DS.'.htaccess', $def);
 }
 
 #### DROPBOX CUSTOM KEYS

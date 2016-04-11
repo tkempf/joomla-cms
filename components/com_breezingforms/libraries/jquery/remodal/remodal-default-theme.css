@@ -1,5 +1,5 @@
 /*
- *  Remodal - v1.0.3
+ *  Remodal - v1.0.6
  *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.
  *  http://vodkabears.github.io/remodal/
  *
@@ -27,18 +27,20 @@
 
 .remodal-overlay.remodal-is-opening,
 .remodal-overlay.remodal-is-closing {
+  -webkit-animation-duration: 0.3s;
+  animation-duration: 0.3s;
   -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
 }
 
 .remodal-overlay.remodal-is-opening {
-  -webkit-animation: remodal-overlay-opening-keyframes 0.3s;
-  animation: remodal-overlay-opening-keyframes 0.3s;
+  -webkit-animation-name: remodal-overlay-opening-keyframes;
+  animation-name: remodal-overlay-opening-keyframes;
 }
 
 .remodal-overlay.remodal-is-closing {
-  -webkit-animation: remodal-overlay-closing-keyframes 0.3s;
-  animation: remodal-overlay-closing-keyframes 0.3s;
+  -webkit-animation-name: remodal-overlay-closing-keyframes;
+  animation-name: remodal-overlay-closing-keyframes;
 }
 
 /* Default theme styles of the wrapper */
@@ -65,18 +67,20 @@
 
 .remodal.remodal-is-opening,
 .remodal.remodal-is-closing {
+  -webkit-animation-duration: 0.3s;
+  animation-duration: 0.3s;
   -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
 }
 
 .remodal.remodal-is-opening {
-  -webkit-animation: remodal-opening-keyframes 0.3s;
-  animation: remodal-opening-keyframes 0.3s;
+  -webkit-animation-name: remodal-opening-keyframes;
+  animation-name: remodal-opening-keyframes;
 }
 
 .remodal.remodal-is-closing {
-  -webkit-animation: remodal-closing-keyframes 0.3s;
-  animation: remodal-closing-keyframes 0.3s;
+  -webkit-animation-name: remodal-closing-keyframes;
+  animation-name: remodal-closing-keyframes;
 }
 
 /* Vertical align of the modal dialog */
@@ -138,15 +142,34 @@
 
 .remodal-confirm,
 .remodal-cancel {
-  
+  font: inherit;
+
+  display: inline-block;
+  overflow: visible;
+
+  min-width: 110px;
+  margin: 0;
+  padding: 12px 0;
+
+  cursor: pointer;
+  -webkit-transition: background 0.2s;
+  transition: background 0.2s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+
+  border: 0;
+  outline: 0;
 }
 
 .remodal-confirm {
+  color: #fff;
+  background: #81c784;
 }
 
 .remodal-confirm:hover,
 .remodal-confirm:focus {
-  
+  background: #66bb6a;
 }
 
 .remodal-cancel {
@@ -164,7 +187,9 @@
 .remodal-confirm::-moz-focus-inner,
 .remodal-cancel::-moz-focus-inner,
 .remodal-close::-moz-focus-inner {
+  padding: 0;
 
+  border: 0;
 }
 
 /* Keyframes
