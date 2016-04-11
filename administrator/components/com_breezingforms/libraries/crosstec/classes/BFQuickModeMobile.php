@@ -77,12 +77,14 @@ class BFQuickModeMobile{
                 
 		$this->rootMdata = $this->dataObject['properties'];
                 
-                /* translatables */
-                if(isset($this->rootMdata['title_translation'.$this->language_tag]) && $this->rootMdata['title_translation'.$this->language_tag] != ''){
-                    $this->rootMdata['title'] = $this->rootMdata['title_translation'.$this->language_tag];
-                    JFactory::getDocument()->setTitle($this->rootMdata['title']);
+                if(JRequest::getVar('ff_applic','') != 'mod_facileforms' && JRequest::getVar('ff_applic','') != 'plg_facileforms'){
+                    /* translatables */
+                    if(isset($this->rootMdata['title_translation'.$this->language_tag]) && $this->rootMdata['title_translation'.$this->language_tag] != ''){
+                        $this->rootMdata['title'] = $this->rootMdata['title_translation'.$this->language_tag];
+                        JFactory::getDocument()->setTitle($this->rootMdata['title']);
+                    }
+                    /* translatables end */
                 }
-                /* translatables end */
                 
 		$this->useErrorAlerts = $this->rootMdata['useErrorAlerts'];
                 $this->useDefaultErrors = isset($this->rootMdata['useDefaultErrors']) ? $this->rootMdata['useDefaultErrors'] : false;
@@ -381,21 +383,10 @@ class BFQuickModeMobile{
                                         
                                         if($mdata['bfType'] == 'bfCaptcha' || $mdata['bfType'] == 'bfReCaptcha'){
                                             $for = 'for="bfCaptchaEntry"';
-                                            if(JFactory::getApplication()->isSite())
-                                            {
-                                            $captcha_url = JURI::root(true).'/components/com_breezingforms/images/captcha/securimage_show.php';
-                                            }
-                                            else
-                                            {
-                                            $captcha_url = JURI::root(true).'/administrator/components/com_breezingforms/images/captcha/securimage_show.php';
-                                            }
-
-                                            echo '<div align="center"><img alt="" border="0" width="230" id="ff_capimgValue" class="ff_capimg" src="'.$captcha_url.'"/></div><br/>'."\n";
-
                                         }
-                                        //else if($mdata['bfType'] == 'bfReCaptcha'){
-                                        //    $for = 'for="recaptcha_response_field"';
-                                        //}
+                                        else if($mdata['bfType'] == 'bfReCaptcha'){
+                                            $for = 'for="recaptcha_response_field"';
+                                        }
 
                                         $req = '';
                                         if($mdata['required']){
@@ -881,13 +872,145 @@ class BFQuickModeMobile{
 						}
 						break;
                                         
-                                        // recaptcha doesn't currently play well with jquery mobile
                                         case 'bfReCaptcha':
-                                        case 'bfCaptcha':
 
-                                                echo '<input autocomplete="off" class="ff_elem" type="text" name="bfCaptchaEntry" id="bfCaptchaEntry" />'."\n";
-						echo '<br /><br /><button data-role="button" data-icon="refresh" data-inline="true" data-iconpos="notext" data-theme="a" id="bfCaptchaReload" onclick="document.getElementById(\'bfCaptchaEntry\').value=\'\';document.getElementById(\'bfCaptchaEntry\').focus();document.getElementById(\'ff_capimgValue\').src = \''.$captcha_url.'?bfMathRandom=\' + Math.random(); return false"><span>Reload Captcha</span></button><br /><br />';
+                                            if(isset($mdata['pubkey']) && $mdata['pubkey'] != ''){
+
+                                                if(isset($mdata['newCaptcha']) && $mdata['newCaptcha']){
+                                                    
+                                                    $http = 'http';
+                                                    if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) != 'off')) {
+                                                        $http .= 's';
+                                                    }
+                                                    $lang = JRequest::getVar('lang','');
+                                                    if($lang != ''){
+                                                        $lang = ',lang: '.json_encode($lang).'';
+                                                    }
+                                                    
+                                                    //JFactory::getDocument()->addScript($http.'://www.google.com/recaptcha/api.js?onload=onloadBFNewRecaptchaCallback&render=explicit', $type = "text/javascript", true, true);
+                                                    
+                                                    echo '
+                                                    <div style="display: inline-block !important; vertical-align: middle;">
+                                                        <div id="newrecaptcha"></div>
+                                                        <div class="g-recaptcha" data-sitekey="'.$mdata['pubkey'].'"></div>
+                                                    </div>
+                                                    <script type="text/javascript">
+                                                    <!--
+                                                    var onloadBFNewRecaptchaCallback = function() {
+                                                      grecaptcha.render("newrecaptcha", {
+                                                        "sitekey" : "'.$mdata['pubkey'].'",
+                                                        "theme" : "'.(trim($mdata['theme']) == '' ? 'light' : trim($mdata['theme'])).'",
+                                                      });
+                                                    };
+                                                    JQuery(document).ready(function(){
+                                                        JQuery.getScript("'.$http.'://www.google.com/recaptcha/api.js?onload=onloadBFNewRecaptchaCallback&render=explicit");
+                                                    });
+                                                    -->
+                                                  </script>';
+                                                    
+                                                } else {
                                                 
+                                                    if(strtolower(trim($mdata['theme'])) == 'custom'){
+
+                                                        $http = 'http';
+
+                                                        if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) != 'off')) {
+                                                            $http .= 's';
+                                                        }
+                                                        $lang = JRequest::getVar('lang','');
+                                                        if($lang != ''){
+                                                            $lang = ',lang: '.json_encode($lang).'';
+                                                        }
+                                                        JFactory::getDocument()->addScript($http.'://www.google.com/recaptcha/api/js/recaptcha.js');
+                                                        echo '<div class="bfRecaptchaCustom" id="recaptcha_widget" style="display: inline-block !important;">
+
+                                                            <div id="recaptcha_image"></div>
+
+                                                            <div class="bfRecaptchaCustomResponseField" style="clear:both;">
+                                                                <input type="text" value="" id="recaptcha_response_field" name="recaptcha_response_field" />
+                                                            </div>
+
+                                                            <div class="bfRecaptchaCustomControls" style="clear:both;">
+
+                                                                <button type="button" class="button bfRecaptchaCustomRefresh" onclick="Recaptcha.reload()"><span>'.BFText::_('COM_BREEZINGFORMS_RC_REFRESH').'</span></button>
+                                                                <button type="button" class="button recaptcha_only_if_image bfRecaptchaCustomAudio" onclick="Recaptcha.switch_type(\'audio\')"><span>'.BFText::_('COM_BREEZINGFORMS_RC_AUDIO').'</span></button>
+                                                                <button type="button" class="button recaptcha_only_if_audio bfRecaptchaCustomPicture" onclick="Recaptcha.switch_type(\'image\')"><span>'.BFText::_('COM_BREEZINGFORMS_RC_PICTURE').'</span></button>
+                                                                <button type="button" class="button bfRecaptchaCustomHelp" onclick="Recaptcha.showhelp()"><span>'.BFText::_('COM_BREEZINGFORMS_RC_HELP').'</span></button>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <script type="text/javascript">
+                                                        <!--
+                                                        Recaptcha.create("'.$mdata['pubkey'].'",
+                                                            "bfReCaptchaDiv", {
+                                                            theme: "custom",
+                                                            custom_theme_widget: "recaptcha_widget"
+                                                            '.$lang.'
+                                                            }
+                                                        );
+                                                        -->
+                                                        </script>'."\n";
+
+                                                    }else{
+
+                                                        $http = 'http';
+                                                        if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) != 'off')) {
+                                                            $http .= 's';
+                                                        }
+                                                        $lang = JRequest::getVar('lang','');
+                                                        if($lang != ''){
+                                                            $lang = ',lang: '.json_encode($lang).'';
+                                                        }
+                                                        JFactory::getDocument()->addScript($http.'://www.google.com/recaptcha/api/js/recaptcha.js');
+                                                        JFactory::getDocument()->addScriptDeclaration(
+                                                        '   
+                                                            JQuery(document).ready(
+                                                                function() {
+                                                                    document.getElementById("bfReCaptchaWrap").style.display = "";
+                                                                    Recaptcha.create("'.$mdata['pubkey'].'",
+                                                                        "bfReCaptchaDiv", {
+                                                                        theme: '.json_encode($mdata['theme']).'
+                                                                        '.$lang.'
+                                                                        }
+                                                                    );
+                                                                    setTimeout("document.getElementById(\"bfReCaptchaSpan\").appendChild(document.getElementById(\"bfReCaptchaWrap\"))",100);
+                                                                }
+                                                            );
+                                                        ');
+
+                                                        echo '<span id="bfReCaptchaSpan" class="bfCaptcha">'."\n";
+                                                        echo '</span>'."\n";
+
+                                                    }
+                                                
+                                                }
+                                            }
+                                            else
+                                            {
+                                                echo '<span class="bfCaptcha">'."\n";
+                                                echo 'WARNING: No public key given for ReCaptcha element!';
+                                                echo '</span>'."\n";
+                                            }
+                                            break;
+                                        case 'bfCaptcha':
+                                            
+                                                if(JFactory::getApplication()->isSite())
+                                                {
+                                                    $captcha_url = JURI::root(true).'/components/com_breezingforms/images/captcha/securimage_show.php';
+                                                }
+                                                else
+                                                {
+                                                    $captcha_url = JURI::root(true).'/administrator/components/com_breezingforms/images/captcha/securimage_show.php';
+                                                }
+
+                                                echo '<div class="ui-grid-a">';
+                                                echo '<img alt="" border="0" width="230" id="ff_capimgValue" class="ff_capimg" src="'.$captcha_url.'"/><br/><br/>'."\n";
+
+                                        
+                                                echo '<input autocomplete="off" class="ff_elem" type="text" name="bfCaptchaEntry" id="bfCaptchaEntry" />'."\n";
+						echo '<button data-role="button" data-icon="refresh" data-inline="true" data-iconpos="notext" data-theme="a" id="bfCaptchaReload" onclick="document.getElementById(\'bfCaptchaEntry\').value=\'\';document.getElementById(\'bfCaptchaEntry\').focus();document.getElementById(\'ff_capimgValue\').src = \''.$captcha_url.'?bfMathRandom=\' + Math.random(); return false"><span>Reload Captcha</span></button>';
+                                                echo '</div>';
                                                 break;
 					
                                         case 'bfCalendar':
@@ -1814,8 +1937,12 @@ class BFQuickModeMobile{
                                                 {
                                                     var prompt = null;
                                                     
-                                                    if(inlineErrorElements[i][0] == "bfCaptchaEntry" || inlineErrorElements[i][0] == "bfReCaptchaEntry"){
+                                                    if(inlineErrorElements[i][0] == "bfCaptchaEntry"){
                                                         prompt = JQuery.bfvalidationEngine.buildPrompt("#bfCaptchaEntry",inlineErrorElements[i][1],"error");
+                                                    }
+                                                    else if(inlineErrorElements[i][0] == "bfReCaptchaEntry"){
+                                                        // nothing here yet for recaptcha, alert is default
+                                                        alert(inlineErrorElements[i][1]);
                                                     }
                                                     else if(typeof JQuery("#bfUploader"+inlineErrorElements[i][0]).get(0) != "undefined")
                                                     {
@@ -1824,7 +1951,11 @@ class BFQuickModeMobile{
                                                     }
                                                     else
                                                     {
-                                                        prompt = JQuery.bfvalidationEngine.buildPrompt("#"+ff_getElementByName(inlineErrorElements[i][0]).id,inlineErrorElements[i][1],"error");
+                                                        if(ff_getElementByName(inlineErrorElements[i][0])){
+                                                            prompt = JQuery.bfvalidationEngine.buildPrompt("#"+ff_getElementByName(inlineErrorElements[i][0]).id,inlineErrorElements[i][1],"error");
+                                                        }else{
+                                                            alert(inlineErrorElements[i][1]);
+                                                        }
                                                     }
                                                     
                                                     JQuery(prompt).mouseover(

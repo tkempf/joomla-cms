@@ -1113,10 +1113,6 @@ class QuickModeHtml{
 					case 'bfFile':
 					case 'bfHidden':
 					case 'bfCalendar':
-						var option = document.createElement('option');
-						JQuery(option).val(items[i].properties.bfName + ":" + items[i].properties.bfType);
-						JQuery(option).text(items[i].properties.label + " ("+items[i].properties.bfName+")"); 
-						JQuery('#bfElementTypeSummarizeConnectWith').append(option);
                                         case 'bfCalendarResponsive':
 						var option = document.createElement('option');
 						JQuery(option).val(items[i].properties.bfName + ":" + items[i].properties.bfType);
@@ -1569,7 +1565,7 @@ class QuickModeHtml{
 				if(mdata){
 					var item = appScope.findDataObjectItem(JQuery(appScope.selectedTreeElement).attr('id'), appScope.dataObject);
 					if(item){
-						item.data.title = mdata.label;
+						item.data.title = JQuery("<div/>").text(mdata.label).html();
 						JQuery('#bfValidationScript').css('display','none');
 						JQuery('#bfInitScript').css('display','none');
 						JQuery('#bfActionScript').css('display','none');

@@ -839,7 +839,7 @@ display:none;
         }
         
 	function __construct( HTML_facileFormsProcessor $p ){
-                
+               
                 // will make sure mootools loads first, important 4 jquery
                 jimport('joomla.version');
                 $version = new JVersion();
@@ -854,12 +854,14 @@ display:none;
 		$this->dataObject = Zend_Json::decode( bf_b64dec($this->p->formrow->template_code) );
 		$this->rootMdata = $this->dataObject['properties'];
                 
-                /* translatables */
-                if(isset($this->rootMdata['title_translation'.$this->language_tag]) && $this->rootMdata['title_translation'.$this->language_tag] != ''){
-                    $this->rootMdata['title'] = $this->rootMdata['title_translation'.$this->language_tag];
-                    JFactory::getDocument()->setTitle($this->rootMdata['title']);
+                if(JRequest::getVar('ff_applic','') != 'mod_facileforms' && JRequest::getVar('ff_applic','') != 'plg_facileforms'){
+                    /* translatables */
+                    if(isset($this->rootMdata['title_translation'.$this->language_tag]) && $this->rootMdata['title_translation'.$this->language_tag] != ''){
+                        $this->rootMdata['title'] = $this->rootMdata['title_translation'.$this->language_tag];
+                        JFactory::getDocument()->setTitle($this->rootMdata['title']);
+                    }
+                    /* translatables end */
                 }
-                /* translatables end */
                 
 		$this->fading = $this->rootMdata['fadeIn'];
 		$this->useErrorAlerts = $this->rootMdata['useErrorAlerts'];
@@ -1381,7 +1383,7 @@ display:none;
 							$mdata['list'] = str_replace("\r", '', $mdata['list']);
 							$gEx = explode("\n", $mdata['list']);
 							$lines = count($gEx);
-							echo '<select class="ff_elem chzn-done" '.$size.($mdata['multiple'] ? 'multiple="multiple" ' : '').$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'."\n";
+							echo '<select data-chosen="no-chzn" class="ff_elem chzn-done" '.$size.($mdata['multiple'] ? 'multiple="multiple" ' : '').$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'."\n";
 							for($i = 0; $i < $lines; $i++){
 								$iEx = explode(";", $gEx[$i]);
 								$iCnt = count($iEx);
@@ -2083,7 +2085,7 @@ display:none;
                                             $this->rootMdata['cancelLabel'] = $this->rootMdata['cancelLabel_translation'.$this->language_tag];
                                         }
                                         /* translatables end */
-					echo '<button type="button" class="bfCancelButton button'.$this->fadingClass.'" type="submit" onclick="ff_resetForm(this, \'click\');"  value="'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button class="bfCancelButton button'.$this->fadingClass.'" type="submit" onclick="ff_resetForm(this, \'click\');"  value="'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
 				
 				$callSubmit = 'ff_validate_submit(this, \'click\')';
@@ -2096,7 +2098,7 @@ display:none;
                                             $this->rootMdata['submitLabel'] = $this->rootMdata['submitLabel_translation'.$this->language_tag];
                                         }
                                         /* translatables end */
-					echo '<button type="button" id="bfSubmitButton" class="bfSubmitButton button'.$this->fadingClass.'" type="submit" onclick="if(typeof bf_htmltextareainit != \'undefined\'){ bf_htmltextareainit() }if(document.getElementById(\'bfPaymentMethod\')){document.getElementById(\'bfPaymentMethod\').value=\'\';};'.$callSubmit.';" value="'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button type="button" id="bfSubmitButton" class="bfSubmitButton button'.$this->fadingClass.'" onclick="if(typeof bf_htmltextareainit != \'undefined\'){ bf_htmltextareainit() }if(document.getElementById(\'bfPaymentMethod\')){document.getElementById(\'bfPaymentMethod\').value=\'\';};'.$callSubmit.';" value="'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
 			
 			}
@@ -2181,6 +2183,7 @@ display:none;
                         }
 			function bfDoFlashUpload(){
                                 JQuery("#bfSubmitMessage").css("visibility","hidden");
+                                JQuery("#bfSubmitMessage").css("display","none");
 				JQuery(".bfErrorMessage").html("");
                                 JQuery(".bfErrorMessage").css("display","none");
                                 for(var i = 0; i < bfUploaderErrorElements.length; i++){
@@ -2221,13 +2224,14 @@ display:none;
                                         if(bfFlashUploadersLength > 0){
                                             JQuery("#bfSubmitMessage").bfcenter(true);
                                             JQuery("#bfSubmitMessage").css("visibility","visible");
+                                            JQuery("#bfSubmitMessage").css("display","block");
                                         }
                                         
 				}
 			}
 			');
 			echo "<div style=\"visibility:hidden;\" id=\"bfFileQueue\"></div>";
-			echo "<div style=\"visibility:hidden;\" id=\"bfSubmitMessage\">".BFText::_('COM_BREEZINGFORMS_SUBMIT_MESSAGE')."</div>";
+			echo "<div style=\"visibility:hidden;display:none;\" id=\"bfSubmitMessage\">".BFText::_('COM_BREEZINGFORMS_SUBMIT_MESSAGE')."</div>";
 		}
 		echo '<noscript>Please turn on javascript to submit your data. Thank you!</noscript>'."\n";
                 JFactory::getDocument()->addScriptDeclaration('//-->');
