@@ -1615,7 +1615,7 @@ class HTML_facileFormsProcessor {
 		 document.getElementById(\'bfCaptchaEntry\').value = "";
 	    }';
         $code .= 'if(error!="" && document.getElementById("bfSubmitButton")){document.getElementById("bfSubmitButton").disabled = false;}' . nl();
-        $code .= 'if(error!="" && typeof JQuery != "undefined"){jQuery(".bfCustomSubmitButton").prop("disabled", false);}' . nl();
+        $code .= 'if(error!="" && typeof JQuery != "undefined"){JQuery(".bfCustomSubmitButton").prop("disabled", false);}' . nl();
         $code .= "    return error;" . nl() .
                 "} // ff_validation";
         $library[] = array('ff_validation', $code);
@@ -2321,15 +2321,7 @@ class HTML_facileFormsProcessor {
 
             } else {
 
-                // transforming recaptcha into captcha due to compatibility on mobiles
                 if($this->isMobile){
-                    for ($i = 0; $i < $this->rowcount; $i++) {
-                        $row = $this->rows[$i];
-                        if( $row->type == "ReCaptcha" ){
-                            $this->rows[$i]->type = 'Captcha';
-                            break;
-                        }
-                    }
                     
                     ob_end_clean();
                     ob_start();
@@ -2423,7 +2415,7 @@ class HTML_facileFormsProcessor {
                                                 if(document.getElementById("bfSubmitButton")){
                                                     document.getElementById("bfSubmitButton").disabled = false;
                                                 }
-                                                if(typeof JQuery != "undefined"){jQuery(".bfCustomSubmitButton").prop("disabled", false);}
+                                                if(typeof JQuery != "undefined"){JQuery(".bfCustomSubmitButton").prop("disabled", false);}
 						return false;
 					}
 					';
@@ -2487,6 +2479,7 @@ class HTML_facileFormsProcessor {
                                                                                 if(typeof JQuery != "undefined" && JQuery("#bfSubmitMessage"))
 									        {
                                                                                     JQuery("#bfSubmitMessage").css("visibility","hidden");
+                                                                                    JQuery("#bfSubmitMessage").css("display","none");
 									        }
                                                                                 if(typeof bfUseErrorAlerts == "undefined"){
                                                                                     alert("' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '");
@@ -2508,7 +2501,7 @@ class HTML_facileFormsProcessor {
                                                                                         if(document.getElementById("bfSubmitButton")){
                                                                                             document.getElementById("bfSubmitButton").disabled = false;
                                                                                         }
-                                                                                        if(typeof JQuery != "undefined"){jQuery(".bfCustomSubmitButton").prop("disabled", false);}
+                                                                                        if(typeof JQuery != "undefined"){JQuery(".bfCustomSubmitButton").prop("disabled", false);}
 										}
                                                                                 
 									}
@@ -2575,7 +2568,7 @@ class HTML_facileFormsProcessor {
                                                                 if(document.getElementById("bfSubmitButton")){
                                                                     document.getElementById("bfSubmitButton").disabled = false;
                                                                 }
-                                                                if(typeof JQuery != "undefined"){jQuery(".bfCustomSubmitButton").prop("disabled", false);}
+                                                                if(typeof JQuery != "undefined"){JQuery(".bfCustomSubmitButton").prop("disabled", false);}
                                                                 if(typeof ladda_button != "undefined"){
                                                                     bf_restore_submitbutton();
                                                                 }
@@ -2602,7 +2595,7 @@ class HTML_facileFormsProcessor {
                                                             if(document.getElementById("bfSubmitButton")){
                                                                 document.getElementById("bfSubmitButton").disabled = false;
                                                             }
-                                                            if(typeof JQuery != "undefined"){jQuery(".bfCustomSubmitButton").prop("disabled", false);}
+                                                            if(typeof JQuery != "undefined"){JQuery(".bfCustomSubmitButton").prop("disabled", false);}
                                                             if(typeof ladda_button != "undefined"){
                                                                 bf_restore_submitbutton();
                                                             }
@@ -3014,6 +3007,7 @@ class HTML_facileFormsProcessor {
             $db->setQuery("Select id, form From #__facileforms_records Where form = " . $db->Quote($this->form) . " And user_id = " . $db->Quote(JFactory::getUser()->get('id', -1)) . " And user_id <> 0 And archived = 0 Order By id Desc Limit 1");
             $recordsResult = $db->loadObjectList();
             if (count($recordsResult) != 0) {
+                $this->record_id = $recordsResult[0]->id;
                 $db->setQuery("Select * From #__facileforms_subrecords Where record = " . $recordsResult[0]->id . "");
                 $recordEntries = $db->loadObjectList();
                 $js = '';
@@ -4328,7 +4322,7 @@ class HTML_facileFormsProcessor {
                                $this->savedata[$next] = array();
                                $this->savedata[$next][_FF_DATA_ID] = $_rec->recElementId; 
                                $this->savedata[$next][_FF_DATA_NAME] = $_rec->recName; 
-                               $this->savedata[$next][_FF_DATA_TITLE] = $_rec->recTitle; 
+                               $this->savedata[$next][_FF_DATA_TITLE] = strip_tags($_rec->recTitle); 
                                $this->savedata[$next][_FF_DATA_TYPE] = $_rec->recType;
                                $this->savedata[$next][_FF_DATA_VALUE] = '';
                                $_is_values = explode("\n", $_rec->recValue);
@@ -4359,7 +4353,7 @@ class HTML_facileFormsProcessor {
                     $subrecord->id = NULL;
                     $subrecord->element = $data[_FF_DATA_ID];
                     $subrecord->name = $data[_FF_DATA_NAME];
-                    $subrecord->title = $data[_FF_DATA_TITLE];
+                    $subrecord->title = strip_tags($data[_FF_DATA_TITLE]);
                     $subrecord->type = $data[_FF_DATA_TYPE];
                     if(isset($_savedata[$data[_FF_DATA_ID]]) && !isset($isset[$data[_FF_DATA_ID]])){
                         $subrecord->value = trim($_savedata[$data[_FF_DATA_ID]]);
@@ -4624,7 +4618,7 @@ class HTML_facileFormsProcessor {
                             $tagvalue = $data[_FF_DATA_VALUE];
                         }
                         $tagvalue = bf_cleanString($tagvalue);
-                        $tags_body .= '<li class="cat-list-row'.$lol.'"><strong class="list-title">'.htmlentities($data[_FF_DATA_TITLE], ENT_QUOTES, 'UTF-8').'</strong><div>'.htmlentities($tagvalue, ENT_QUOTES, 'UTF-8').'</div></li>'."\n";
+                        $tags_body .= '<li class="cat-list-row'.$lol.'"><strong class="list-title">'.htmlentities(strip_tags($data[_FF_DATA_TITLE]), ENT_QUOTES, 'UTF-8').'</strong><div>'.htmlentities($tagvalue, ENT_QUOTES, 'UTF-8').'</div></li>'."\n";
                         $lol++;
                     }
                     $tags_body .= '</ul>'."\n";
@@ -4641,7 +4635,7 @@ class HTML_facileFormsProcessor {
                             $tagvalue = $data[_FF_DATA_VALUE];
                         }
                         $tagvalue = bf_cleanString($tagvalue);
-                        $tags_body = str_replace('{'.$data[_FF_DATA_NAME].':label}', htmlentities($data[_FF_DATA_TITLE], ENT_QUOTES, 'UTF-8'), $tags_body);
+                        $tags_body = str_replace('{'.$data[_FF_DATA_NAME].':label}', htmlentities(strip_tags($data[_FF_DATA_TITLE]), ENT_QUOTES, 'UTF-8'), $tags_body);
                         $tags_body = str_replace('{'.$data[_FF_DATA_NAME].':value}', htmlentities($tagvalue, ENT_QUOTES, 'UTF-8'), $tags_body);
                     }
                     $matches = array();
@@ -4687,7 +4681,7 @@ class HTML_facileFormsProcessor {
                 }
                 
                 if(trim($title) == '' && isset($this->savedata[0])){
-                    $title = $this->savedata[0][_FF_DATA_TITLE];
+                    $title = strip_tags($this->savedata[0][_FF_DATA_TITLE]);
                 }else if(trim($title) == '' && !isset($this->savedata[0])){
                     $title = 'Unknown';
                 }
@@ -4965,7 +4959,7 @@ class HTML_facileFormsProcessor {
                 if($translate){
                     $title_translated = '';
                     $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $title_translated);
-                    $data[_FF_DATA_TITLE] = $title_translated != '' ? $title_translated : $data[_FF_DATA_TITLE];
+                    $data[_FF_DATA_TITLE] = $title_translated != '' ? $title_translated : strip_tags($data[_FF_DATA_TITLE]);
                 }
                 $xmldata[] = $data;
                 //$processed[] = $data[_FF_DATA_NAME];
@@ -5045,7 +5039,7 @@ class HTML_facileFormsProcessor {
         $pdf->AddPage();
         $pdf->writeHTML($c);
         mt_srand();
-        $pdfname = $ff_compath . '/exports/ffexport-pdf-' . $date_stamp . '-' . mt_rand(0, mt_getrandmax()) . '.pdf';
+        $pdfname = $this->uploads . '/ffexport-pdf-' . $date_stamp . '-' . mt_rand(0, mt_getrandmax()) . '.pdf';
         $pdf->lastPage();
         $pdf->Output($pdfname, "F");
         return $pdfname;
@@ -5111,8 +5105,8 @@ class HTML_facileFormsProcessor {
         if (count($xmldata)) {
             foreach ($xmldata as $data) {
                 if (!in_array($data[_FF_DATA_NAME], $filter) && !in_array($data[_FF_DATA_NAME], $processed)) {
-                    $fields[strtoupper($data[_FF_DATA_NAME])] = true;
-                    $lines[$lineNum][strtoupper($data[_FF_DATA_NAME])][] = is_array($data[_FF_DATA_VALUE]) ? implode('|', $data[_FF_DATA_VALUE]) : $data[_FF_DATA_VALUE];
+                    $fields[strip_tags($data[_FF_DATA_TITLE])] = true;
+                    $lines[$lineNum][strip_tags($data[_FF_DATA_TITLE])][] = is_array($data[_FF_DATA_VALUE]) ? implode('|', $data[_FF_DATA_VALUE]) : $data[_FF_DATA_VALUE];
                     //$processed[] = $data[_FF_DATA_NAME];
                 }
             } // foreach
@@ -5151,7 +5145,7 @@ class HTML_facileFormsProcessor {
             }
         }
         mt_srand();
-        $csvname = JPATH_SITE . '/components/com_breezingforms/exports/ffexport-' . $date_stamp . '-' . mt_rand(0, mt_getrandmax()) . '.csv';
+        $csvname = $this->uploads . '/ffexport-' . $date_stamp . '-' . mt_rand(0, mt_getrandmax()) . '.csv';
         JFile::makeSafe($csvname);
         if (function_exists('mb_convert_encoding')) {
             $to_encoding = 'UTF-16LE';
@@ -5199,7 +5193,7 @@ class HTML_facileFormsProcessor {
         if ($this->dying)
             return '';
         mt_srand();
-        $xmlname = $ff_compath . '/exports/ffexport-' . $date_stamp . '-' . mt_rand(0, mt_getrandmax()) . '.xml';
+        $xmlname = $this->uploads . '/ffexport-' . $date_stamp . '-' . mt_rand(0, mt_getrandmax()) . '.xml';
 
         $xml = '<?xml version="1.0" encoding="utf-8" ?>' . nl() .
                 '<FacileFormsExport type="records" version="' . $ff_version . '">' . nl() .
@@ -5241,7 +5235,7 @@ class HTML_facileFormsProcessor {
                     $xml .= indent(2) . '<subrecord>' . nl() .
                             indent(3) . '<element>' . $data[_FF_DATA_ID] . '</element>' . nl() .
                             indent(3) . '<name>' . $data[_FF_DATA_NAME] . '</name>' . nl() .
-                            indent(3) . '<title>' . htmlspecialchars($title_translated != '' ? $title_translated : $data[_FF_DATA_TITLE], ENT_QUOTES, 'UTF-8') . '</title>' . nl() .
+                            indent(3) . '<title>' . htmlspecialchars($title_translated != '' ? $title_translated : strip_tags($data[_FF_DATA_TITLE]), ENT_QUOTES, 'UTF-8') . '</title>' . nl() .
                             indent(3) . '<type>' . $data[_FF_DATA_TYPE] . '</type>' . nl() .
                             indent(3) . '<value>' . htmlspecialchars(is_array($data[_FF_DATA_VALUE]) ? implode('|', $data[_FF_DATA_VALUE]) : $data[_FF_DATA_VALUE], ENT_QUOTES, 'UTF-8') . '</value>' . nl() .
                             indent(2) . '</subrecord>' . nl();
@@ -5458,8 +5452,8 @@ class HTML_facileFormsProcessor {
                 $MAILDATA = array();
                 if (count($this->maildata)) {
                     foreach ($this->maildata as $DATA) {
-                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', $DATA[_FF_DATA_TITLE], $subject);
-                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', $DATA[_FF_DATA_TITLE], $subject);
+                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', strip_tags($DATA[_FF_DATA_TITLE]), $subject);
+                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', strip_tags($DATA[_FF_DATA_TITLE]), $subject);
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', urldecode($DATA[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . '}', $DATA[_FF_DATA_VALUE], $subject);
                         $MAILDATA[] = $DATA;
@@ -5511,11 +5505,11 @@ class HTML_facileFormsProcessor {
                         BFText::_('COM_BREEZINGFORMS_PROCESS_OPSYS') . ": " . $this->opsys . nl() . nl();
                 if (count($this->maildata)) {
                     foreach ($this->maildata as $data) {
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $data[_FF_DATA_TITLE], $subject);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $data[_FF_DATA_TITLE], $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', strip_tags($data[_FF_DATA_TITLE]), $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', strip_tags($data[_FF_DATA_TITLE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
-                        $body .= $data[_FF_DATA_TITLE] . ": " . $data[_FF_DATA_VALUE] . nl();
+                        $body .= strip_tags($data[_FF_DATA_TITLE]) . ": " . $data[_FF_DATA_VALUE] . nl();
                     }
                 }
             }
@@ -5608,11 +5602,11 @@ class HTML_facileFormsProcessor {
 
             if (count($this->maildata)) {
                 foreach ($this->maildata as $data) {
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $data[_FF_DATA_TITLE], $subject);
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $data[_FF_DATA_TITLE], $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', strip_tags($data[_FF_DATA_TITLE]), $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', strip_tags($data[_FF_DATA_TITLE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
-                    $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $data[_FF_DATA_TITLE], $body);
+                    $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', strip_tags($data[_FF_DATA_TITLE]), $body);
                     if ($this->formrow->email_custom_html) {
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),urldecode($data[_FF_DATA_VALUE])), $body);
                     } else {
@@ -5874,7 +5868,9 @@ class HTML_facileFormsProcessor {
                     jimport('joomla.version');
                     $version = new JVersion();
                     if(version_compare($version->getShortVersion(), '2.5', '>=')){
-                        $language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
+                        jimport( 'joomla.application.component.helper' );
+                        $default = JComponentHelper::getParams('com_languages')->get('site');
+                        $language_tag = JFactory::getLanguage()->getTag() != $default ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
                         if (trim($name) == trim($dataObject['properties']['bfName']) && isset($dataObject['properties'][$field.'_translation'.$language_tag]) && $dataObject['properties'][$field.'_translation'.$language_tag] != '') {
                             $res = addslashes($dataObject['properties'][$field.'_translation'.$language_tag]);
                             return;
@@ -6238,11 +6234,11 @@ class HTML_facileFormsProcessor {
                         if (!in_array($DATA[_FF_DATA_NAME], $filter)) {
                             $trans_title = '';
                             $this->getFieldTranslated('label', $DATA[_FF_DATA_NAME], $trans_title);
-                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $DATA[_FF_DATA_TITLE], $subject);
-                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : $DATA[_FF_DATA_TITLE], $subject);
+                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]), $subject);
+                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]), $subject);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', urldecode($DATA[_FF_DATA_VALUE]), $subject);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . '}', $DATA[_FF_DATA_VALUE], $subject);
-                            $DATA[_FF_DATA_TITLE] = $trans_title != '' ? $trans_title : $DATA[_FF_DATA_TITLE];
+                            $DATA[_FF_DATA_TITLE] = $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]);
                             $MAILDATA[] = $DATA;
                         }
                     }
@@ -6298,12 +6294,12 @@ class HTML_facileFormsProcessor {
                     foreach ($this->maildata as $data) {
                         $trans_title = '';
                         $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $trans_title);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}',urldecode($data[_FF_DATA_VALUE]), $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                         if (!in_array($data[_FF_DATA_NAME], $filter)) {
-                            $body .= $data[_FF_DATA_TITLE] . ": " . $data[_FF_DATA_VALUE] . nl();
+                            $body .= strip_tags($data[_FF_DATA_TITLE]) . ": " . $data[_FF_DATA_VALUE] . nl();
                         }
                     }
                 }
@@ -6403,12 +6399,12 @@ class HTML_facileFormsProcessor {
                 foreach ($this->maildata as $data) {
                     $trans_title = '';
                     $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $trans_title);
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                     if (!in_array($data[_FF_DATA_NAME], $filter)) {
-                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : $data[_FF_DATA_TITLE], $body);
+                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $body);
                         if ($this->formrow->mb_email_custom_html) {
                             $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),urldecode($data[_FF_DATA_VALUE])), $body);
                         } else {
@@ -6712,6 +6708,7 @@ class HTML_facileFormsProcessor {
             $fm = str_replace('{filemask:_datetime}', trim($date_stamp), $fm);
             $fm = str_replace('{filemask:_timestamp}', trim(time()), $fm);
             $fm = str_replace('{filemask:_random}', trim(mt_rand(0, mt_getrandmax())), $fm);
+            $fm = str_replace('{filemask:_filename}', trim(basename($userfile_name, '.'.JFile::getExt($userfile_name))), $fm);
             if($fm == ''){
                $fm = '__empty__'; 
             }
@@ -7107,7 +7104,7 @@ class HTML_facileFormsProcessor {
                                             return;
                                         $paths[] = $path;
                                         $serverPaths[] = $serverPath;
-                                        $this->submitdata[] = array($row->id, $row->name, $row->title, $row->type, $path);
+                                        $this->submitdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $path);
                                         // CONTENTBUILDER
                                         if(strpos(strtolower($row->data1), '{cbsite}') === 0){
                                             $is_relative[$serverPath] = true;
@@ -7185,6 +7182,7 @@ class HTML_facileFormsProcessor {
                                                                     $fm = str_replace('{filemask:_datetime}', trim($date_stamp), $fm);
                                                                     $fm = str_replace('{filemask:_timestamp}', trim(time()), $fm);
                                                                     $fm = str_replace('{filemask:_random}', trim(mt_rand(0, mt_getrandmax())), $fm);
+                                                                    $fm = str_replace('{filemask:_filename}', trim(basename($userfile_name, '.'.JFile::getExt($userfile_name))), $fm);
                                                                     if($fm == ''){
                                                                        $fm = '__empty__'; 
                                                                     }
@@ -7232,7 +7230,7 @@ class HTML_facileFormsProcessor {
                                                                 
                                                                 $paths[] = $path;
                                                                 $serverPaths[] = $serverPath;
-                                                                $this->submitdata[] = array($row->id, $row->name, $row->title, $row->type, $path);
+                                                                $this->submitdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $path);
                                                                 
                                                                 // resize if image
                                                                 // last param = crop or simple. Nothing for exact.
@@ -7295,42 +7293,42 @@ class HTML_facileFormsProcessor {
                                     
                                     if (($this->formrow->dblog == 1 && $savedata_path != '') ||
                                             $this->formrow->dblog == 2 || ( $cbResult != null && $cbResult['record'] != null) )
-                                        $this->savedata[] = array($row->id, $row->name, $row->title, $row->type, $savedata_path);
+                                        $this->savedata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $savedata_path);
                                 }
                                 
                                 foreach ($paths as $path) {
                                     if (( ($this->formrow->emaillog == 1 && $this->trim($path)) ||
                                             $this->formrow->emaillog == 2 ) && ($this->formrow->emailxml == 1 ||
                                             $this->formrow->emailxml == 2 || $this->formrow->emailxml == 3 || $this->formrow->emailxml == 4))
-                                        $this->xmldata[] = array($row->id, $row->name, $row->title, $row->type, $path);
+                                        $this->xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $path);
                                     if (( ($this->formrow->emaillog == 1 && $this->trim($path)) ||
                                             $this->formrow->mb_emaillog == 2 ) && ($this->formrow->mb_emailxml == 1 ||
                                             $this->formrow->mb_emailxml == 2 || $this->formrow->mb_emailxml == 3 || $this->formrow->mb_emailxml == 4))
-                                        $this->mb_xmldata[] = array($row->id, $row->name, $row->title, $row->type, $path);
+                                        $this->mb_xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $path);
                                 } // foreach
 
                                 if (!count($paths)) {
                                     if (($this->formrow->dblog == 1) ||
                                             $this->formrow->dblog == 2)
-                                        $this->savedata[] = array($row->id, $row->name, $row->title, $row->type, '');
+                                        $this->savedata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, '');
                                     if ($this->formrow->emaillog == 2 && ($this->formrow->emailxml == 1 ||
                                             $this->formrow->emailxml == 2 || $this->formrow->emailxml == 3 || $this->formrow->emailxml == 4))
-                                        $this->xmldata[] = array($row->id, $row->name, $row->title, $row->type, '');
+                                        $this->xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, '');
                                     if ($this->formrow->mb_emaillog == 2 && ($this->formrow->mb_emailxml == 1 ||
                                             $this->formrow->mb_emailxml == 2 || $this->formrow->mb_emailxml == 3 || $this->formrow->mb_emailxml == 4))
-                                        $this->mb_xmldata[] = array($row->id, $row->name, $row->title, $row->type, '');
+                                        $this->mb_xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, '');
                                 }
                                 // mail
                                 $paths = implode(nl(), $paths);
                                 $serverPaths = implode(nl(), $serverPaths);
                                 
                                 if($this->trim($paths)){
-                                    $this->sfadata[] = array($row->id, $row->name, $row->title, $row->type, $paths, $serverPaths);
+                                    $this->sfadata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $paths, $serverPaths);
                                 }
                                 
                                 if (($this->formrow->emaillog == 1 && $this->trim($paths)) ||
                                         $this->formrow->emaillog == 2)
-                                    $this->maildata[] = array($row->id, $row->name, $row->title, $row->type, $paths, $serverPaths);
+                                    $this->maildata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $paths, $serverPaths);
                             } // if
                             break;
                         case 'Text':
@@ -7367,7 +7365,7 @@ class HTML_facileFormsProcessor {
                                     // for db
                                     if (($this->formrow->dblog == 1 && $value != '') ||
                                             $this->formrow->dblog == 2 || ( $cbResult != null && $cbResult['record'] != null))
-                                        $this->savedata[] = array($row->id, $row->name, $row->title, $row->type, $value);
+                                        $this->savedata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $value);
 
                                     // CONTENTBUILDER
                                     $loadData = true;
@@ -7386,16 +7384,16 @@ class HTML_facileFormsProcessor {
                                     if ($loadData) {
                                         // submitdata
                                         if ($this->trim($value))
-                                            $this->submitdata[] = array($row->id, $row->name, $row->title, $row->type, $value);
+                                            $this->submitdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $value);
 
                                         if (($this->formrow->emaillog == 1 && $this->trim($value)) ||
                                                 $this->formrow->emaillog == 2 && ( ($this->formrow->emailxml == 1 ||
                                                 $this->formrow->emailxml == 2 || $this->formrow->emailxml == 3 || $this->formrow->emailxml == 4)))
-                                            $this->xmldata[] = array($row->id, $row->name, $row->title, $row->type, $value);
+                                            $this->xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $value);
                                         if (($this->formrow->mb_emaillog == 1 && $this->trim($value)) ||
                                                 $this->formrow->mb_emaillog == 2 && ( ($this->formrow->mb_emailxml == 1 ||
                                                 $this->formrow->mb_emailxml == 2 || $this->formrow->mb_emailxml == 3 || $this->formrow->mb_emailxml == 4)))
-                                            $this->mb_xmldata[] = array($row->id, $row->name, $row->title, $row->type, $value);
+                                            $this->mb_xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $value);
                                     }
                                 } // foreach
                                 // for mail
@@ -7441,12 +7439,12 @@ class HTML_facileFormsProcessor {
                                 }
                                 
                                 if($this->trim($sfvalues)){
-                                    $this->sfdata[] = array($row->id, $row->name, $row->title, $row->type, $sfvalues);
+                                    $this->sfdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $sfvalues);
                                 }
                                 
                                 if (($this->formrow->emaillog == 1 && $this->trim($values)) ||
                                         $this->formrow->emaillog == 2)
-                                    $this->maildata[] = array($row->id, $row->name, $row->title, $row->type, $values);
+                                    $this->maildata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $values);
                             } // if logging
                             break;
                         default:;
@@ -7526,16 +7524,7 @@ class HTML_facileFormsProcessor {
             }else
                 $this->isMobile = false;
             
-            // transforming recaptcha into captcha due to compatibility on mobiles
-            if($this->isMobile && trim($this->formrow->template_code_processed) == 'QuickMode'){
-                for ($i = 0; $i < $this->rowcount; $i++) {
-                    $row = $this->rows[$i];
-                    if( $row->type == "ReCaptcha" ){
-                        $this->rows[$i]->type = 'Captcha';
-                        break;
-                    }
-                }
-            }
+            
             
             for ($i = 0; $i < $this->rowcount; $i++) {
                 $row = $this->rows[$i];
@@ -8099,7 +8088,12 @@ class HTML_facileFormsProcessor {
         }
 
         if (!$paymentAction) {
-
+ 
+           if( defined('CRBCBF_INLINE') ){
+               
+                return;
+           }
+            
            if(!defined('VMBFCF_RUNNING')){
                 $ob = 0;
                 while (@ob_get_level() > 0 && $ob <= 32) {
@@ -8218,6 +8212,7 @@ class HTML_facileFormsProcessor {
 
                 echo '</body>
                       </html>';
+                
             }
         }
 
@@ -8229,10 +8224,8 @@ class HTML_facileFormsProcessor {
         if(!defined('VMBFCF_RUNNING')){
             exit;
         }
+        
     }
 
 // submit
 }
-
-// HTML_facileFormsProcessor
-?>

@@ -1,5 +1,6 @@
 /** See /media/breezingforms/themes-bootstrap/stasis/script.php for Google Font inclusion **/
-@import url(http://fonts.googleapis.com/css?family=Maven+Pro:500&subset=latin,greek,latin-ext,cyrillic);
+@import url(//fonts.googleapis.com/css?family=Maven+Pro:500&subset=latin,greek,latin-ext,cyrillic);
+
 .bfQuickMode .bfPage{
     background-color: #ffffff;
     padding: 10px;
@@ -261,10 +262,10 @@
 
 .bfQuickMode fieldset .bfLegendIcon{
     float: left;
-    padding-top: 20px;
+    padding-top: 0;
     background-color: #B5C8E0;
     width: 55px;
-    height: 35px;
+    height: 55px;
     color: #ffffff;
     font-size: 20px;
 }
@@ -579,6 +580,4 @@
     -moz-opacity:1.0;
     opacity: 1.0;
 }
-
-
 
