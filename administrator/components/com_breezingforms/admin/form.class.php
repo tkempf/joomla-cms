@@ -528,6 +528,7 @@ class facileFormsForm
 		$total = count($ids);
 		$row = new facileFormsForms($database);
 		$elem = new facileFormsElements($database);
+                
 		if (count($ids)) foreach ($ids as $id) {
 			$row->load(intval($id));
 			$row->id       = NULL;
@@ -548,7 +549,7 @@ class facileFormsForm
 			} // for
                         
                         // resetting easy and quickmode database ids
-                        JFactory::getDBO()->setQuery("Select template_areas, template_code_processed, template_code From #__facileforms_forms Where id = " . intval($row->$id));
+                        JFactory::getDBO()->setQuery("Select template_areas, template_code_processed, template_code From #__facileforms_forms Where id = " . intval($row->id));
                         $row_ = JFactory::getDBO()->loadObject();
                         
                         if (trim($row_->template_code) != '') {
@@ -568,17 +569,19 @@ class facileFormsForm
 
                             if ($row_->template_code_processed == 'QuickMode') {
                                 $dataObject = Zend_Json::decode(bf_b64dec($row_->template_code));
+                                $dataObject['properties']['name'] = 'copy_' . $dataObject['properties']['name'];
+                                $dataObject['properties']['title'] = 'Copy of ' . $dataObject['properties']['title'];
                                 resetQuickModeDbId($dataObject);
                                 $template_code = bf_b64enc(Zend_Json::encode($dataObject));
                             }
 
-                            JFactory::getDBO()->setQuery("Update #__facileforms_forms Set template_code = " . JFactory::getDBO()->Quote($template_code) . ", template_areas = " . JFactory::getDBO()->Quote($template_areas) . " Where id = " . intval($id));
+                            JFactory::getDBO()->setQuery("Update #__facileforms_forms Set template_code = " . JFactory::getDBO()->Quote($template_code) . ", template_areas = " . JFactory::getDBO()->Quote($template_areas) . " Where id = " . intval($row->id));
                             JFactory::getDBO()->query();
 
                             if ($row_ && $row_->template_code_processed == 'QuickMode') {
                                 $quickMode = new QuickMode();
                                 $quickMode->save(
-                                        $id, Zend_Json::decode(bf_b64dec($template_code))
+                                        $row->id, Zend_Json::decode(bf_b64dec($template_code))
                                 );
                             }
                         }

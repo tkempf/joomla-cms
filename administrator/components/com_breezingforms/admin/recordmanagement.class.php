@@ -603,10 +603,12 @@ class bfRecordManagement{
             };
 
             var bf_submitbutton = function(pressbutton){
+                
+                var form_selection = jQuery("#bfFormSelection").val();
+
                 switch (pressbutton) {
                     case "csvimport":
 
-                        var form_selection = jQuery("#bfFormSelection").val();
                         SqueezeBox.initialize({});               
 
                         SqueezeBox.loadModal = function(modalUrl,handler,x,y) {
@@ -828,7 +830,7 @@ class bfRecordManagement{
                                                             var the_title = detail_fields_raw[i]["title"];
                                                             var the_value = data.record["bfrecord_custom_"+the_name] !== null ? data.record["bfrecord_custom_"+the_name] : "";
                                                             
-                                                            out += "<td class=\"bfDetailsTableLabelCol\"><strong>"+jQuery("<div/>").text(the_title).html()+"</strong>";
+                                                            out += "<td class=\"bfDetailsTableLabelCol\"><strong>"+jQuery("<div/>").text(the_title).text()+"</strong>";
                                                             out += "<br /><small>'.addslashes(BFText::_('COM_BREEZINGFORMS_ELEMENT_NAME')).': "+the_name+"</small>";
                                                             out += "<br /><small>'.addslashes(BFText::_('COM_BREEZINGFORMS_RECORDS_ELEMENTID')).': "+data.record["bfrecord_custom_element_id_"+the_name]+"</small>";
                                                             out += "<br /><small>'.addslashes(BFText::_('COM_BREEZINGFORMS_RECORDS_TYPE')).': "+data.record["bfrecord_custom_element_type_"+the_name]+"</small></td>";
@@ -2421,9 +2423,9 @@ class bfRecordManagement{
                 $pdf->setPrintHeader(false);
 		$pdf->AddPage();
 		$pdf->writeHTML($c);
-		$pdfname = $ff_compath.'/exports/ffexport-pdf-'.$date_stamp.'.pdf';
+		$pdfname = 'ffexport-pdf-'.$date_stamp.'.pdf';
 		$pdf->lastPage();
-		$pdf->Output($pdfname, "FD");
+		$pdf->Output($pdfname, "D");
 		exit;
 	}
         
@@ -2458,23 +2460,69 @@ class bfRecordManagement{
 
 		$fields = array();
 		$lines = array();
+                $element_fields = array();
+                $updIds = array();
+                
                 if(isset($ids[0])){
                     $ids = implode(',', $ids);
                     $db->setQuery(
                             "select * from #__facileforms_records where id in ($ids) order by submitted Desc"
                     );
+                    $recs = $db->loadObjectList();
+                    
+                    $forms = array();
+                    foreach($recs As $rec){
+                        $forms[] = $rec->form;
+                    }
+                    
+                    $db->setQuery(
+                    "select Distinct * from #__facileforms_elements where form In (".implode(',',$forms).")  And published = 1 And `name` <> 'bfFakeName' And `name` <> 'bfFakeName2' And `name` <> 'bfFakeName3' And `name` <> 'bfFakeName4' And `name` <> 'bfFakeName5' order by ordering"
+                    );
+                    
+                    $element_fields = $db->loadObjectList();
+                    
                 }else if(JRequest::getInt('form_selection',0)){
                     $db->setQuery(
                             "select * from #__facileforms_records where form = ".$db->Quote(JRequest::getInt('form_selection',0))." order by submitted Desc"
                     );
+                    $recs = $db->loadObjectList();
+                    $db->setQuery(
+                        "select Distinct * from #__facileforms_elements where form = ".$db->Quote(JRequest::getInt('form_selection',0))." And published = 1 And `name` <> 'bfFakeName' And `name` <> 'bfFakeName2' And `name` <> 'bfFakeName3' And `name` <> 'bfFakeName4' And `name` <> 'bfFakeName5' order by ordering"
+                    );
+                    $element_fields = $db->loadObjectList();
                 }
                 else {
                     $db->setQuery(
                             "select * from #__facileforms_records order by submitted Desc"
                     );
+                    $recs = $db->loadObjectList();
+                    $db->setQuery(
+                        "select Distinct * from #__facileforms_elements Where published = 1 And `name` <> 'bfFakeName' And `name` <> 'bfFakeName2' And `name` <> 'bfFakeName3' And `name` <> 'bfFakeName4' And `name` <> 'bfFakeName5'"
+                    );
+                    $element_fields = $db->loadObjectList();
                 }
-                $updIds = array();
-		$recs = $db->loadObjectList();
+                
+		$fields['ID'] = true;
+                $fields['SUBMITTED'] = true;
+                $fields['USER_ID'] = true;
+                $fields['USERNAME'] = true;
+                $fields['USER_FULL_NAME'] = true;
+                $fields['TITLE'] = true;
+                $fields['IP'] = true;
+                $fields['BROWSER'] = true;
+                $fields['OPSYS'] = true;
+                $fields['TRANSACTION_ID'] = true;
+                $fields['DATE'] = true;
+                $fields['TEST_ACCOUNT'] = true;
+                $fields['DOWNLOAD_TRIES'] = true;
+                
+                foreach($element_fields As $element_field){
+                    
+                    if(!isset($fields[strip_tags($element_field->title)]))
+                    {
+                        $fields[strip_tags($element_field->title)] = true;
+                    }
+                }
                 
 		$recsSize = count($recs);
 		for($r = 0; $r < $recsSize; $r++) {
@@ -2497,20 +2545,6 @@ class bfRecordManagement{
                         
 			$lineNum = count($lines);
                         
-			$fields['ID'] = true;
-			$fields['SUBMITTED'] = true;
-			$fields['USER_ID'] = true;
-			$fields['USERNAME'] = true;
-			$fields['USER_FULL_NAME'] = true;
-			$fields['TITLE'] = true;
-			$fields['IP'] = true;
-			$fields['BROWSER'] = true;
-			$fields['OPSYS'] = true;
-			$fields['TRANSACTION_ID'] = true;
-			$fields['DATE'] = true;
-			$fields['TEST_ACCOUNT'] = true;
-			$fields['DOWNLOAD_TRIES'] = true;
-
                         $lines[$lineNum]['ID'][] = $rec->id;
 			$lines[$lineNum]['SUBMITTED'][] = $rec->submitted;
 			$lines[$lineNum]['USER_ID'][] = $rec->user_id;
@@ -2525,18 +2559,43 @@ class bfRecordManagement{
 			$lines[$lineNum]['TEST_ACCOUNT'][] = $rec->paypal_testaccount;
 			$lines[$lineNum]['DOWNLOAD_TRIES'][] = $rec->paypal_download_tries;
 
+                        foreach($fields As $fieldName => $null)
+                        {
+                            switch($fieldName){
+                                case 'ID': 
+                                case 'SUBMITTED':
+                                case 'USER_ID':
+                                case 'USERNAME':
+                                case 'USER_FULL_NAME':
+                                case 'TITLE':
+                                case 'IP': 
+                                case 'BROWSER':
+                                case 'OPSYS':
+                                case 'TRANSACTION_ID':
+                                case 'DATE':
+                                case 'TEST_ACCOUNT':
+                                case 'DOWNLOAD_TRIES':
+                                    break;
+                                default:
+                                    $lines[$lineNum][$fieldName] = array();
+                            }
+                            
+                        }
+                        
 			$rec = $recs[$r];
 			$db->setQuery(
-				"select Distinct * from #__facileforms_subrecords where record = $rec->id order by id"
+				"select Distinct s.* from #__facileforms_subrecords As s, #__facileforms_elements As e where e.id = s.element And s.record = $rec->id Order By e.ordering"
 			);
+                        
 			$subs = $db->loadObjectList();
+                        
 			$subsSize = count($subs);
 			for($s = 0; $s < $subsSize; $s++) {
 				$sub = $subs[$s];
 				if($sub->name != 'bfFakeName' && $sub->name != 'bfFakeName2' && $sub->name != 'bfFakeName3' && $sub->name != 'bfFakeName4'){
-					if(!isset($fields[$sub->name]))
+					if(!isset($fields[$sub->title]))
 					{
-						$fields[$sub->name] = true;
+						$fields[$sub->title] = true;
 					}
                                         if($sub->type == 'File Upload' && strpos(strtolower($sub->value), '{cbsite}') === 0){
                                             $out = '';
@@ -2555,7 +2614,7 @@ class bfRecordManagement{
                                             }
                                             $sub->value = $out;
                                         }
-					$lines[$lineNum][$sub->name][] = $sub->value;
+					$lines[$lineNum][$sub->title][] = $sub->value;
 				}
 			}
 		}
@@ -2577,13 +2636,14 @@ class bfRecordManagement{
 				}
 			}
 		}
-
+                
 		$head = substr($head,0,strlen($head)-1) . nl();
 
 		$out = '';
 		for($i = 0; $i < $lineLength;$i++)
 		{
 			foreach($lines[$i] As $fieldName => $line){
+                            
                             if($inverted == true){
                             	$out .= $csvquote.str_replace($csvquote,$csvquote.$csvquote,str_replace("\n",$cellnewline,str_replace("\r","",$fieldName))).$csvquote.$csvdelimiter;
                             }
@@ -2627,10 +2687,10 @@ class bfRecordManagement{
 		$csvname = JPATH_SITE.'/components/com_breezingforms/exports/ffexport-'.$date_stamp.'.csv';
 		JFile::makeSafe($csvname);
                 
-		if (!JFile::write($csvname,$headout = $head.$out)) {
-			echo "<script> alert('".addslashes(BFText::_('COM_BREEZINGFORMS_RECORDS_XMLNORWRTBL'))."'); window.history.go(-1);</script>\n";
-			exit();
-		} // if
+		//if (!JFile::write($csvname,$headout = $head.$out)) {
+		//	echo "<script> alert('".addslashes(BFText::_('COM_BREEZINGFORMS_RECORDS_XMLNORWRTBL'))."'); window.history.go(-1);</script>\n";
+		//	exit();
+		//} // if
 
                 if(isset($updIds[0])){
                     $updIds = implode(',', $updIds);
@@ -2651,7 +2711,7 @@ class bfRecordManagement{
 		*/
 		@ob_end_clean();
                 
-		$_size = filesize($csvname);
+		//$_size = filesize($csvname);
 		$_name = basename($csvname);
 		@ini_set("zlib.output_compression", "Off");
 
@@ -2667,7 +2727,7 @@ class bfRecordManagement{
 		//header("Accept-Ranges: bytes");
 		//header("Content-Length: $_size");
                 ob_start();
-		readfile($csvname);
+		echo $head.$out;
                 $c = ob_get_contents();
                 ob_end_clean();
                 if(function_exists('mb_convert_encoding')){
@@ -2810,10 +2870,10 @@ class bfRecordManagement{
 		$xml .= '</FacileFormsExport>'.nl();
 
 		//$xmlname = JFile::makeSafe($xmlname);
-		if (!JFile::write($xmlname,$xml)) {
-			echo "<script> alert('".addslashes(BFText::_('COM_BREEZINGFORMS_RECORDS_XMLNORWRTBL'))."'); window.history.go(-1);</script>\n";
-			exit();
-		} // if
+		//if (!JFile::write($xmlname,$xml)) {
+		//	echo "<script> alert('".addslashes(BFText::_('COM_BREEZINGFORMS_RECORDS_XMLNORWRTBL'))."'); window.history.go(-1);</script>\n";
+		//	exit();
+		//} // if
 
                 if(isset($updIds[0])){
                     $updIds = implode(',',$updIds);
@@ -2824,7 +2884,7 @@ class bfRecordManagement{
                 }
                 
                 @ob_end_clean();
-                $_size = filesize($xmlname);
+                //$_size = filesize($xmlname);
                 $_name = basename($xmlname);
                 @ini_set("zlib.output_compression", "Off");
                 header("Pragma: public");
@@ -2833,8 +2893,8 @@ class bfRecordManagement{
                 header("Content-Type: application/octet-stream");
                 header("Content-Disposition: attachment; filename=$_name");
                 header("Accept-Ranges: bytes");
-                header("Content-Length: $_size");
-                readfile($xmlname);
+                //header("Content-Length: $_size");
+                echo $xml;
                 exit;
 		
 

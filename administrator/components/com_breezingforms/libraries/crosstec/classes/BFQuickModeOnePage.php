@@ -528,6 +528,7 @@ display:none;
                             });
 
                             posting.done(function( data ) {
+                                JQuery("#bfSubmitMessage").css("visibility","hidden");
                                 JQuery("#bfSubmitMessage").css("display","none");
                                 if('.$has_last_page.'){
                                     ladda_button.ladda("stop");
@@ -1008,12 +1009,14 @@ display:none;
                 
 		$this->rootMdata = $this->dataObject['properties'];
                 
-                /* translatables */
-                if(isset($this->rootMdata['title_translation'.$this->language_tag]) && $this->rootMdata['title_translation'.$this->language_tag] != ''){
-                    $this->rootMdata['title'] = $this->rootMdata['title_translation'.$this->language_tag];
-                    JFactory::getDocument()->setTitle($this->rootMdata['title']);
+                if(JRequest::getVar('ff_applic','') != 'mod_facileforms' && JRequest::getVar('ff_applic','') != 'plg_facileforms'){
+                    /* translatables */
+                    if(isset($this->rootMdata['title_translation'.$this->language_tag]) && $this->rootMdata['title_translation'.$this->language_tag] != ''){
+                        $this->rootMdata['title'] = $this->rootMdata['title_translation'.$this->language_tag];
+                        JFactory::getDocument()->setTitle($this->rootMdata['title']);
+                    }
+                    /* translatables end */
                 }
-                /* translatables end */
                 
                 $this->fading = $this->rootMdata['fadeIn'];
 		$this->useErrorAlerts = $this->rootMdata['useErrorAlerts'];
@@ -1546,7 +1549,7 @@ display:none;
 							$lines = count($gEx);
                                                         echo '<div class="controls form-inline">';
                                                         echo $label;
-							echo '<select class="ff_elem chzn-done" '.$size.($mdata['multiple'] ? 'multiple="multiple" ' : '').$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'."\n";
+							echo '<select data-chosen="no-chzn" class="ff_elem chzn-done" '.$size.($mdata['multiple'] ? 'multiple="multiple" ' : '').$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'."\n";
 							for($i = 0; $i < $lines; $i++){
 								$iEx = explode(";", $gEx[$i]);
 								$iCnt = count($iEx);
@@ -2239,7 +2242,7 @@ display:none;
                                             $this->rootMdata['cancelLabel'] = $this->rootMdata['cancelLabel_translation'.$this->language_tag];
                                         }
                                         /* translatables end */
-					echo '<button type="button" class="bfCancelButton btn btn-secondary pull-right button'.$this->fadingClass.'" type="submit" onclick="ff_resetForm(this, \'click\');"  value="'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button class="bfCancelButton btn btn-secondary pull-right button'.$this->fadingClass.'" type="submit" onclick="ff_resetForm(this, \'click\');"  value="'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
 				
 				$callSubmit = 'bf_validate_submit(this, \'click\')';
@@ -2252,7 +2255,7 @@ display:none;
                                             $this->rootMdata['submitLabel'] = $this->rootMdata['submitLabel_translation'.$this->language_tag];
                                         }
                                         /* translatables end */
-					echo '<button data-style="zoom-in" type="button" id="bfSubmitButton" class="bfSubmitButton btn btn-primary pull-right button'.$this->fadingClass.'" type="submit" onclick="this.disabled=true;if(typeof bf_htmltextareainit != \'undefined\'){ bf_htmltextareainit() }if(document.getElementById(\'bfPaymentMethod\')){document.getElementById(\'bfPaymentMethod\').value=\'\';};'.$callSubmit.';" value="'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button data-style="zoom-in" type="button" id="bfSubmitButton" class="bfSubmitButton btn btn-primary pull-right button'.$this->fadingClass.'" onclick="this.disabled=true;if(typeof bf_htmltextareainit != \'undefined\'){ bf_htmltextareainit() }if(document.getElementById(\'bfPaymentMethod\')){document.getElementById(\'bfPaymentMethod\').value=\'\';};'.$callSubmit.';" value="'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
                                 
                                 echo '</div>';
@@ -2359,6 +2362,7 @@ display:none;
                         }
 			function bfDoFlashUpload(){
                                 JQuery("#bfSubmitMessage").css("visibility","hidden");
+                                JQuery("#bfSubmitMessage").css("display","none");
 				JQuery(".bfErrorMessage").html("");
                                 JQuery(".bfErrorMessage").css("display","none");
                                 for(var i = 0; i < bfUploaderErrorElements.length; i++){
@@ -2400,13 +2404,14 @@ display:none;
                                         if(bfFlashUploadersLength > 0){
                                             JQuery("#bfSubmitMessage").bfcenter(true);
                                             JQuery("#bfSubmitMessage").css("visibility","visible");
+                                            JQuery("#bfSubmitMessage").css("display","block");
                                         }
                                         
 				}
 			}
 			');
 			echo "<div style=\"visibility:hidden;\" id=\"bfFileQueue\"></div>";
-			echo "<div style=\"visibility:hidden;\" id=\"bfSubmitMessage\">".BFText::_('COM_BREEZINGFORMS_SUBMIT_MESSAGE')."</div>";
+			echo "<div style=\"visibility:hidden;display:none;\" id=\"bfSubmitMessage\">".BFText::_('COM_BREEZINGFORMS_SUBMIT_MESSAGE')."</div>";
 		}
 		echo '<noscript>Please turn on javascript to submit your data. Thank you!</noscript>'."\n";
                 echo '<script type="text/javascript">
