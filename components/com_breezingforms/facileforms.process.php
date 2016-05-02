@@ -5454,7 +5454,7 @@ class HTML_facileFormsProcessor {
                     foreach ($this->maildata as $DATA) {
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', strip_tags($DATA[_FF_DATA_TITLE]), $subject);
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', strip_tags($DATA[_FF_DATA_TITLE]), $subject);
-                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', $DATA[_FF_DATA_VALUE], $subject);
+                        $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', urldecode($DATA[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . '}', $DATA[_FF_DATA_VALUE], $subject);
                         $MAILDATA[] = $DATA;
                     }
@@ -5507,7 +5507,7 @@ class HTML_facileFormsProcessor {
                     foreach ($this->maildata as $data) {
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', strip_tags($data[_FF_DATA_TITLE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', strip_tags($data[_FF_DATA_TITLE]), $subject);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                         $body .= strip_tags($data[_FF_DATA_TITLE]) . ": " . $data[_FF_DATA_VALUE] . nl();
                     }
@@ -5604,13 +5604,13 @@ class HTML_facileFormsProcessor {
                 foreach ($this->maildata as $data) {
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', strip_tags($data[_FF_DATA_TITLE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', strip_tags($data[_FF_DATA_TITLE]), $subject);
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                     $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', strip_tags($data[_FF_DATA_TITLE]), $body);
                     if ($this->formrow->email_custom_html) {
-                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),$data[_FF_DATA_VALUE]), $body);
+                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),urldecode($data[_FF_DATA_VALUE])), $body);
                     } else {
-                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $body);
+                        $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $body);
                     }
                 }
             }
@@ -5918,7 +5918,7 @@ class HTML_facileFormsProcessor {
         $accept = JRequest::getVar('mailbackConnectWith', array());
         $sender = JRequest::getVar('mailbackSender', array());
         $attachToUserMail = JRequest::getVar('attachToUserMail', array());
-
+        $addfiles = array();
         $mailbackfiles = array();
         $recipients = array();
         for ($i = 0; $i < $this->rowcount; $i++) {
@@ -5984,11 +5984,22 @@ class HTML_facileFormsProcessor {
                             }
                         }
                     }
+                    else{
+                    	// Das Mailbackfilefeld enthaelt keine E-mailadresse sondern einen Pfad
+                    	// Diese Datei wird spaeter allen recipients angehaengt
+                    	if(isset($mb[$x]) && trim($mb[$x]) != '' && file_exists(trim($mb[$x])))
+                    		$addfiles[]=trim($mb[$x]);
+                    }	
                 }
             }
         }
 
         $recipientsSize = count($recipients);
+        foreach($recipients as $rec){
+	        foreach($addfiles as $adf){
+    		    $mailbackfiles[$rec][]=$adf;
+	        }
+        }
 
         $subject = BFText::_('COM_BREEZINGFORMS_PROCESS_FORMRECRECEIVED');
         if ($this->formrow->mb_custom_mail_subject != '') {
@@ -6101,8 +6112,20 @@ class HTML_facileFormsProcessor {
                             break;
                         }
                     }
+                    else{
+                    	// Das Mailbackfilefeld enthaelt keine E-mailadresse sondern einen Pfad
+                    	// Diese Datei wird spaeter allen recipients angehaengt
+                    	if(isset($mb[$x]) && trim($mb[$x]) != '' && file_exists(trim($mb[$x])))
+                    		$addfiles[]=trim($mb[$x]);
                 }
             }
+        }
+        }
+        $recipientsSize = count($recipients);
+        foreach($recipients as $rec){
+        	foreach($addfiles as $adf){
+        		$mailbackfiles[$rec][]=$adf;
+        	}
         }
         
         if ($this->formrow->mb_email_type == 0) {
@@ -6213,7 +6236,7 @@ class HTML_facileFormsProcessor {
                             $this->getFieldTranslated('label', $DATA[_FF_DATA_NAME], $trans_title);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]), $subject);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]), $subject);
-                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', $DATA[_FF_DATA_VALUE], $subject);
+                            $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . ':value}', urldecode($DATA[_FF_DATA_VALUE]), $subject);
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . '}', $DATA[_FF_DATA_VALUE], $subject);
                             $DATA[_FF_DATA_TITLE] = $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]);
                             $MAILDATA[] = $DATA;
@@ -6273,7 +6296,7 @@ class HTML_facileFormsProcessor {
                         $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $trans_title);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
-                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                        $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                         $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                         if (!in_array($data[_FF_DATA_NAME], $filter)) {
                             $body .= strip_tags($data[_FF_DATA_TITLE]) . ": " . $data[_FF_DATA_VALUE] . nl();
@@ -6378,14 +6401,14 @@ class HTML_facileFormsProcessor {
                     $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $trans_title);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':title}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $subject);
-                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $subject);
+                    $subject = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $subject);
                     $subject = str_replace('{' . $data[_FF_DATA_NAME] . '}', $data[_FF_DATA_VALUE], $subject);
                     if (!in_array($data[_FF_DATA_NAME], $filter)) {
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', $trans_title != '' ? $trans_title : strip_tags($data[_FF_DATA_TITLE]), $body);
                         if ($this->formrow->mb_email_custom_html) {
-                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),$data[_FF_DATA_VALUE]), $body);
+                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', str_replace(array("\n","\r"),array('<br/>',''),urldecode($data[_FF_DATA_VALUE])), $body);
                         } else {
-                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', $data[_FF_DATA_VALUE], $body);
+                            $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', urldecode($data[_FF_DATA_VALUE]), $body);
                         }
                     } else {
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', '', $body);
