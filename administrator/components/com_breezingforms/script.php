@@ -152,6 +152,19 @@ class com_breezingformsInstallerScript
                 $db->setQuery("INSERT INTO `#__menu` VALUES(1, '', 'Menu_Item_Root', 'root', '', '', '', '', 1, 0, 0, 0, 0, '0000-00-00 00:00:00', 0, 0, '', 0, '', 0, ( Select mlftrgt From (Select max(mlft.rgt)+1 As mlftrgt From #__menu As mlft) As tbone ), 0, '*', 0)");
                 $db->query();
             }
+            
+            $db->setQuery("Select update_site_id From #__update_sites Where `name` = 'BreezingForms Lite' And `type` = 'extension'");
+            $site_id = $db->loadResult();
+            
+            if( $site_id ){
+                
+                $db->setQuery("Delete From #__update_sites Where update_site_id = " . $db->quote($site_id));
+                $db->execute();
+                $db->setQuery("Delete From #__update_sites_extensions Where update_site_id = " . $db->quote($site_id));
+                $db->execute();
+                $db->setQuery("Delete From #__updates Where update_site_id = " . $db->quote($site_id));
+                $db->execute();
+            }
 	}
 }
 

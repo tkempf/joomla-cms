@@ -79,7 +79,7 @@ class HTML_facileFormsForm
 			if (error != '')
 				alert(error);
 			else{
-				submitform( pressbutton );	
+				submitform( pressbutton );
 			}
 		}; // submitbutton
 
@@ -366,7 +366,7 @@ class HTML_facileFormsForm
 			<tr>
 				<td></td>
 				<td width="100%">
-<?php           
+<?php
 		$tabs = new BFTabs(0);
 		$tabs->startPane('editPane');
 		$tabs->startTab(BFText::_('COM_BREEZINGFORMS_FORMS_SETTINGS'),'tab_settings');
@@ -395,7 +395,7 @@ class HTML_facileFormsForm
 				</td>
 				<td></td>
 			</tr>
-			
+
 			<tr>
 				<td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_FORMS_CLASSFOR'); ?> &lt;div&gt;</td>
 				<td valign="top">
@@ -481,7 +481,7 @@ if($row->template_code_processed == 'QuickMode' || $row->template_code != '' ){
                                         <i><?php echo BFText::_('COM_BREEZINGFORMS_AUTOHEIGHT_INFO'); ?></i>
 				</td>
 				<td></td>
-			</tr>  
+			</tr>
 <?php
 }
 ?>
@@ -516,7 +516,7 @@ if($row->template_code == ''){
 				</td>
 				<td></td>
 			</tr>
-			
+
 
                         <tr>
 				<td colspan="2" valign="top">
@@ -581,7 +581,7 @@ if($row->template_code == ''){
                     <td valign="top">
                         <label for="tags_content_template_selector"><?php echo BFText::_('COM_BREEZINGFORMS_TAG_CONTENT_TEMPLATE_CLICKTOADD'); ?></label>
                         <div style="height: 600px; width: 190px; overflow: auto;" id="tags_content_template_selector">
-                        <?php 
+                        <?php
                         jimport( 'joomla.html.editor' );
                         $editor = JFactory::getEditor();
                         echo bf_getFieldSelectorListHTML($row->id,$editor,'tags_content_template');?></td>
@@ -608,7 +608,7 @@ if($row->template_code == ''){
                         ?>
                         </fieldset>
                         <fieldset><legend><?php echo htmlentities(JText::_('COM_BREEZINGFORMS_CONTENT_DEFAULTS'), ENT_QUOTES, 'UTF-8');?></legend>
-                        
+
                         <label for="tags_content_default_category"><?php echo htmlentities(JText::_('COM_BREEZINGFORMS_CATEGORIES'), ENT_QUOTES, 'UTF-8');?></label>
                         <?php
                         $categories = facileFormsForm::getCategories();
@@ -675,7 +675,7 @@ if($row->template_code == ''){
                 <fieldset><legend><?php echo BFText::_('COM_BREEZINGFORMS_ADMIN_EMAILS'); ?></legend>
                 <table width="80%" cellpadding="4" cellspacing="1" border="0">
                 <tr>
-				
+
 				<td style="width: 200px;" valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_FORMS_EMAILNOTIFY'); ?></td>
 				<td valign="top">
 					<select style="width: 335px;" name="emailntf" size="1" onchange="dispemail(this.value);" class="inputbox">
@@ -721,7 +721,7 @@ if($row->template_code == ''){
 				<td></td>
 			</tr>
                         <tr>
-				
+
 				<td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_ALT_MAILFROM'); ?></td>
 				<td valign="top">
 					<input type="text" name="alt_mailfrom"  value="<?php echo $row->alt_mailfrom; ?>" size="50"  class="inputbox"/>
@@ -729,7 +729,7 @@ if($row->template_code == ''){
 				<td></td>
 			</tr>
                         <tr>
-				
+
 				<td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_ALT_FROMNAME'); ?></td>
 				<td valign="top">
 					<input type="text" name="alt_fromname"  value="<?php echo $row->alt_fromname; ?>" size="50"  class="inputbox"/>
@@ -737,7 +737,7 @@ if($row->template_code == ''){
 				<td></td>
 			</tr>
 			<tr>
-				
+
 				<td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_CUSTOM_MAIL_SUBJECT'); ?></td>
 				<td valign="top">
 					<input type="text" name="custom_mail_subject"  value="<?php echo $row->custom_mail_subject; ?>" size="50"  class="inputbox"/>
@@ -779,7 +779,7 @@ if($row->template_code == ''){
                 <table width="80%" cellpadding="4" cellspacing="1" border="0">
 			<tr>
                             <td style="width: 200px;" valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_FORMS_EMAILNOTIFY'); ?></td>
-				
+
 				<td valign="top">
 					<table cellpadding="4" cellspacing="1" border="0">
 						<tr id="bf_emaillogging"<?php if ($row->mb_emailntf==0) echo ' style="display:none;"'; ?>>
@@ -809,7 +809,7 @@ if($row->template_code == ''){
 				<td valign="top"></td>
 			</tr>
                         <tr>
-				
+
 				<td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_ALT_MAILFROM'); ?></td>
 				<td>
 					<input type="text" name="mb_alt_mailfrom"  value="<?php echo $row->mb_alt_mailfrom; ?>" size="50"  class="inputbox"/>
@@ -817,7 +817,7 @@ if($row->template_code == ''){
 				<td valign="top"></td>
 			</tr>
                         <tr>
-				
+
 				<td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_ALT_FROMNAME'); ?></td>
 				<td>
 					<input type="text" name="mb_alt_fromname"  value="<?php echo $row->mb_alt_fromname; ?>" size="50"  class="inputbox"/>
@@ -825,7 +825,7 @@ if($row->template_code == ''){
 				<td valign="top"></td>
 			</tr>
 			<tr>
-				
+
 				<td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_CUSTOM_MAIL_SUBJECT'); ?></td>
 				<td>
 					<input type="text" name="mb_custom_mail_subject"  value="<?php echo $row->mb_custom_mail_subject; ?>" size="50"  class="inputbox"/>
@@ -865,7 +865,7 @@ if($row->template_code == ''){
 <input type="hidden" name="prevmode" value="2"/>
 <input type="hidden" name="nonclassic" value="1"/>
 <input type="hidden" name="quickmode" value="<?php echo $row->template_code_processed == 'QuickMode' ? '1' : '0'?>"/>
-<?php			
+<?php
 		}
 
                 $tabs->endTab();
@@ -1307,7 +1307,7 @@ if($row->template_code == ''){
                     <?php
                     }
                     ?>
-                     
+
                     <tr>
                         <td style="width: 200px;" valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_SF_ENABLED'); ?></td>
                         <td valign="top">
@@ -1315,22 +1315,22 @@ if($row->template_code == ''){
                             <input type="hidden" name="salesforce_flag" id="salesforce_flag" value="0"/>
                         </td>
                     </tr>
-                     
+
                     <tr>
                         <td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_SF_TOKEN'); ?></td>
                         <td valign="top"><input type="text" name="salesforce_token"  value="<?php echo $row->salesforce_token; ?>" size="50"  class="inputbox"/></td>
                     </tr>
-                    
+
                     <tr>
                         <td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_SF_USERNAME'); ?></td>
                         <td valign="top"><input type="text" name="salesforce_username"  value="<?php echo $row->salesforce_username; ?>" size="50"  class="inputbox"/></td>
                     </tr>
-                    
+
                     <tr>
                         <td valign="top"><?php echo BFText::_('COM_BREEZINGFORMS_SF_PASSWORD'); ?></td>
                         <td valign="top"><input type="password" name="salesforce_password"  value="<?php echo $row->salesforce_password; ?>" size="50"  class="inputbox"/></td>
                     </tr>
-                    
+
                     <?php
                     if( count($row->salesforce_types) != 0 ){
                     ?>
@@ -1376,16 +1376,16 @@ if($row->template_code == ''){
                     <?php
                     }
                     ?>
-                    
+
                  </table>
                      </fieldset>
 <?php
                 $tabs->endTab();
 		$tabs->startTab('Dropbox®','tab_dropbox');
                 $failed = false;
-                
+
                 if (version_compare(phpversion(), '5.3.0', '>=')) {
-                
+
                 try{
                     jimport('joomla.filesystem.file');
                     require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
@@ -1394,17 +1394,17 @@ if($row->template_code == ''){
                     if(JFile::exists(JPATH_SITE.'/media/breezingforms/dropbox/config.json')){
                         $json_file = JPATH_SITE.'/media/breezingforms/dropbox/config.json';
                     }
-                    
+
                     // need to do it dynamically, otherwise php < 5.3 would throw an error (even on the condition above)
                     $space1 = "Dropbox\\AppInfo";
                     $space2 = "Dropbox\\WebAuthNoRedirect";
                     $appInfo = call_user_func($space1.'::loadFromJsonFile', $json_file);
                     $webAuth = new $space2($appInfo, "BreezingForms/1.8.5");
-                
+
                 } catch(Exception $e){
                     $failed = true;
                 }
-               
+
 ?>
                 <fieldset><legend>Dropbox®</legend>
                    <table width="80%" cellpadding="4" cellspacing="1" border="0">
@@ -1413,7 +1413,7 @@ if($row->template_code == ''){
                            <?php
                            try{
                             if(!$failed){
-                                
+
                              if( $row->dropbox_password == '' && $row->dropbox_email == ''){
                                  $authorizeUrl = $webAuth->start();
                                  echo "<h3>Dropbox uses a secure way to connect with other apps like BreezingForms, please follow the steps below to connect this form with Dropbox</h3><br/>";
@@ -1437,13 +1437,13 @@ if($row->template_code == ''){
                            ?>
                        </td>
                     </tr>
-                            
+
                     <tr<?php echo $row->dropbox_email == '' ? ' style="display:none;"' : ''; ?>>
                         <td style="width: 200px;" valign="top">Access Token</td>
                         <td valign="top"><input type="text" name="dropbox_email"  value="<?php echo $row->dropbox_email; ?>" size="50"  class="inputbox"/>
                             </td>
                     </tr>
-                    
+
                     <tr<?php echo $row->dropbox_email != '' ? ' style="display:none;"' : ''; ?>>
                         <td valign="top">Authentication Code</td>
                         <td valign="top"><input type="text" name="dropbox_password"  value="<?php echo $row->dropbox_password; ?>" size="50"  class="inputbox"/></td>
@@ -1458,17 +1458,17 @@ if($row->template_code == ''){
                     <?php
                     }
                     ?>
-                    
+
                     <tr>
                         <td valign="top">Folder (leave empty for form name)</td>
                         <td valign="top"><input type="text" name="dropbox_folder" value="<?php echo $row->dropbox_folder; ?>" size="50"  class="inputbox"/></td>
                     </tr>
-                    
+
                     <tr>
                         <td valign="top">Upload Submission</td>
                         <td valign="top"><input type="checkbox" name="dropbox_submission_enabled"  value="1" size="50"  class="inputbox"<?php echo $row->dropbox_submission_enabled == 1 ? ' checked="checked"' : ''; ?>/></td>
                     </tr>
-                    
+
                     <tr>
                         <td valign="top">Submission Types</td>
                         <td valign="top">
@@ -1477,7 +1477,7 @@ if($row->template_code == ''){
                             <input type="checkbox" name="dropbox_submission_types[]"  value="xml" size="50"  class="inputbox"<?php echo in_array('xml', $row->dropbox_submission_types) ? ' checked="checked"' : ''; ?>/> <label>XML</label>
                         </td>
                     </tr>
-                    
+
                 </table>
                 </fieldset>
 <?php
@@ -1485,25 +1485,25 @@ if($row->template_code == ''){
                 }else{
                     echo 'Your PHP Version does not support Dropbox. Please upgrade to at least PHP 5.3. You need to do it anyway, earlier versions are not secure any more!';
                 }
-                
+
 		$tabs->endTab();
                 
                 // calling addon plugins
-                
+
                 JPluginHelper::importPlugin('breezingforms_addons');
                 $dispatcher = JDispatcher::getInstance();
                 $addons = $dispatcher->trigger('onPropertiesDisplay', array(JRequest::getInt('form', 0), $tabs));
                 foreach($addons As $addon){
                     echo $addon;
                 }
-                
+
 		$tabs->endPane();
 ?>
 				</td>
 				<td></td>
 			</tr>
 		</table>
-                    
+
 		<input type="hidden" name="id" value="<?php echo $row->id; ?>" />
 		<input type="hidden" name="pkg" value="<?php echo $pkg; ?>" />
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
@@ -1512,7 +1512,7 @@ if($row->template_code == ''){
 		<input type="hidden" name="pages" value="<?php echo $row->pages; ?>" />
 		<input type="hidden" name="caller_url" value="<?php echo htmlspecialchars($caller, ENT_QUOTES); ?>" />
 		</form>
-                
+
                 <div style="float: right;">
                 <input class="btn btn-primary" onclick="submitbutton('save');" type="submit" value="<?php echo htmlentities(BFText::_('COM_BREEZINGFORMS_TOOLBAR_SAVE'), ENT_QUOTES, 'UTF-8'); ?>"/>
                 &nbsp;&nbsp;
@@ -1641,8 +1641,8 @@ if($row->template_code == ''){
 ?>
 				<tr class="row<?php echo $k; ?>">
 					<td nowrap valign="top" align="center"><input type="checkbox" id="cb<?php echo $i; ?>" name="ids[]" value="<?php echo $row->id; ?>" onclick="<?php jimport('joomla.version'); $version = new JVersion(); echo version_compare($version->getShortVersion(), '3.0', '>=') ? 'Joomla.isChecked(this.checked);' : 'isChecked(this.checked);' ;?>" /></td>
-					
-					<?php 
+
+					<?php
 					if($row->template_code_processed != '' && $row->template_code_processed != 'QuickMode'){
 					?>
 					<td valign="top" align="left"><a href="index.php?option=com_breezingforms&amp;format=html&amp;act=easymode&amp;formName=<?php echo $row->name?>&amp;form=<?php echo $row->id; ?>"><?php echo $row->title; ?></a></td>
@@ -1654,14 +1654,14 @@ if($row->template_code == ''){
 					<td valign="top" align="left"><a href="#editpage1" onclick="return listItemTask('cb<?php echo $i; ?>','editpage1')"><?php echo $row->title; ?></a></td>
 					<td valign="top" align="left"><a href="#editform" onclick="return listItemTask('cb<?php echo $i; ?>','edit')"><?php echo $row->name; ?></a></td>
 					<?php } ?>
-					
+
 					<td nowrap valign="top" align="left"><?php
 					for ($p = 1; $p <= $row->pages; $p++) {
 						if ($p > 1) echo '&nbsp;';
 						if($row->template_code_processed == '' && $row->template_code_processed != 'QuickMode'){
 						?><a href="#editpage<?php echo $p; ?>" onclick="return listItemTask('cb<?php echo $i; ?>','editpage<?php echo $p; ?>')"><?php echo $p; ?></a><?php
 						}else if($row->template_code_processed == 'QuickMode'){
-						?><a href="index.php?option=com_breezingforms&amp;format=html&amp;act=quickmode&amp;formName=<?php echo $row->name?>&amp;form=<?php echo $row->id; ?>&amp;page=<?php echo $p; ?>"><?php echo $p; ?></a><?php	
+						?><a href="index.php?option=com_breezingforms&amp;format=html&amp;act=quickmode&amp;formName=<?php echo $row->name?>&amp;form=<?php echo $row->id; ?>&amp;page=<?php echo $p; ?>"><?php echo $p; ?></a><?php
 						} else {?>
 						<a href="index.php?option=com_breezingforms&amp;format=html&amp;act=easymode&amp;formName=<?php echo $row->name?>&amp;form=<?php echo $row->id; ?>&amp;page=<?php echo $p; ?>"><?php echo $p; ?></a>
 						<?php
@@ -1707,12 +1707,12 @@ if($row->template_code == ''){
 <?php
 				$k = 1 - $k;
 			} // for
-                        
+
                $limit = JFactory::getApplication()->getUserStateFromRequest('global.list.limit', 'limit', JFactory::getApplication()->getCfg('list_limit'), 'int');
                $pagination = facileFormsForm::getPagination($total, $limit, JRequest::getInt('limitstart',0));
                $pages_links = $pagination->getPagesLinks();
 ?>
-                                
+
                 <tfoot>
                         <tr>
                             <td colspan="1000" valign="middle" align="center">
@@ -1725,14 +1725,14 @@ if($row->template_code == ''){
                                     <br />
                                     <?php echo $pagination->getPagesCounter(); ?>
                                     <br />
-                                    <?php echo BFText::_('COM_BREEZINGFORMS_AMOUNT');?>: <?php echo $total;?> 
+                                    <?php echo BFText::_('COM_BREEZINGFORMS_AMOUNT');?>: <?php echo $total;?>
                                 </div>
                             </td>
                         </tr>
                 </tfoot>
 
 		</table>
-                    
+
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
 		<input type="hidden" name="act" value="manageforms" />

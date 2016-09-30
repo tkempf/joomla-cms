@@ -411,7 +411,7 @@ class BFQuickModeMobile{
 				}
 				
 				$readonly = '';
-				if($mdata['readonly']){
+				if(isset($mdata['readonly']) && $mdata['readonly']){
 					$readonly = 'readonly="readonly" ';
 				}
 				
@@ -693,6 +693,9 @@ class BFQuickModeMobile{
                                                                                     if(typeof files[i].size != 'undefined'){
                                                                                         fsize = '(' + plupload.formatSize(files[i].size) + ') ';
                                                                                     }
+                                                                                    if(typeof bfUploadFileAdded == 'function'){
+                                                                                        bfUploadFileAdded(files[i]);
+                                                                                    }
                                                                                     JQuery('#bfFileQueue').append( '<div id=\"' + files[i].id + 'queue\">' + (iOS ? '' : files[i].name) + ' '+fsize+'<b></b></div>' );
                                                                                 }
                                                                         }
@@ -903,7 +906,13 @@ class BFQuickModeMobile{
                                                       });
                                                     };
                                                     JQuery(document).ready(function(){
-                                                        JQuery.getScript("'.$http.'://www.google.com/recaptcha/api.js?onload=onloadBFNewRecaptchaCallback&render=explicit");
+                                                        var rc_loaded = JQuery("script").filter(function () {
+														    return ((typeof JQuery(this).attr("src") != "undefined" && JQuery(this).attr("src").indexOf("recaptcha\/api.js") > 0) ? true : false);
+														}).length;
+														
+														if (rc_loaded === 0) {
+															JQuery.getScript("'.$http.'://www.google.com/recaptcha/api.js?onload=onloadBFNewRecaptchaCallback&render=explicit");
+														}
                                                     });
                                                     -->
                                                   </script>';
@@ -1090,7 +1099,7 @@ class BFQuickModeMobile{
                                                 JQuery(document).ready(function () {
                                                     JQuery("#ff_elem'.$mdata['dbId'].'_calendarButton").pickadate({
                                                         format: "'.$mdata['format'].'", 
-                                                        selectYears: true, 
+                                                        selectYears: 60, 
                                                         selectMonths: true,
                                                         editable: true,
                                                         firstDay: 1,
@@ -1104,7 +1113,76 @@ class BFQuickModeMobile{
                                                 
                                                 $this->hasResponsiveDatePicker = true;
                                                 
-						break;	
+						break;
+
+					case 'bfSignature':
+
+						JFactory::getDocument()->addScript(Juri::root(true).'/components/com_breezingforms/libraries/js/signature.js');
+						JFactory::getDocument()->addScriptDeclaration('
+						var bf_signaturePad' . $mdata['dbId'] . ' = null;
+						var bf_canvas' . $mdata['dbId'] . ' = null;
+						
+						function bf_resizeCanvas' . $mdata['dbId'] . 'Func() {
+						    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+						    bf_canvas' . $mdata['dbId'] . '.width = bf_canvas' . $mdata['dbId'] . '.offsetWidth * ratio;
+						    bf_canvas' . $mdata['dbId'] . '.height = bf_canvas' . $mdata['dbId'] . '.offsetHeight * ratio;
+						    bf_canvas' . $mdata['dbId'] . '.getContext("2d").scale(ratio, ratio);
+						}
+						
+						function bf_Signature' . $mdata['dbId'] . 'Reset(sig) {
+							sig.clear();
+							jQuery("#ff_elem' . $mdata['dbId'] . '").val("");
+						}
+						
+						jQuery(document).ready(function(){
+							bf_canvas' . $mdata['dbId'] . ' = document.querySelector("#bfSignature' . $mdata['dbId'] . ' canvas");
+							
+							jQuery(window).on("resize", bf_resizeCanvas' . $mdata['dbId'] . 'Func);
+							bf_resizeCanvas' . $mdata['dbId'] . 'Func();
+							
+							bf_signaturePad' . $mdata['dbId'] . ' = new SignaturePad(bf_canvas' . $mdata['dbId'] . ', {
+							    backgroundColor: "rgb(255,255,255)",
+							    penColor: "rgb(0,0,0)",
+							    onEnd: function(){
+							        var data = bf_signaturePad' . $mdata['dbId'] . '.toDataURL();
+							        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data);
+							    }
+							});
+							
+						});
+						');
+
+						echo '<div class="bfSignature" id="bfSignature' . $mdata['dbId'] . '"><div class="bfSignatureCanvasBorder"><canvas></canvas></div>'."\n";
+						echo '<button onclick="bf_Signature' . $mdata['dbId'] . 'Reset(bf_signaturePad' . $mdata['dbId'] . ');" class="bfSignatureResetButton button btn btn-primary"><span>'.JText::_('COM_BREEZINGFORMS_SIGNATURE_RESET_BUTTON').'</span></button>'."\n";
+						echo '</div>';
+						echo '<input class="ff_elem" type="hidden" name="ff_nm_' . $mdata['bfName'] . '[]" value="" id="ff_elem' . $mdata['dbId'] . '"/>' . "\n";
+
+						break;
+
+					case 'bfStripe':
+
+						/* translatables */
+						if(isset($mdata['image_translation'.$this->language_tag]) && $mdata['image_translation'.$this->language_tag] != ''){
+							$mdata['image'] = $mdata['image_translation'.$this->language_tag];
+						}
+						/* translatables end */
+
+						$value = '';
+						$type = 'submit';
+						$src = '';
+						if($mdata['image'] != ''){
+							$type = 'image';
+							$src = 'src="'.$mdata['image'].'" ';
+						}else{
+							$value = 'value="Stripe" ';
+						}
+						if($mdata['actionClick'] == 1){
+							$onclick = 'onclick="document.getElementById(\'bfPaymentMethod\').value=\'Stripe\';'.$mdata['actionFunctionName'] . '(this,\'click\');" ';
+						} else {
+							$onclick = 'onclick="document.getElementById(\'bfPaymentMethod\').value=\'Stripe\';" ';
+						}
+						echo '<div align="center"><input data-role="none" class="ff_elem" '.$value.$src.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'"/></div>'."\n";
+						break;
 						
 					case 'bfPayPal':
 						
@@ -1347,6 +1425,7 @@ class BFQuickModeMobile{
                         }
 			function bfDoFlashUpload(){
                                 JQuery("#bfSubmitMessage").css("visibility","hidden");
+                                JQuery("#bfSubmitMessage").css("z-index","999999");
 				JQuery(".bfErrorMessage").html("");
                                 JQuery(".bfErrorMessage").css("display","none");
                                 for(var i = 0; i < bfUploaderErrorElements.length; i++){
@@ -1387,6 +1466,7 @@ class BFQuickModeMobile{
                                         if(bfFlashUploadersLength > 0){
                                             JQuery("#bfSubmitMessage").bfcenter(true);
                                             JQuery("#bfSubmitMessage").css("visibility","visible");
+                                            JQuery("#bfSubmitMessage").css("z-index","999999");
                                         }
                                         
 				}
