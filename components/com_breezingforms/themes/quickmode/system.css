@@ -7,6 +7,25 @@
 
 /* ##### General BreezingForms Default styles ##### */
 
+.bfQuickMode .bfSignature{
+    width: 45%;
+    display: inline-block;
+
+}
+
+.bfQuickMode .bfSignature canvas{
+    width: 100%;
+    height: 200px;
+}
+
+.bfQuickMode .bfSignatureCanvasBorder{
+    width: 100%;
+    height: 200px;
+    border: 5px solid #F0F0FF;
+    border: 5px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 5px;
+}
+
 .bfCalendarResponsiveContainer .picker__button--today,
 .bfCalendarResponsiveContainer .picker__button--clear{
     color: black !important;
@@ -594,7 +613,14 @@
 	float: none;
         display: block;
     }
-    
+
+    .bfQuickMode .bfSignature{
+        width: 90%;
+        max-width: 90%;
+        min-width: 90%;
+    }
+
+
     .bfQuickMode input[type=text], 
     .bfQuickMode textarea,  
     .bfQuickMode .uneditable-input,

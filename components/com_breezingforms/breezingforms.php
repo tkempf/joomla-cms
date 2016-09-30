@@ -16,8 +16,6 @@
  **/
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
-@error_reporting(E_ALL ^ E_DEPRECATED);
-
 if(!defined('DS')){
     define('DS', DIRECTORY_SEPARATOR);
 }
@@ -128,10 +126,12 @@ if(
 	!JRequest::getBool('showSecImage') &&
 	!JRequest::getBool('bfCaptcha') &&
         !JRequest::getBool('bfReCaptcha') &&
-	!JRequest::getBool('checkCaptcha') && 
+	!JRequest::getBool('checkCaptcha') &&
+	!JRequest::getBool('confirmStripe')  &&
 	!JRequest::getBool('confirmPayPal')  &&
         !JRequest::getBool('confirmPayPalIpn')  &&
 	!JRequest::getBool('paypalDownload') &&
+	!JRequest::getBool('stripeDownload') &&
 	!JRequest::getBool('showPayPalConnectMsg') &&
 	!JRequest::getBool('successSofortueberweisung') &&
 	!JRequest::getBool('confirmSofortueberweisung') &&
@@ -812,6 +812,7 @@ if(
 					curl_setopt($ch,CURLOPT_URL, $paypal.'/cgi-bin/webscr');
 					curl_setopt($ch,CURLOPT_POST,1);
 					curl_setopt($ch,CURLOPT_POSTFIELDS,$req);
+                                        curl_setopt($ch, CURLOPT_SSLVERSION, 6); //6 is for TLSV1.2
 
 					ob_start();
 					curl_exec($ch);
@@ -923,6 +924,249 @@ if(
 		}
 	}
 
+} else if(JRequest::getBool('confirmStripe') && ( !isset($ff_applic) || $ff_applic == '' ) ){
+
+	JRequest::setVar('format', 'html');
+
+	require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
+	require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
+
+	$db->setQuery( "Select * From #__facileforms_forms Where id = " . $db->Quote( JRequest::getInt('form_id',-1) ) );
+	$list = $db->loadObjectList();
+
+	if(count($list) == 0){
+		BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_FORM_DOES_NOT_EXIST'));
+		exit;
+	}
+
+	$form = $list[0];
+
+	$areas = Zend_Json::decode($form->template_areas);
+
+	if(!is_array($areas)){
+		BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_COULD_NOT_FIND_STRIPE_DATA'));
+		exit;
+	}
+
+	$tx_token  = JRequest::getVar('token');
+	$record_id = JRequest::getInt('record_id');
+
+	foreach($areas As $area) {
+
+		foreach ( $area['elements'] As $element ) {
+
+			if ( $element['internalType'] == 'bfStripe' ) {
+
+				$options = $element['options'];
+
+				require_once JPATH_SITE . '/administrator/components/com_breezingforms/libraries/stripe/vendor/autoload.php';
+
+				\Stripe\Stripe::setApiKey($options['secretKey']);
+
+				// Create the charge on Stripe's servers - this will charge the user's card
+				try {
+
+
+					$db->setQuery("
+									Select paypal_tx_id From 
+										#__facileforms_records 
+									Where 
+										id = '".$record_id."'
+									And
+										paypal_tx_id like 'Stripe:%'
+									");
+
+					$exists = $db->loadResult();
+
+					if(!$exists) {
+
+						if( JFactory::getSession()->get('bf_stripe_last_payment_amount'.$record_id, null) == null ){
+
+							BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_COULD_NOT_FIND_STRIPE_AMOUNT'));
+							exit;
+						}
+
+						$charge = \Stripe\Charge::create( array(
+							"amount"      => JFactory::getSession()->get( 'bf_stripe_last_payment_amount' . $record_id, null ),
+							// amount in cents, again
+							"currency"    => strtolower( $options['currencyCode'] ),
+							"source"      => $tx_token,
+							"description" => $options['itemname'],
+							"metadata"    => array()
+							//,"metadata" => array("Order ID" => $_session_cart['order_id'])
+						) );
+
+						JFactory::getSession()->clear('bf_stripe_last_payment_amount'.$record_id);
+					}
+					else
+						{
+
+						$exploded = explode(':', $exists);
+						$charge = \Stripe\Charge::retrieve(trim($exploded[1]));
+
+					}
+
+					$tx_token = $charge->id;
+
+					if(!$charge->paid){
+
+						$msg = JText::_("COM_BREEZINGFORMS_STRIPE_DECLINED");
+						require_once(JPATH_SITE . '/media/breezingforms/downloadtpl/error.php');
+					}
+					else
+					{
+
+						$db->setQuery( "
+										Update 
+											#__facileforms_records 
+										Set 
+											paypal_tx_id = " . $db->Quote( 'Stripe: ' . strip_tags( $tx_token ) ) . ", 
+											paypal_payment_date = " . $db->Quote( date( 'Y-m-d H:i:s', $charge->created ) ) . ",
+											paypal_testaccount = " . $db->Quote( !$charge->livemode ? 1 : 0 ) . ",
+											paypal_download_tries = 0
+										Where 
+											id = '" . JRequest::getInt( 'record_id', - 1 ) . "'
+											" );
+
+						$db->execute();
+
+						// trigger a script after succeeded payment?
+						if ( JFile::exists( JPATH_SITE . '/bf_paypal_success.php' ) ) {
+							require_once( JPATH_SITE . '/bf_paypal_success.php' );
+						}
+
+						// send mail after succeeded payment?
+						if ( isset( $options['sendNotificationAfterPayment'] ) && $options['sendNotificationAfterPayment'] ) {
+							bf_sendNotificationByPaymentCache( JRequest::getInt( 'form_id', - 1 ), JRequest::getInt( 'record_id', - 1 ), 'admin' );
+							bf_sendNotificationByPaymentCache( JRequest::getInt( 'form_id', - 1 ), JRequest::getInt( 'record_id', - 1 ), 'mailback' );
+						}
+
+						if($options['downloadableFile']){
+
+							$record_id = JRequest::getInt('record_id', -1);
+							$tries     = $options['downloadTries'];
+							$form_id   = JRequest::getInt('form_id',-1);
+							require_once(JPATH_SITE . '/media/breezingforms/downloadtpl/stripe_download.php');
+
+						} else {
+
+							if($options['thankYouPage'] != ''){
+								BFRedirect($options['thankYouPage']);
+							} else {
+								BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_THANK_YOU_FOR_PAYING_WITH_STRIPE'));
+							}
+						}
+
+					}
+
+				} catch(\Stripe\Error\Card $e) {
+
+					$msg = JText::_("COM_BREEZINGFORMS_STRIPE_DECLINED");
+					require_once(JPATH_SITE . '/media/breezingforms/downloadtpl/error.php');
+				}
+
+				break;
+
+			}
+		}
+	}
+
+}else if(JRequest::getBool('stripeDownload')  && ( !isset($ff_applic) || $ff_applic == '' ) ){
+
+	JRequest::setVar('format', 'raw');
+
+	require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
+	require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
+
+	$db->setQuery( "Select * From #__facileforms_forms Where id = " . $db->Quote( JRequest::getInt('form',-1) ) );
+	$list = $db->loadObjectList();
+	if(count($list) == 0){
+		BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_FORM_DOES_NOT_EXIST'));
+		exit;
+	}
+
+	$form = $list[0];
+
+	$areas = Zend_Json::decode($form->template_areas);
+	if(!is_array($areas)){
+		BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_COULD_NOT_FIND_PAYMENT_DATA'));
+	}
+
+	foreach($areas As $area){
+		foreach($area['elements'] As $element){
+			if($element['internalType'] == 'bfStripe'){
+
+				$options = $element['options'];
+
+				if($options['downloadableFile']){
+
+					$file = $options['filepath'];
+
+					$db->setQuery("
+									Select paypal_download_tries From 
+										#__facileforms_records 
+									Where 
+										id = '".JRequest::getInt('record_id', -1)."'
+									And
+										paypal_tx_id = ".$db->Quote('Stripe: ' . JRequest::getVar('token',''))."
+									");
+
+					$downloads = $db->loadObjectList();
+
+					if(count($downloads) == 1){
+
+						if($downloads[0]->paypal_download_tries < $options['downloadTries']){
+
+							$db->setQuery("
+											Update 
+												#__facileforms_records 
+											Set
+												paypal_download_tries = paypal_download_tries + 1 
+											Where 
+												id = '".JRequest::getInt('record_id', -1)."'
+											And
+												paypal_tx_id = ".$db->Quote('Stripe: ' . JRequest::getVar('token',''))."
+											");
+
+							$db->query();
+
+							if(!file_exists($file)) {
+								BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_COULD_NOT_FIND_DOWNLOAD_FILE'));
+							}
+
+							header('Content-Description: File Transfer');
+							header('Content-Type: application/octet-stream');
+							header('Content-Disposition: attachment; filename='.basename($file));
+							header('Content-Transfer-Encoding: binary');
+							header('Expires: 0');
+							header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+							header('Pragma: public');
+							header('Content-Length: ' . filesize($file));
+							ob_clean();
+							flush();
+							readfile($file) or die("Error reading the file ".$file);
+							exit;
+
+						} else {
+
+							BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_MAX_DOWNLOAD_TRIES_REACHED'));
+						}
+
+					} else {
+
+						BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_DOWNLOAD_NOT_POSSIBLE'));
+					}
+
+				} else {
+
+					BFRedirect(JURI::root(), BFText::_('COM_BREEZINGFORMS_NO_DOWNLOADABLE_PRODUCT'));
+				}
+
+				break;
+			}
+		}
+	}
+
 } else if(JRequest::getBool('confirmPayPal') && ( !isset($ff_applic) || $ff_applic == '' ) ){
 	
 	JRequest::setVar('format', 'html');
@@ -981,6 +1225,7 @@ if(
 					curl_setopt($ch,CURLOPT_URL, $paypal.'/cgi-bin/webscr');
 					curl_setopt($ch,CURLOPT_POST,1);
 					curl_setopt($ch,CURLOPT_POSTFIELDS,$req);
+                                        curl_setopt($ch, CURLOPT_SSLVERSION, 6); //6 is for TLSV1.2
 
 					ob_start();
 					curl_exec($ch);
@@ -1619,9 +1864,9 @@ if(
                                     $secureTicket = md5( strtotime('now') .  mt_rand( 0, mt_getrandmax() ) );
                                     JFactory::getSession()->set('secure_ticket', $secureTicket, 'com_breezingforms');
                                 }
-                                $allowed = "/[^a-z0-9\\.\\-\\_]/i";
-                                $targetFile = str_replace('//','/',$targetPath). 'chunks' . DS . JRequest::getInt('offset',0) . '_' . preg_replace($allowed,"_",JRequest::getVar('name','unknown')) . '_' . JRequest::getVar('itemName','') . '_' . JRequest::getVar('bfFlashUploadTicket') . '_' . $secureTicket . '_chunktmp';
-				$finaltargetFile = str_replace('//','/',$targetPath) . preg_replace($allowed,"_",JRequest::getVar('name','unknown')) . '_' . JRequest::getVar('itemName','') . '_' . JRequest::getVar('bfFlashUploadTicket') . '_' . $secureTicket . '_flashtmp';
+                                
+                                $targetFile = str_replace('//','/',$targetPath). 'chunks' . DS . JRequest::getInt('offset',0) . '_' . bf_sanitizeFilename(JRequest::getVar('name','unknown')) . '_' . JRequest::getVar('itemName','') . '_' . JRequest::getVar('bfFlashUploadTicket') . '_' . $secureTicket . '_chunktmp';
+				$finaltargetFile = str_replace('//','/',$targetPath) . bf_sanitizeFilename(JRequest::getVar('name','unknown')) . '_' . JRequest::getVar('itemName','') . '_' . JRequest::getVar('bfFlashUploadTicket') . '_' . $secureTicket . '_flashtmp';
                                 if(@JFile::upload($tempFile,$targetFile)){
                                         $chunky = @JFile::read($targetFile);
                                         // ok, here we try native PHP file operation 

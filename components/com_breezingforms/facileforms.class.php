@@ -10,7 +10,7 @@ defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
 global $ff_version, $ff_resnames, $ff_request, $ff_target;
 
-$ff_version = '1.8.7 Stable (build 881)';
+$ff_version = '1.8.7 Stable (build 895)';
 $ff_target  = 0;
 
 $ff_resnames = array(
@@ -221,7 +221,7 @@ class facileFormsConf {
         
         var $enable_classic = 0;
 
-	function facileFormsConf()
+	function __construct()
 	{
 		$this->load();
 	} // constructor
@@ -347,7 +347,7 @@ class facileFormsMenus extends JTable {
 	var $border         = 0;        // show a border
 	var $params         = null;     // additional parameters
 
-	function facileFormsMenus(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_compmenus', 'id', $db);
 	} // constructor
@@ -458,7 +458,7 @@ class facileFormsForms extends JTable {
         var $dropbox_submission_enabled = 0;
         var $dropbox_submission_types = 'pdf';
         
-	function facileFormsForms(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_forms', 'id', $db);
 	} // constructor
@@ -559,7 +559,7 @@ Query List Settings: border / cellspacing / cellpadding / <tr(h)>class / <tr(1)>
 	var $mailback       = null;
 	var $mailbackfile       = null;
 	
-	function facileFormsElements(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_elements', 'id', $db);
 	} // constructor
@@ -593,7 +593,7 @@ class facileFormsScripts extends JTable {
 	var $type           = null;     // type name
 	var $code           = null;     // the code
 
-	function facileFormsScripts(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_scripts', 'id', $db);
 	} // constructor
@@ -627,7 +627,7 @@ class facileFormsPieces extends JTable {
 	var $type           = null;     // type name
 	var $code           = null;     // the code
 
-	function facileFormsPieces(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_pieces', 'id', $db);
 	} // constructor
@@ -669,7 +669,7 @@ class facileFormsRecords extends JTable {
 	var $paypal_testaccount = null;
 	var $paypal_download_tries = null;
 	
-	function facileFormsRecords(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_records', 'id', $db);
 	} // constructor
@@ -701,7 +701,7 @@ class facileFormsSubrecords extends JTable {
 	var $type           = null;     // data type
 	var $value          = null;     // data value
 
-	function facileFormsSubrecords(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_subrecords', 'id', $db);
 	} // constructor
@@ -738,7 +738,7 @@ class facileFormsQuerycols {
 	var $value          = null;     // value field (php allowed)
 	var $comp           = null;     // complied value: array of array(type, value/code)
 
-	function facileFormsQuerycols()
+	function __construct()
 	{
 		$this->title    = '';
 		$this->name     = '';

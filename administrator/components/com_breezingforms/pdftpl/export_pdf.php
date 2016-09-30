@@ -152,7 +152,7 @@ for($s = 0; $s < $subsSize; $s++) {
         <?php echo wordwrap(htmlentities($sub->title, ENT_QUOTES, 'UTF-8'), 40, '<br />', true); ?>:</strong>
 </td>
 <td>
-	<?php echo nl2br(htmlentities(substr($sub->value,0,10000), ENT_QUOTES, 'UTF-8')); ?> 
+	<?php echo $sub->type == 'Signature' && file_exists(JPATH_SITE.'/media/breezingforms/signatures/'.$sub->value) ? '<img src="'.JPATH_SITE.'/media/breezingforms/signatures/'.$sub->value.'" />' : nl2br(htmlentities(substr($sub->value,0,10000), ENT_QUOTES, 'UTF-8')); ?>
 </td>
 </tr>
 <?php
