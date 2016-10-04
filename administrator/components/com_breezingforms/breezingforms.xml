@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5" method="upgrade">
-	<name>BreezingForms</name>
-	<creationDate>2015-09-29</creationDate>
+	<name>COM_BREEZINGFORMS</name>
+	<creationDate>2016-09-26</creationDate>
 	<author>Markus Bopp | Until FacileForms Version 1.4.7: Peter Koch</author>
 	<copyright>This Joomla! component is released under the GNU/GPL license</copyright>
         <license>GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html</license>
 	<authorEmail>markus.bopp@crosstec.org</authorEmail>
 	<authorUrl>www.crosstec.org</authorUrl>
-	<version>1.8.7 Stable (881)</version>
+	<version>1.8.7 Stable (895)</version>
 	<description>Installation successful. Next find BreezingForms in the Components menu, and finish the installation process.</description>
 	<installfile>install.php</installfile>
         <uninstallfile>uninstall.php</uninstallfile>
 
         <scriptfile>script.php</scriptfile>
+
+        <updateservers>
+            <server type="extension" name="BreezingForms Pro" priority="1">https://crosstec.org/updates/breezingforms/breezingforms_update.xml</server>
+         </updateservers>
 
 	<files folder="site">
                 <filename>index.html</filename>
@@ -58,7 +62,7 @@
 
 
 	<administration>
-		<menu>BreezingForms</menu>
+		<menu>COM_BREEZINGFORMS</menu>
 		<submenu>
 			<menu act="managerecs" alt="BreezingForms/Manage Records">COM_BREEZINGFORMS_MANAGE_RECORDS</menu>
 			<menu act="manageforms" alt="BreezingForms/Manage Forms">COM_BREEZINGFORMS_MANAGE_FORMS</menu>
@@ -93,31 +97,24 @@
                 </files>
 
 		<languages folder="admin">
-                        <language tag="de-DE">languages/de-DE/admin/de-DE.com_breezingforms.menu.ini</language>
 			<language tag="de-DE">languages/de-DE/admin/de-DE.com_breezingforms.ini</language>
                         <language tag="de-DE">languages/de-DE/admin/de-DE.com_breezingforms.sys.ini</language>
 
                         <language tag="en-GB">languages/en-GB/admin/en-GB.com_breezingforms.ini</language>
-                        <language tag="en-GB">languages/en-GB/admin/en-GB.com_breezingforms.menu.ini</language>
                         <language tag="en-GB">languages/en-GB/admin/en-GB.com_breezingforms.sys.ini</language>
 
 			<language tag="hu-HU">languages/hu-HU/admin/hu-HU.com_breezingforms.ini</language>
                         <language tag="hu-HU">languages/hu-HU/admin/hu-HU.com_breezingforms.sys.ini</language>
-                        <language tag="hu-HU">languages/hu-HU/admin/hu-HU.com_breezingforms.menu.ini</language>
 
                         <language tag="tr-TR">languages/tr-TR/admin/tr-TR.com_breezingforms.ini</language>
-                        <language tag="tr-TR">languages/tr-TR/admin/tr-TR.com_breezingforms.menu.ini</language>
-                        <language tag="tr-TR">languages/tr-TR/admin/tr-TR.com_breezingforms.sys.ini</language>
+            <language tag="tr-TR">languages/tr-TR/admin/tr-TR.com_breezingforms.sys.ini</language>
 
                         <language tag="fr-FR">languages/fr-FR/admin/fr-FR.com_breezingforms.ini</language>
                         <language tag="fr-FR">languages/fr-FR/admin/fr-FR.com_breezingforms.sys.ini</language>
-                        <language tag="fr-FR">languages/fr-FR/admin/fr-FR.com_breezingforms.menu.ini</language>
 
-                        <language tag="es-ES">languages/es-ES/admin/es-ES.com_breezingforms.menu.ini</language>
 			<language tag="es-ES">languages/es-ES/admin/es-ES.com_breezingforms.ini</language>
                         <language tag="es-ES">languages/es-ES/admin/es-ES.com_breezingforms.sys.ini</language>
 
-                        <language tag="nl-NL">languages/nl-NL/admin/nl-NL.com_breezingforms.menu.ini</language>
 			<language tag="nl-NL">languages/nl-NL/admin/nl-NL.com_breezingforms.ini</language>
                         <language tag="nl-NL">languages/nl-NL/admin/nl-NL.com_breezingforms.sys.ini</language>
 		</languages>

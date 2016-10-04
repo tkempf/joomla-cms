@@ -143,6 +143,13 @@ if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'downloadtpl')){
     );
 }
 
+if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php')){
+	JFile::copy(
+		JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php',
+		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php'
+	);
+}
+
 #### UPLOADS
 
 if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'uploads')){

@@ -1,10 +1,10 @@
 <?php
-defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+defined( '_JEXEC' ) or die( 'Restricted access' );
 //============================================================+
 // File name   : tcpdf_colors.php
-// Version     : 1.0.003
+// Version     : 1.0.004
 // Begin       : 2002-04-09
-// Last Update : 2013-10-25
+// Last Update : 2014-04-25
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -43,7 +43,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
  * @class TCPDF_COLORS
  * PHP color class for TCPDF
  * @package com.tecnick.tcpdf
- * @version 1.0.003
+ * @version 1.0.004
  * @author Nicola Asuni - info@tecnick.com
  */
 class TCPDF_COLORS {
@@ -307,7 +307,7 @@ class TCPDF_COLORS {
 				}
 				return $returncolor;
 			}
-		} elseif ((substr($color, 0, 4) != 'cmyk') AND ($dotpos = strpos($color, '.')) !== false) {
+		} elseif ((substr($color, 0, 4) != 'cmyk') AND (substr($color, 0, 3) != 'rgb') AND (($dotpos = strpos($color, '.')) !== false)) {
 			// remove class parent (i.e.: color.red)
 			$color = substr($color, ($dotpos + 1));
 			if ($color == 'transparent') {
@@ -352,7 +352,7 @@ class TCPDF_COLORS {
 			}
 			return $returncolor;
 		}
-		if ($color{0} != '#') {
+		if ($color[0] != '#') {
 			// COLOR NAME
 			if (isset(self::$webcolor[$color])) {
 				// web color

@@ -1,5 +1,5 @@
 <?php
-defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+defined( '_JEXEC' ) or die( 'Restricted access' );
 //============================================================+
 // File name   : tcpdf_import.php
 // Version     : 1.0.001
