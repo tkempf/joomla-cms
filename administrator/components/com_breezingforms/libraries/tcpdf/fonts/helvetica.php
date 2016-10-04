@@ -1,12 +1,12 @@
 <?php
 /**
-* BreezingForms - A Joomla Forms Application
-* @version 1.4.4
-* @package BreezingForms
-* @copyright (C) 2004-2005 by Peter Koch
-* @license Released under the terms of the GNU General Public License
-**/
-defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+ * @package     BreezingCommerce
+ * @author      Markus Bopp
+ * @link        http://www.crosstec.de
+ * @license     GNU/GPL
+ */
+defined( '_JEXEC' ) or die( 'Restricted access' );
+
 // TCPDF FONT FILE DESCRIPTION
 $type='core';
 $name='Helvetica';

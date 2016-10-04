@@ -7,8 +7,6 @@
 */
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
-@error_reporting(E_ALL ^ E_DEPRECATED);
-
 if(!defined('DS')){
     define('DS', DIRECTORY_SEPARATOR);
 }

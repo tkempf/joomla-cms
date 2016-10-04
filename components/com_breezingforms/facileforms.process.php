@@ -482,7 +482,7 @@ class HTML_facileFormsProcessor {
     public $quickmode = null;
     public $legacy_wrap = true;
     
-    function HTML_facileFormsProcessor(
+    function __construct(
     $runmode, // _FF_RUNMODE_FRONTEND, ..._BACKEND, ..._PREVIEW
             $inframe, // run in iframe
             $form, // form id
@@ -2671,9 +2671,14 @@ class HTML_facileFormsProcessor {
                     $code .="    ff_resizepage(" . $this->formrow->heightmode . ", " . $this->formrow->height . ");" . nl();
                 if ($this->showgrid)
                     $code .="    ff_showgrid();" . nl();
-                if ($funcname != '')
-                    $code .="    " . $funcname . "(" . $this->status . ",\"" . str_replace("\n", '', str_replace("\r", '', stripcslashes($this->message))) . "\");" . nl();
-                $code .= "} // onload";
+	            if ($funcname != '') {
+		            $json_return = json_encode( $this->message, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS );
+		            if(trim($json_return) == ''){
+			            $json_return = '""';
+		            }
+		            $code .= "    " . $funcname . "(" . $this->status . "," . $json_return . ");" . nl();
+	            }
+	            $code .= "} // onload";
                 $this->linkcode('onload', $library, $linked, $code);
             } // if
         } // if
@@ -3131,6 +3136,25 @@ class HTML_facileFormsProcessor {
                                                     }'.nl();
                             }
                             break;
+	                    case 'Signature':
+
+	                    	$sig_path = JPATH_SITE.'/media/breezingforms/signatures/';
+
+	                    	if(strlen($cbEntry->recValue) > 0 && file_exists($sig_path . $cbEntry->recValue)){
+
+	                    	    $sig_encoded = bf_b64enc(JFile::read($sig_path . $cbEntry->recValue));
+
+			                    $js .= '
+										JQuery(document).ready(function(){
+											if(typeof bf_signaturePad' . $cbEntry->recElementId . ' != "undefined"){
+												if('.( strlen($sig_encoded) > 0 ? 'true' : 'false' ).'){
+													JQuery("[name=\"ff_nm_'.$cbEntry->recName.'[]\"]").val('.json_encode('data:image/png;base64,' . $sig_encoded).')
+													bf_signaturePad' . $cbEntry->recElementId . '.fromDataURL('.json_encode('data:image/png;base64,' . $sig_encoded).');
+												}
+											}
+										});';
+		                    }
+							break;
                         case 'Textarea':
                         case 'Text':
                         case 'Hidden Input':
@@ -4024,7 +4048,7 @@ class HTML_facileFormsProcessor {
         $paymentMethod = '';
         for ($i = 0; $i < $this->rowcount; $i++) {
             $row = $this->rows[$i];
-            if ($row->type == "PayPal" || $row->type == "Sofortueberweisung") {
+            if ($row->type == "PayPal" || $row->type == "Sofortueberweisung" || $row->type == "Stripe") {
                 echo indentc(1) . '<input type="hidden" name="ff_payment_method" id="bfPaymentMethod" value=""/>' . nl();
                 break;
             }
@@ -4868,45 +4892,57 @@ class HTML_facileFormsProcessor {
             return;
         $mail = bf_createMail($from, $fromname, $subject, $body, $alt_sender);
 
-        if (is_array($recipient))
-            foreach ($recipient as $to)
-                $mail->AddAddress($to);
-        else
-            $mail->AddAddress($recipient);
+        try{
+        
+            if (is_array($recipient))
+                foreach ($recipient as $to)
+                    $mail->AddAddress($to);
+            else
+                $mail->AddAddress($recipient);
 
-        if ($attachment) {
-            if (is_array($attachment)) {
-                $attCnt = count($attachment);
-                for ($i = 0; $i < $attCnt; $i++) {
-                    $mail->AddAttachment($attachment[$i]);
+            if ($attachment) {
+                if (is_array($attachment)) {
+                    $attCnt = count($attachment);
+                    for ($i = 0; $i < $attCnt; $i++) {
+                        if(trim($attachment[$i]) != '' ){
+                            $mail->AddAttachment($attachment[$i]);
+                        }
+                    }
+                }else{
+                    if($attachment != ''){
+                        $mail->AddAttachment($attachment);
+                    }
                 }
-            }else
-                $mail->AddAttachment($attachment);
-        } // if
+            } // if
 
-        if (isset($html))
-            $mail->IsHTML($html);
+            if (isset($html))
+                $mail->IsHTML($html);
 
-        if (isset($cc)) {
-            if (is_array($cc))
-                foreach ($cc as $to)
-                    $mail->AddCC($to);
-            else
-                $mail->AddCC($cc);
-        } // if
+            if (isset($cc)) {
+                if (is_array($cc))
+                    foreach ($cc as $to)
+                        $mail->AddCC($to);
+                else
+                    $mail->AddCC($cc);
+            } // if
 
-        if (isset($bcc)) {
-            if (is_array($bcc))
-                foreach ($bcc as $to)
-                    $mail->AddBCC($to);
-            else
-                $mail->AddBCC($bcc);
-        } // if
+            if (isset($bcc)) {
+                if (is_array($bcc))
+                    foreach ($bcc as $to)
+                        $mail->AddBCC($to);
+                else
+                    $mail->AddBCC($bcc);
+            } // if
 
-        if (!$mail->Send()) {
-            $this->status = _FF_STATUS_SENDMAIL_FAILED;
-            $this->message = $mail->ErrorInfo;
-        } // if
+            if (!$mail->Send()) {
+                $this->status = _FF_STATUS_SENDMAIL_FAILED;
+                $this->message = $mail->ErrorInfo;
+            } // if
+        
+        }catch(Exception $e){
+            
+            JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+        }
     }
 
     
@@ -4988,7 +5024,10 @@ class HTML_facileFormsProcessor {
         
         $this->submitted = $submitted;
 
-        require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/tcpdf/tcpdf.php');
+        if(!class_exists('TCPDF')){
+            require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/tcpdf/tcpdf.php');
+        }
+        
         $pdf = new TCPDF();
         
         $active_found = false;
@@ -5011,7 +5050,7 @@ class HTML_facileFormsProcessor {
                         $file_sep = explode('.', $file);
                         if(count($file_sep) > 1){
                             unset($file_sep[count($file_sep)-1]);
-                            $pdf->addTTFfont($sourcePath.$file, 'TrueTypeUnicode', '', 96);
+                            TCPDF_FONTS::addTTFfont($sourcePath.$file, 'TrueTypeUnicode');
                             $font_loaded = true;
                         }
                     }
@@ -5031,7 +5070,7 @@ class HTML_facileFormsProcessor {
         }
         
         if(!$active_found){
-            $pdf->addTTFfont(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/tcpdf/fonts/verdana.ttf', 'TrueTypeUnicode', '', 96);
+            TCPDF_FONTS::addTTFfont(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/tcpdf/fonts/verdana.ttf', 'TrueTypeUnicode');
             $pdf->SetFont('verdana');
         }
         
@@ -5746,6 +5785,8 @@ class HTML_facileFormsProcessor {
             }
         }
 
+        $signatures = array();
+
         $attachToAdminMail = JRequest::getVar('attachToAdminMail', array());
         if (count($this->maildata)) {
             foreach ($this->maildata as $data) {
@@ -5792,7 +5833,23 @@ class HTML_facileFormsProcessor {
                         }
                     }
                 }
+
+	            if($data[_FF_DATA_TYPE] == 'Signature'){
+
+		            $signatures[] = JPATH_SITE . '/media/breezingforms/signatures/' . $data[_FF_DATA_VALUE];
+	            }
             }
+        }
+
+        if(is_array($attachment) && count($signatures) > 0){
+
+	        $attachment = array_merge($attachment, $signatures);
+        }
+        else if(!is_array($attachment) && count($signatures) > 0){
+	        $attachment = array_merge(array($attachment), $signatures);
+        }
+        else if(count($signatures) > 0){
+	        $attachment = $signatures;
         }
 
         if (!$this->sendNotificationAfterPayment) {
@@ -5869,8 +5926,7 @@ class HTML_facileFormsProcessor {
                     $version = new JVersion();
                     if(version_compare($version->getShortVersion(), '2.5', '>=')){
                         jimport( 'joomla.application.component.helper' );
-                        $default = JComponentHelper::getParams('com_languages')->get('site');
-                        $language_tag = JFactory::getLanguage()->getTag() != $default ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
+                        $language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
                         if (trim($name) == trim($dataObject['properties']['bfName']) && isset($dataObject['properties'][$field.'_translation'.$language_tag]) && $dataObject['properties'][$field.'_translation'.$language_tag] != '') {
                             $res = addslashes($dataObject['properties'][$field.'_translation'.$language_tag]);
                             return;
@@ -5889,6 +5945,8 @@ class HTML_facileFormsProcessor {
     
     function sendMailbackNotification() {
         global $ff_config;
+
+	    $signatures = array();
 
         $mainframe = JFactory::getApplication();
 
@@ -6241,6 +6299,11 @@ class HTML_facileFormsProcessor {
                             $DATA[_FF_DATA_TITLE] = $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]);
                             $MAILDATA[] = $DATA;
                         }
+
+	                    if($DATA[_FF_DATA_TYPE] == 'Signature'){
+
+		                    $signatures[] = JPATH_SITE . '/media/breezingforms/signatures/' . $DATA[_FF_DATA_VALUE];
+	                    }
                     }
                 }
 
@@ -6301,6 +6364,11 @@ class HTML_facileFormsProcessor {
                         if (!in_array($data[_FF_DATA_NAME], $filter)) {
                             $body .= strip_tags($data[_FF_DATA_TITLE]) . ": " . $data[_FF_DATA_VALUE] . nl();
                         }
+
+	                    if($data[_FF_DATA_TYPE] == 'Signature'){
+
+		                    $signatures[] = JPATH_SITE . '/media/breezingforms/signatures/' . $data[_FF_DATA_VALUE];
+	                    }
                     }
                 }
             }
@@ -6414,6 +6482,11 @@ class HTML_facileFormsProcessor {
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':label}', '', $body);
                         $body = str_replace('{' . $data[_FF_DATA_NAME] . ':value}', '', $body);
                     }
+
+	                if($data[_FF_DATA_TYPE] == 'Signature'){
+
+		                $signatures[] = JPATH_SITE . '/media/breezingforms/signatures/' . $data[_FF_DATA_VALUE];
+	                }
                 }
             }
 
@@ -6452,6 +6525,18 @@ class HTML_facileFormsProcessor {
                         $attachment = $mailbackfiles[$recipients[$i]];
                     }
                 }
+
+	            if(is_array($attachment) && count($signatures) > 0){
+
+		            $attachment = array_merge($attachment, $signatures);
+	            }
+	            else if(!is_array($attachment) && count($signatures) > 0){
+		            $attachment = array_merge(array($attachment), $signatures);
+	            }
+	            else if(count($signatures) > 0){
+		            $attachment = $signatures;
+	            }
+
                 $this->sendMail($from, $fromname, $recipients[$i], $subject, $body, $attachment, $isHtml, null, null, $alt_sender);
             }
         } else {
@@ -6482,6 +6567,17 @@ class HTML_facileFormsProcessor {
                         }
                     }
                 }
+
+	            if(is_array($attachment) && count($signatures) > 0){
+
+		            $attachment = array_merge($attachment, $signatures);
+	            }
+	            else if(!is_array($attachment) && count($signatures) > 0){
+		            $attachment = array_merge(array($attachment), $signatures);
+	            }
+	            else if(count($signatures) > 0){
+		            $attachment = $signatures;
+	            }
                 
                 $later_content = serialize(array(
                             'from' => $from,
@@ -6664,7 +6760,7 @@ class HTML_facileFormsProcessor {
         if(version_compare($_version, '3.2', '>=')){
             $tz = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
         }
-        
+
         $date_stamp = date('YmdHis');
         if(version_compare($_version, '3.2', '>=')){
             $date_ = JFactory::getDate($this->submitted, $tz);
@@ -7092,12 +7188,11 @@ class HTML_facileFormsProcessor {
                                 for ($i = 0; $i < $cnt; $i++) {
                                     $path = '';
                                     if ($name[$i] != '') {
-                                        $allowed = "/[^a-z0-9\\.\\-\\_]/i";
                                         $rowpath1 = $row->data1;
                                         //if ($cbResult !== null && isset($cbResult['data']) && $cbResult['data'] != null) {
                                             $rowpath1 = $this->cbCreatePathByTokens($rowpath1, $this->rows);
                                         //}
-                                        $pathInfo = $this->saveUpload($tmp_name[$i], preg_replace($allowed, "_", $name[$i]), $rowpath1, $row->flag1, $useUrl, $useUrlDownloadDirectory,$resize_target_width,$resize_target_height,$resize_type,$resize_bgcolor);
+                                        $pathInfo = $this->saveUpload($tmp_name[$i], bf_sanitizeFilename($name[$i]), $rowpath1, $row->flag1, $useUrl, $useUrlDownloadDirectory,$resize_target_width,$resize_target_height,$resize_type,$resize_bgcolor);
                                         $path = $pathInfo['default'];
                                         $serverPath = $pathInfo['server'];
                                         if ($this->status != _FF_STATUS_OK)
@@ -7341,6 +7436,7 @@ class HTML_facileFormsProcessor {
                         case 'Checkbox Group':
                         case 'Calendar':
                         case 'Hidden Input':
+						case 'Signature':
                             if ($row->logging == 1) {
                                 
                                 $values = @JRequest::getVar("ff_nm_" . $row->name, array(''));
@@ -7359,8 +7455,49 @@ class HTML_facileFormsProcessor {
                                         }
                                     }
                                 }
-                                
+
+	                            $sigValues = '';
+
                                 foreach ($values as $value) {
+
+	                                if( $row->type == 'Signature' && $value != '' ) {
+		                                if ( !JFolder::exists( JPATH_SITE . '/media/breezingforms/signatures/' ) ) {
+			                                JFolder::create( JPATH_SITE . '/media/breezingforms/signatures/' );
+			                                $def = '';
+			                                JFile::write(JPATH_SITE . '/media/breezingforms/signatures/index.html', $def);
+										}
+										$sig_exploded = explode(',', $value);
+		                                $sig_decoded = bf_b64dec($sig_exploded[1]);
+		                                $sig_file = JPATH_SITE . '/media/breezingforms/signatures/'.$row->name.'-'.md5($sig_exploded[1]).'.png';
+		                                JFile::write($sig_file, $sig_decoded);
+		                                $value = basename($sig_file);
+
+		                                $sigValues .= $value;
+
+		                                // DROPBOX SUPPORT
+		                                if (version_compare(phpversion(), '5.3.0', '>=')) {
+			                                $dbxClient = null;
+			                                if( $this->formrow->dropbox_email ){
+				                                try{
+					                                require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
+					                                $space = "Dropbox\\Client";
+					                                $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
+				                                }catch(Exception $e){}
+			                                }
+		                                }
+
+		                                // DROPBOX
+		                                if (version_compare(phpversion(), '5.3.0', '>=')) {
+			                                if( $this->formrow->dropbox_email && $dbxClient !== null){
+				                                try{
+					                                $f = fopen($sig_file, "rb");
+					                                $space = "Dropbox\\WriteMode";
+					                                $dbxClient->uploadFile('/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($sig_file), call_user_func($space.'::add'), $f);
+					                                fclose($f);
+				                                }catch(Exception $e){}
+			                                }
+		                                }
+	                                }
 
                                     // for db
                                     if (($this->formrow->dblog == 1 && $value != '') ||
@@ -7379,6 +7516,7 @@ class HTML_facileFormsProcessor {
                                                 $loadData = false;
                                             }
                                             break;
+
                                     }
 
                                     if ($loadData) {
@@ -7399,8 +7537,13 @@ class HTML_facileFormsProcessor {
                                 // for mail
                                 
                                 $sfvalues = $values;
-                                
-                                if ($row->type == 'Textarea'){
+
+	                            if ($row->type == 'Signature') {
+
+		                            $values = $sigValues;
+		                            $sfvalues = $sigValues;
+
+	                            } else if ($row->type == 'Textarea'){
                                     
                                     $values = implode(nl(), $values);
                                     $sfvalues = implode(nl(), $sfvalues);
@@ -7443,8 +7586,15 @@ class HTML_facileFormsProcessor {
                                 }
                                 
                                 if (($this->formrow->emaillog == 1 && $this->trim($values)) ||
-                                        $this->formrow->emaillog == 2)
-                                    $this->maildata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $values);
+                                        $this->formrow->emaillog == 2) {
+	                                $this->maildata[] = array(
+		                                $row->id,
+		                                $row->name,
+		                                strip_tags( $row->title ),
+		                                $row->type,
+		                                $values
+	                                );
+                                }
                             } // if logging
                             break;
                         default:;
@@ -7603,11 +7753,12 @@ class HTML_facileFormsProcessor {
 
             if (is_array($areas)) {
                 switch (JRequest::getVar('ff_payment_method', '')) {
+	                case 'Stripe':
                     case 'PayPal':
                     case 'Sofortueberweisung':
                         foreach ($areas As $area) {
                             foreach ($area['elements'] As $element) {
-                                if ($element['internalType'] == 'bfPayPal' || $element['internalType'] == 'bfSofortueberweisung') {
+                                if ($element['internalType'] == 'bfStripe' || $element['internalType'] == 'bfPayPal' || $element['internalType'] == 'bfSofortueberweisung') {
                                     $options = $element['options'];
                                     if (isset($options['sendNotificationAfterPayment']) && $options['sendNotificationAfterPayment']) {
                                         $this->sendNotificationAfterPayment = true;
@@ -7785,6 +7936,7 @@ class HTML_facileFormsProcessor {
             require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
 
             $areas = Zend_Json::decode($this->formrow->template_areas);
+	        $head = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
 
             if (is_array($areas)) {
 
@@ -7799,6 +7951,100 @@ class HTML_facileFormsProcessor {
                 $paymentAction = true;
 
                 switch (JRequest::getVar('ff_payment_method', '')) {
+
+
+	                case 'Stripe':
+
+		                foreach ($area['elements'] As $element) {
+
+			                if ( $element['internalType'] == 'bfStripe' ) {
+
+				                $options = $element['options'];
+
+				                $ppselect = JRequest::getVar('ff_nm_bfPaymentSelect', array());
+				                if (count($ppselect) != 0) {
+					                $ppselected = explode('|', $ppselect[0]);
+					                if (count($ppselected) == 4) {
+
+						                $options['itemname'] = $ppselected[0] . ' ' . $ppselected[1];
+						                $options['amount'] = floatval($ppselected[2]) + floatval($ppselected[3]);
+
+					                }
+				                }
+
+				                $options['amount'] = round(floatval($options['amount']), 2) * 100;
+
+				                JFactory::getSession()->set('bf_stripe_last_payment_amount'.$this->record_id, $options['amount']);
+
+				                $html = '';
+
+				                if (!$this->inline)
+					                $html .= '<html><head></head><body>';
+
+				                $current_tag = JFactory::getLanguage()->getTag();
+				                $exploded = explode('-', $current_tag);
+
+				                $locale = 'auto';
+
+				                if(in_array(strtolower($exploded[0]), array('zh','nl','en','fr','de','it','ja','es'))){
+
+				                	$locale = strtolower($exploded[0]);
+				                }
+
+				                $returnurl = JURI::root() . "index.php?option=com_breezingforms&confirmStripe=true&form_id=" . $this->form . "&record_id=" . $this->record_id;
+
+			                	$html .= '
+			                	
+			                	<script src="https://checkout.stripe.com/checkout.js"></script>
+			                	
+								<script>
+								var submitted_form = false;
+								
+								var handler = StripeCheckout.configure({
+								  key: '.json_encode($options['publishableKey']).',
+								  image: '.json_encode(JURI::root() . 'components/com_breezingforms/images/icon_card.png').',
+								  locale: '.json_encode($locale).',
+								  token: function(token) {
+								    submitted_form = true;
+								    location.href = '.json_encode($returnurl).'+"&token="+token.id
+								  }
+								});
+								
+								
+								// Close Checkout on page navigation:
+								window.addEventListener(\'popstate\', function() {
+								  handler.close();
+								});
+								
+								window.onload = function(){
+								  handler.open({
+									    name: '.json_encode(isset( $head['properties']['title_translation'.JFactory::getLanguage()->getTag()] ) ? $head['properties']['title_translation'.JFactory::getLanguage()->getTag()] : $this->formrow->title).',
+									    description: '.json_encode( $options['itemname'] ) .',
+									    currency: '.json_encode(strtolower($options['currencyCode'])).',
+									    amount: '.json_encode($options['amount']).',
+									    zipCode : true,
+									    billingAddress: true,
+									    closed: function () { 
+									        if( !submitted_form ){
+									        
+									            location.href = '.json_encode(JURI::root()).'; 
+									        }
+									    }
+								  });
+								};
+								</script>
+			                	
+			                	';
+
+				                if (!$this->inline)
+					                $html .= "</form></body></html>";
+
+				                echo $html;
+			                }
+		                }
+
+	                	break;
+
 
                     case 'PayPal':
 
@@ -8174,8 +8420,9 @@ class HTML_facileFormsProcessor {
             indentc(1) . '<input type="hidden" name="ff_record_id" value="' . $this->record_id . '"/>' . nl() .
             indentc(1) . '<input type="hidden" name="ff_module_id" value="' . JRequest::getInt('ff_module_id', 0) . '"/>' . nl() .
             indentc(1) . '<input type="hidden" name="ff_status" value="' . htmlentities($this->status, ENT_QUOTES, 'UTF-8') . '"/>' . nl() .
-            indentc(1) . '<input type="hidden" name="ff_message" value="' . htmlentities(addcslashes($message, "\0..\37!@\@\177..\377"), ENT_QUOTES, 'UTF-8') . '"/>' . nl() .
+            indentc(1) . '<input type="hidden" name="ff_message" value="' . htmlentities($message, ENT_QUOTES, 'UTF-8') . '"/>' . nl() .
             indentc(1) . '<input type="hidden" name="ff_form_submitted" value="1"/>' . nl();
+
             if(JRequest::getVar('tmpl') == 'component'){
                 echo indentc(1) . '<input type="hidden" name="tmpl" value="component"/>' . nl();
             }

@@ -1,6 +1,15 @@
 <?php
 namespace Dropbox;
 
+/**
+ * Dropbox API
+ *
+ * LICENSE IS GPL Compatible, see License.txt
+ *
+ */
+
+defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+
 // The Dropbox SDK autoloader.  You probably shouldn't be using this.  Instead,
 // use a global autoloader, like the Composer autoloader.
 //

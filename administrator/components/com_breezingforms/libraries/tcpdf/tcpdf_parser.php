@@ -1,14 +1,14 @@
 <?php
-defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+defined( '_JEXEC' ) or die( 'Restricted access' );
 //============================================================+
 // File name   : tcpdf_parser.php
-// Version     : 1.0.014
+// Version     : 1.0.15
 // Begin       : 2011-05-23
-// Last Update : 2014-02-18
+// Last Update : 2015-01-24
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : http://www.tecnick.com/pagefiles/tcpdf/LICENSE.TXT GNU-LGPLv3
 // -------------------------------------------------------------------
-// Copyright (C) 2011-2014 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2011-2015 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -38,7 +38,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
  * This is a PHP class for parsing PDF documents.<br>
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.014
+ * @version 1.0.15
  */
 
 // include class for decoding filters
@@ -49,7 +49,7 @@ require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
  * This is a PHP class for parsing PDF documents.<br>
  * @package com.tecnick.tcpdf
  * @brief This is a PHP class for parsing PDF documents..
- * @version 1.0.010
+ * @version 1.0.15
  * @author Nicola Asuni - info@tecnick.com
  */
 class TCPDF_PARSER {
@@ -210,7 +210,7 @@ class TCPDF_PARSER {
 	 * @since 1.0.000 (2011-06-20)
 	 */
 	protected function decodeXref($startxref, $xref=array()) {
-		$startxref += 4; // 4 is the lenght of the word 'xref'
+		$startxref += 4; // 4 is the length of the word 'xref'
 		// skip initial white space chars: \x00 null (NUL), \x09 horizontal tab (HT), \x0A line feed (LF), \x0C form feed (FF), \x0D carriage return (CR), \x20 space (SP)
 		$offset = $startxref + strspn($this->pdfdata, "\x00\x09\x0a\x0c\x0d\x20", $startxref);
 		// initialize object number
@@ -395,7 +395,7 @@ class TCPDF_PARSER {
 							$pb = abs($p - $row_up);
 							$pc = abs($p - $row_upleft);
 							$pmin = min($pa, $pb, $pc);
-							// return minumum distance
+							// return minimum distance
 							switch ($pmin) {
 								case $pa: {
 									$ddata[$k][$j] = (($row[$i] + $row_left) & 0xff);
@@ -691,7 +691,8 @@ class TCPDF_PARSER {
 		$objdata = array();
 		$i = 0; // object main index
 		do {
-			// get element
+			$oldoffset = $offset;
+                        // get element
 			$element = $this->getRawObject($offset);
 			$offset = $element[2];
 			// decode stream using stream's dictionary information
@@ -700,7 +701,7 @@ class TCPDF_PARSER {
 			}
 			$objdata[$i] = $element;
 			++$i;
-		} while ($element[0] != 'endobj');
+		} while (($element[0] != 'endobj') AND ($offset != $oldoffset));
 		// remove closing delimiter
 		array_pop($objdata);
 		// return raw object content
@@ -738,7 +739,7 @@ class TCPDF_PARSER {
 	 * @since 1.0.000 (2011-06-22)
 	 */
 	protected function decodeStream($sdic, $stream) {
-		// get stream lenght and filters
+		// get stream length and filters
 		$slength = strlen($stream);
 		if ($slength <= 0) {
 			return array('', array());
@@ -747,7 +748,7 @@ class TCPDF_PARSER {
 		foreach ($sdic as $k => $v) {
 			if ($v[0] == '/') {
 				if (($v[1] == 'Length') AND (isset($sdic[($k + 1)])) AND ($sdic[($k + 1)][0] == 'numeric')) {
-					// get declared stream lenght
+					// get declared stream length
 					$declength = intval($sdic[($k + 1)][1]);
 					if ($declength < $slength) {
 						$stream = substr($stream, 0, $declength);

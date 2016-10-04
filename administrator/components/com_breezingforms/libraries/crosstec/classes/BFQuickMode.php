@@ -57,8 +57,7 @@ class BFQuickMode{
         function headers(){
             
             // keep IE8 compatbility
-            if(preg_match('/(?i)msie [1-8]/',$_SERVER['HTTP_USER_AGENT']))
-            {
+		if (preg_match('/(?i)msie [1-8]/', $_SERVER['HTTP_USER_AGENT'])) {
                 JFactory::getDocument()->addScript('https://html5shiv.googlecode.com/svn/trunk/html5.js');
             }
             
@@ -980,8 +979,7 @@ display:none;
 					if(trim($mdata['title']) != ''){
 						echo '<legend><span class="bfLegend-l"><span class="bfLegend-r"><span class="bfLegend-m">'.htmlentities(trim($mdata['title']), ENT_QUOTES, 'UTF-8').'</span></span></span></legend>'."\n";
 					}
-				} 
-				else if( $mdata['bfType'] == 'normal' ) {
+				} else if ($mdata['bfType'] == 'normal') {
 					if(isset($dataObject['properties']['name']) && $dataObject['properties']['name'] != ''){
 						echo '<div '.(isset($mdata['off']) && $mdata['off'] ? 'style="display:none" ' : '').'class="bfNoSection"'.(isset($dataObject['properties']['name']) && $dataObject['properties']['name'] != "" ? ' id="'.$dataObject['properties']['name'].'"' : '').'>'."\n";
 					}
@@ -1132,8 +1130,7 @@ display:none;
                                         
                                         if($mdata['bfType'] == 'bfCaptcha'){
                                             $for = 'for="bfCaptchaEntry"';
-                                        }
-                                        else if($mdata['bfType'] == 'bfReCaptcha'){
+					} else if ($mdata['bfType'] == 'bfReCaptcha') {
                                             $for = 'for="recaptcha_response_field"';
                                         }
                                         $required = '';
@@ -1144,7 +1141,7 @@ display:none;
 				}
 				
 				$readonly = '';
-				if($mdata['readonly']){
+				if (isset($mdata['readonly']) && $mdata['readonly']) {
 					$readonly = 'readonly="readonly" ';
 				}
 				
@@ -1156,8 +1153,7 @@ display:none;
 				for($i = 0; $i < $this->p->rowcount; $i++) {
 					$row = $this->p->rows[$i];
 					if($mdata['bfName'] == $row->name){
-						if( ( isset($mdata['value']) || isset($mdata['list']) || isset($mdata['group']))
-							&& 
+						if (( isset($mdata['value']) || isset($mdata['list']) || isset($mdata['group'])) &&
 							( 
 								$mdata['bfType'] == 'bfTextfield' ||
 								$mdata['bfType'] == 'bfTextarea' ||
@@ -1171,16 +1167,11 @@ display:none;
 								$mdata['bfType'] == 'bfRadioGroup'
 							)
 						){
-							if($mdata['bfType'] == 'bfSelect')
-							{
+							if ($mdata['bfType'] == 'bfSelect') {
 								$mdata['list'] = $this->p->replaceCode($row->data2, "data2 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);
-							} 
-							else if($mdata['bfType'] == 'bfCheckboxGroup' || $mdata['bfType'] == 'bfRadioGroup')
-							{
+							} else if ($mdata['bfType'] == 'bfCheckboxGroup' || $mdata['bfType'] == 'bfRadioGroup') {
 								$mdata['group'] = $this->p->replaceCode($row->data2, "data2 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);
-							} 
-							else
-							{
+							} else {
 								$mdata['value'] = $this->p->replaceCode($row->data1, "data1 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);	
 							}
 						}
@@ -1485,6 +1476,9 @@ display:none;
                                                                                     if(typeof files[i].size != 'undefined'){
                                                                                         fsize = '(' + plupload.formatSize(files[i].size) + ') ';
                                                                                     }
+                                                                                    if(typeof bfUploadFileAdded == 'function'){
+                                                                                        bfUploadFileAdded(files[i]);
+                                                                                    }
                                                                                     JQuery('#bfFileQueue').append( '<div id=\"' + files[i].id + 'queue\">' + (iOS ? '' : files[i].name) + ' '+fsize+'<b></b></div>' );
                                                                                 }
                                                                         }
@@ -1683,7 +1677,14 @@ display:none;
                                                       });
                                                     };
                                                     JQuery(document).ready(function(){
+                                                        
+                                                        var rc_loaded = JQuery("script").filter(function () {
+														    return ((typeof JQuery(this).attr("src") != "undefined" && JQuery(this).attr("src").indexOf("recaptcha\/api.js") > 0) ? true : false);
+														}).length;
+														
+														if (rc_loaded === 0) {
                                                         JQuery.getScript("'.$http.'://www.google.com/recaptcha/api.js?onload=onloadBFNewRecaptchaCallback&render=explicit");
+														}
                                                     });
                                                     -->
                                                   </script>';
@@ -1765,9 +1766,7 @@ display:none;
                                                     }
                                                 
                                                 }
-                                            }
-                                            else
-                                            {
+						} else {
                                                 echo '<span class="bfCaptcha">'."\n";
                                                 echo 'WARNING: No public key given for ReCaptcha element!';
                                                 echo '</span>'."\n";
@@ -1776,12 +1775,9 @@ display:none;
 
 					case 'bfCaptcha':
 
-                                                if(JFactory::getApplication()->isSite())
-                                                 {
+						if (JFactory::getApplication()->isSite()) {
                                                     $captcha_url = JURI::root(true).'/components/com_breezingforms/images/captcha/securimage_show.php';
-                                                 }
-                                                 else
-                                                 {
+						} else {
                                                     $captcha_url = JURI::root(true).'/administrator/components/com_breezingforms/images/captcha/securimage_show.php';
                                                  }
                                             
@@ -1935,7 +1931,7 @@ display:none;
                                                     '.$container.'
                                                     JQuery("#ff_elem'.$mdata['dbId'].'_calendarButton").pickadate({
                                                         format: "'.$mdata['format'].'", 
-                                                        selectYears: true, 
+                                                        selectYears: 60, 
                                                         selectMonths: true,
                                                         editable: true,
                                                         firstDay: 1,
@@ -1955,6 +1951,75 @@ display:none;
                                                 
 						break;	
 						
+					case 'bfSignature':
+
+						JFactory::getDocument()->addScript(Juri::root(true).'/components/com_breezingforms/libraries/js/signature.js');
+						JFactory::getDocument()->addScriptDeclaration('
+						var bf_signaturePad' . $mdata['dbId'] . ' = null;
+						var bf_canvas' . $mdata['dbId'] . ' = null;
+						
+						function bf_resizeCanvas' . $mdata['dbId'] . 'Func() {
+						    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+						    bf_canvas' . $mdata['dbId'] . '.width = bf_canvas' . $mdata['dbId'] . '.offsetWidth * ratio;
+						    bf_canvas' . $mdata['dbId'] . '.height = bf_canvas' . $mdata['dbId'] . '.offsetHeight * ratio;
+						    bf_canvas' . $mdata['dbId'] . '.getContext("2d").scale(ratio, ratio);
+						}
+						
+						function bf_Signature' . $mdata['dbId'] . 'Reset(sig) {
+							sig.clear();
+							jQuery("#ff_elem' . $mdata['dbId'] . '").val("");
+						}
+						
+						jQuery(document).ready(function(){
+							bf_canvas' . $mdata['dbId'] . ' = document.querySelector("#bfSignature' . $mdata['dbId'] . ' canvas");
+							
+							jQuery(window).on("resize", bf_resizeCanvas' . $mdata['dbId'] . 'Func);
+							bf_resizeCanvas' . $mdata['dbId'] . 'Func();
+							
+							bf_signaturePad' . $mdata['dbId'] . ' = new SignaturePad(bf_canvas' . $mdata['dbId'] . ', {
+							    backgroundColor: "rgb(255,255,255)",
+							    penColor: "rgb(0,0,0)",
+							    onEnd: function(){
+							        var data = bf_signaturePad' . $mdata['dbId'] . '.toDataURL();
+							        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data);
+							    }
+							});
+							
+						});
+						');
+
+						echo '<div class="bfSignature" id="bfSignature' . $mdata['dbId'] . '"><div class="bfSignatureCanvasBorder"><canvas></canvas></div>'."\n";
+						echo '<button onclick="bf_Signature' . $mdata['dbId'] . 'Reset(bf_signaturePad' . $mdata['dbId'] . ');" class="bfSignatureResetButton button"><span>'.JText::_('COM_BREEZINGFORMS_SIGNATURE_RESET_BUTTON').'</span></button>'."\n";
+						echo '</div>';
+						echo '<input class="ff_elem" type="hidden" name="ff_nm_' . $mdata['bfName'] . '[]" value="" id="ff_elem' . $mdata['dbId'] . '"/>' . "\n";
+
+						break;
+
+					case 'bfStripe':
+
+						/* translatables */
+						if (isset($mdata['image_translation' . $this->language_tag]) && $mdata['image_translation' . $this->language_tag] != '') {
+							$mdata['image'] = $mdata['image_translation' . $this->language_tag];
+						}
+						/* translatables end */
+
+						$value = '';
+						$type = 'submit';
+						$src = '';
+						if ($mdata['image'] != '') {
+							$type = 'image';
+							$src = 'src="' . $mdata['image'] . '" ';
+						} else {
+							$value = 'value="PayPal" ';
+						}
+						if ($mdata['actionClick'] == 1) {
+							$onclick = 'onclick="document.getElementById(\'bfPaymentMethod\').value=\'Stripe\';' . $mdata['actionFunctionName'] . '(this,\'click\');" ';
+						} else {
+							$onclick = 'onclick="document.getElementById(\'bfPaymentMethod\').value=\'Stripe\';" ';
+						}
+						echo '<input class="ff_elem" ' . $value . $src . $tabIndex . $onclick . $onblur . $onchange . $onfocus . $onselect . $readonly . 'type="' . $type . '" name="ff_nm_' . $mdata['bfName'] . '[]" id="ff_elem' . $mdata['dbId'] . '"/>' . "\n";
+						break;
+
 					case 'bfPayPal':
 						
                                                 /* translatables */
@@ -2053,8 +2118,7 @@ display:none;
 			if(isset($dataObject['properties']['name']) && $dataObject['properties']['name'] != ''){
 				echo '</div>'."\n";
 			}
-		}
-		else if(isset($dataObject['properties']) && $dataObject['properties']['type'] == 'page'){
+		} else if (isset($dataObject['properties']) && $dataObject['properties']['type'] == 'page') {
 
 			$isLastPage = false;
 			if($this->rootMdata['lastPageThankYou'] && $dataObject['properties']['pageNumber'] == count($this->dataObject['children']) && count($this->dataObject['children']) > 1){
@@ -2137,8 +2201,7 @@ display:none;
                 // we must make sure that everything mootools related is included after moxie and plupload
                 if(isset(JFactory::getDocument()->_scripts)){
                     foreach(JFactory::getDocument()->_scripts As $script_name => $script_value){
-                        if(basename($script_name) != 'moxie.js' && basename($script_name) != 'plupload.js' 
-                                && basename($script_name) != 'calendar.js' && basename($script_name) != 'calendar-setup.js'){
+				if (basename($script_name) != 'moxie.js' && basename($script_name) != 'plupload.js' && basename($script_name) != 'calendar.js' && basename($script_name) != 'calendar-setup.js') {
                             unset(JFactory::getDocument()->_scripts[$script_name]);
                             JFactory::getDocument()->_scripts[$script_name] = $script_value;
                         }
@@ -2191,6 +2254,7 @@ display:none;
 			function bfDoFlashUpload(){
                                 JQuery("#bfSubmitMessage").css("visibility","hidden");
                                 JQuery("#bfSubmitMessage").css("display","none");
+                                JQuery("#bfSubmitMessage").css("z-index","999999");
 				JQuery(".bfErrorMessage").html("");
                                 JQuery(".bfErrorMessage").css("display","none");
                                 for(var i = 0; i < bfUploaderErrorElements.length; i++){
@@ -2232,6 +2296,7 @@ display:none;
                                             JQuery("#bfSubmitMessage").bfcenter(true);
                                             JQuery("#bfSubmitMessage").css("visibility","visible");
                                             JQuery("#bfSubmitMessage").css("display","block");
+                                            JQuery("#bfSubmitMessage").css("z-index","999999");
                                         }
                                         
 				}

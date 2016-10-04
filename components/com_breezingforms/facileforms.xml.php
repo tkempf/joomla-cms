@@ -20,7 +20,7 @@ class ff_xmlPackage
 	var $element    = NULL;     // element stack
 	var $params     = NULL;     // parameters
 
-	function ff_xmlPackage()
+	function __construct()
 	{
 		// constructor
 		global $_ff_xmlPackage;

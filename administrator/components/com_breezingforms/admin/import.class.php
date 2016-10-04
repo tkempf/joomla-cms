@@ -24,9 +24,9 @@ class ff_importPackage extends ff_xmlPackage
 	var $pubmenus       = NULL;     // ids of publisched menus imported
 	var $warnings       = NULL;     // warnings emitted
 
-	function ff_importPackage()
+	function __construct()
 	{
-		parent::ff_xmlPackage();
+		parent::__construct();
 
 		$this->doc = array('elem' => array(
 			'FacileFormsPackage' => array(
