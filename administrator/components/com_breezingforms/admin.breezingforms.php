@@ -229,17 +229,17 @@ if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'ima
     );
 }
 
-if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.4.min.css')){
+if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.5.min.css')){
     JFile::copy(
-            JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode'.DS.'jq.mobile.1.4.4.min.css', 
-            JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.4.min.css'
+            JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode'.DS.'jq.mobile.1.4.5.min.css',
+            JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.5.min.css'
     );
 }
 
-if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.4.icons.min.css')){
+if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.5.icons.min.css')){
     JFile::copy(
-            JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode'.DS.'jq.mobile.1.4.4.icons.min.css', 
-            JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.4.icons.min.css'
+            JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode'.DS.'jq.mobile.1.4.5.icons.min.css',
+            JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'jq.mobile.1.4.5.icons.min.css'
     );
 }
 
