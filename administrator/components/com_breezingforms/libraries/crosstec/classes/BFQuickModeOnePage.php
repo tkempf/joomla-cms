@@ -1335,10 +1335,16 @@ display:none;
 				if($mdata['tabIndex'] != -1 && is_numeric($mdata['tabIndex'])){
 					$tabIndex = 'tabindex="'.intval($mdata['tabIndex']).'" ';
 				}
+
+				/* translatables */
+				if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
+					$mdata['value'] = $mdata['value_translation'.$this->language_tag];
+				}
 			
 				for($i = 0; $i < $this->p->rowcount; $i++) {
 					$row = $this->p->rows[$i];
 					if($mdata['bfName'] == $row->name){
+
 						if( ( isset($mdata['value']) || isset($mdata['list']) || isset($mdata['group']))
 							&& 
 							( 
@@ -1354,17 +1360,32 @@ display:none;
 								$mdata['bfType'] == 'bfRadioGroup'
 							)
 						){
+							$trans_value = '';
+							if (isset($mdata['value_translation' . $this->language_tag]) && $mdata['value_translation' . $this->language_tag] != '') {
+								$trans_value = $mdata['value_translation' . $this->language_tag];
+							}
+
+							$group_value = '';
+							if (isset($mdata['group_translation' . $this->language_tag]) && $mdata['group_translation' . $this->language_tag] != '') {
+								$group_value = $mdata['group_translation' . $this->language_tag];
+							}
+
+							$list_value = '';
+							if (isset($mdata['list_translation' . $this->language_tag]) && $mdata['list_translation' . $this->language_tag] != '') {
+								$list_value = $mdata['list_translation' . $this->language_tag];
+							}
+
 							if($mdata['bfType'] == 'bfSelect')
 							{
-								$mdata['list'] = $this->p->replaceCode($row->data2, "data2 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);
-							} 
+								$mdata['list'] = $this->p->replaceCode($list_value ? $list_value : $row->data2, "data2 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);
+							}
 							else if($mdata['bfType'] == 'bfCheckboxGroup' || $mdata['bfType'] == 'bfRadioGroup')
 							{
-								$mdata['group'] = $this->p->replaceCode($row->data2, "data2 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);
-							} 
+								$mdata['group'] = $this->p->replaceCode($group_value ? $group_value : $row->data2, "data2 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);
+							}
 							else
 							{
-								$mdata['value'] = $this->p->replaceCode($row->data1, "data1 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);	
+								$mdata['value'] = $this->p->replaceCode($trans_value ? $trans_value : $row->data1, "data1 of " . $mdata['bfName'], 'e', $mdata['dbId'], 0);
 							}
 						}
 						if(isset($mdata['checked']) && $mdata['bfType'] == 'bfCheckbox'){
@@ -1392,9 +1413,9 @@ display:none;
 						}
                                                 
                                                 /* translatables */
-                                                if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
-                                                    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
+                                                //    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
+                                                //}
                                                 
                                                 if(isset($mdata['placeholder_translation'.$this->language_tag]) && $mdata['placeholder_translation'.$this->language_tag] != ''){
                                                     $mdata['placeholder'] = $mdata['placeholder_translation'.$this->language_tag];
@@ -1434,9 +1455,9 @@ display:none;
                                                 if(isset($mdata['placeholder_translation'.$this->language_tag]) && $mdata['placeholder_translation'.$this->language_tag] != ''){
                                                     $mdata['placeholder'] = $mdata['placeholder_translation'.$this->language_tag];
                                                 }
-                                                if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
-                                                    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
+                                                //    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
+                                                //}
                                                 /* translatables end */
                                                 
                                                 echo '<div class="controls form-inline">';
@@ -1446,7 +1467,7 @@ display:none;
                                                     JImport( 'joomla.html.editor' );
                                                     $editor = JFactory::getEditor();
                                                     $this->htmltextareas[] = 'ff_nm_'.$mdata['bfName'].'[]';
-                                                    echo $editor->display('ff_nm_'.$mdata['bfName'].'[]',htmlentities(trim($mdata['value']), ENT_QUOTES, 'UTF-8'), strip_tags($mdata['width']), strip_tags($mdata['height']), '75', '20');
+                                                    echo $editor->display('ff_nm_'.$mdata['bfName'].'[]',htmlentities(trim($mdata['value']), ENT_QUOTES, 'UTF-8'), strip_tags($mdata['width']), strip_tags($mdata['height']), '75', '20', true, 'ff_elem' . $mdata['dbId']);
                                                     echo '</div>';
                                                     echo '<style type="text/css">.toggle-editor{display: none;}</style>';
                                                 } else {
@@ -1458,9 +1479,9 @@ display:none;
 					case 'bfRadioGroup':
 						
                                                 /* translatables */
-                                                if(isset($mdata['group_translation'.$this->language_tag]) && $mdata['group_translation'.$this->language_tag] != ''){
-                                                    $mdata['group'] = $mdata['group_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['group_translation'.$this->language_tag]) && $mdata['group_translation'.$this->language_tag] != ''){
+                                                //    $mdata['group'] = $mdata['group_translation'.$this->language_tag];
+                                                //}
                                                 /* translatables end */
                                             
 						if($mdata['group'] != ''){
@@ -1493,9 +1514,9 @@ display:none;
 						
 					case 'bfCheckboxGroup':
 						/* translatables */
-                                                if(isset($mdata['group_translation'.$this->language_tag]) && $mdata['group_translation'.$this->language_tag] != ''){
-                                                    $mdata['group'] = $mdata['group_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['group_translation'.$this->language_tag]) && $mdata['group_translation'.$this->language_tag] != ''){
+                                                //    $mdata['group'] = $mdata['group_translation'.$this->language_tag];
+                                                //}
                                                 /* translatables end */
 						if($mdata['group'] != ''){
 							echo '<div class="controls form-inline">';
@@ -1538,9 +1559,9 @@ display:none;
 						
 					case 'bfSelect':
 						/* translatables */
-                                                if(isset($mdata['list_translation'.$this->language_tag]) && $mdata['list_translation'.$this->language_tag] != ''){
-                                                    $mdata['list'] = $mdata['list_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['list_translation'.$this->language_tag]) && $mdata['list_translation'.$this->language_tag] != ''){
+                                                //    $mdata['list'] = $mdata['list_translation'.$this->language_tag];
+                                                //}
                                                 /* translatables end */
 						if($mdata['list'] != ''){
 							
@@ -1770,9 +1791,9 @@ display:none;
                                                 if(isset($mdata['src_translation'.$this->language_tag]) && $mdata['src_translation'.$this->language_tag] != ''){
                                                     $mdata['src'] = $mdata['src_translation'.$this->language_tag];
                                                 }
-                                                if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
-                                                    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
+                                                //    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
+                                                //}
                                                 /* translatables end */
                                                 
 						echo '<div class="controls form-inline">';
@@ -1968,9 +1989,9 @@ display:none;
 					
                                         case 'bfCalendar':
                                                 /* translatables */
-                                                if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
-                                                    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
+                                                //    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
+                                                //}
                                                 if(isset($mdata['format_translation'.$this->language_tag]) && $mdata['format_translation'.$this->language_tag] != ''){
                                                     $mdata['format'] = $mdata['format_translation'.$this->language_tag];
                                                 }
@@ -2016,9 +2037,9 @@ display:none;
                                                 
 					case 'bfCalendarResponsive':
                                                 /* translatables */
-                                                if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
-                                                    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
-                                                }
+                                                //if(isset($mdata['value_translation'.$this->language_tag]) && $mdata['value_translation'.$this->language_tag] != ''){
+                                                //    $mdata['value'] = $mdata['value_translation'.$this->language_tag];
+                                                //}
                                                 if(isset($mdata['format_translation'.$this->language_tag]) && $mdata['format_translation'.$this->language_tag] != ''){
                                                     $mdata['format'] = $mdata['format_translation'.$this->language_tag];
                                                 }
@@ -2135,10 +2156,23 @@ display:none;
 						var bf_canvas' . $mdata['dbId'] . ' = null;
 						
 						function bf_resizeCanvas' . $mdata['dbId'] . 'Func() {
+							
+							if(arguments[0] !== false){
+							
+								var data = bf_signaturePad' . $mdata['dbId'] . '.toDataURL();
+							
+							}
+							
 						    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
 						    bf_canvas' . $mdata['dbId'] . '.width = bf_canvas' . $mdata['dbId'] . '.offsetWidth * ratio;
 						    bf_canvas' . $mdata['dbId'] . '.height = bf_canvas' . $mdata['dbId'] . '.offsetHeight * ratio;
 						    bf_canvas' . $mdata['dbId'] . '.getContext("2d").scale(ratio, ratio);
+						    
+						    if(arguments[0] !== false){
+						    
+						        bf_signaturePad' . $mdata['dbId'] . '.fromDataURL(data);
+						        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data);
+						    }
 						}
 						
 						function bf_Signature' . $mdata['dbId'] . 'Reset(sig) {
@@ -2149,8 +2183,10 @@ display:none;
 						jQuery(document).ready(function(){
 							bf_canvas' . $mdata['dbId'] . ' = document.querySelector("#bfSignature' . $mdata['dbId'] . ' canvas");
 							
+							// trouble on mobile devices, thinks swiping is resize...
 							jQuery(window).on("resize", bf_resizeCanvas' . $mdata['dbId'] . 'Func);
-							bf_resizeCanvas' . $mdata['dbId'] . 'Func();
+							
+							bf_resizeCanvas' . $mdata['dbId'] . 'Func(false);
 							
 							bf_signaturePad' . $mdata['dbId'] . ' = new SignaturePad(bf_canvas' . $mdata['dbId'] . ', {
 							    backgroundColor: "rgb(255,255,255)",

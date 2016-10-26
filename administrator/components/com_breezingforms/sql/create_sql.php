@@ -289,7 +289,7 @@ $_19 = "CREATE TABLE `#__facileforms_subrecords` (
   `title` varchar(255) NOT NULL default '',
   `name` varchar(255) NOT NULL default '',
   `type` varchar(255) NOT NULL default '',
-  `value` text,
+  `value` longtext NOT NULL,
   PRIMARY KEY  (`id`)
 ) AUTO_INCREMENT=1  DEFAULT CHARACTER SET utf8   
  COLLATE utf8_general_ci";
