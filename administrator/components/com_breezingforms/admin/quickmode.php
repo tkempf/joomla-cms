@@ -101,7 +101,7 @@ switch($task){
 			$formDesc      = $fOptions->description;
 		}
 
-                echo QuickModeHtml::showApplication($formId, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $quickMode->getTemplateCode($formId), $quickMode->getElementScripts(), $quickMode->getThemes(), $quickMode->getThemesBootstrap());
+                echo QuickModeHtml::showApplication($formId, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $quickMode->getTemplateCode($formId), $quickMode->getElementScripts(), $quickMode->getThemes(), $quickMode->getThemesBootstrap(), $quickMode->getThemesBootstrap3());
 		break;
 
 	default:
@@ -182,5 +182,5 @@ switch($task){
 			$o = $quickMode->getTemplateCode(JRequest::getInt('form', ''));
 		}
 
-		echo QuickModeHtml::showApplication($form, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $o, $quickMode->getElementScripts(), $quickMode->getThemes(), $quickMode->getThemesBootstrap());
+		echo QuickModeHtml::showApplication($form, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $o, $quickMode->getElementScripts(), $quickMode->getThemes(), $quickMode->getThemesBootstrap(), $quickMode->getThemesBootstrap3());
 }

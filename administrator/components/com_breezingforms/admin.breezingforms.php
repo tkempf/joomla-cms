@@ -215,6 +215,17 @@ if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstra
     );
 }
 
+if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstrap3')){
+	JFolder::copy(
+		JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode-bootstrap3'.DS,
+		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'quickmode-bootstrap3'.DS
+	);
+	JFolder::move(
+		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'quickmode-bootstrap3'.DS,
+		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstrap3'.DS
+	);
+}
+
 if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'images')){
     JFolder::copy(
             JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode'.DS.'images'.DS, 

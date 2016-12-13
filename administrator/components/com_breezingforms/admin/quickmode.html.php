@@ -10,7 +10,7 @@ defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
 class QuickModeHtml {
 
-	public static function showApplication( $formId = 0, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $dataObjectString, $elementScripts, $themes, $themesbootstrap ) {
+	public static function showApplication( $formId = 0, $formName, $formTitle, $formDesc, $formEmailntf, $formEmailadr, $dataObjectString, $elementScripts, $themes, $themesbootstrap, $themesbootstrap3 ) {
 		$active_language_code = htmlentities( JRequest::getVar( 'active_language_code' ), ENT_QUOTES, 'UTF-8' );
 		JHTML::_( 'behavior.keepalive' );
 		JHTML::_( 'behavior.modal' );
@@ -2201,6 +2201,9 @@ class QuickModeHtml {
 							mdata.themebootstrapThemeEngine = JQuery('#bfThemeBootstrapThemeBootstrap').attr('checked') ? 'bootstrap' : 'breezingforms';
 
 							mdata.themebootstrapMode = JQuery('#bfThemeBootstrapModeYes').attr('checked');
+							mdata.themebootstrapUse3 = JQuery('#bfThemeBootstrapUse3Yes').attr('checked');
+							mdata.themebootstrap3builtin = JQuery('#bfThemeBootstrap3BuiltInYes').attr('checked');
+							mdata.themebootstrap3classpfx = JQuery('#bfThemeBootstrap3Classpfx').val();
 
 							mdata.submitLabel = JQuery('#bfFormSubmitLabel').val();
 							mdata['submitLabel_translation<?php echo $active_language_code; ?>'] = JQuery('#bfFormSubmitLabelTrans').val();
@@ -2304,6 +2307,27 @@ class QuickModeHtml {
 								} else {
 									JQuery('#bfThemeBootstrapModeYes').attr('checked', false);
 									JQuery('#bfThemeBootstrapModeNo').attr('checked', true);
+								}
+
+								if (mdata.themebootstrapUse3) {
+									JQuery('#bfThemeBootstrapUse3Yes').attr('checked', true);
+									JQuery('#bfThemeBootstrapUse3No').attr('checked', false);
+								} else {
+									JQuery('#bfThemeBootstrapUse3Yes').attr('checked', false);
+									JQuery('#bfThemeBootstrapUse3No').attr('checked', true);
+								}
+
+								if (mdata.themebootstrap3builtin) {
+									JQuery('#bfThemeBootstrap3BuiltInYes').attr('checked', true);
+									JQuery('#bfThemeBootstrap3BuiltInNo').attr('checked', false);
+								} else {
+									JQuery('#bfThemeBootstrap3BuiltInYes').attr('checked', false);
+									JQuery('#bfThemeBootstrap3BuiltInNo').attr('checked', true);
+								}
+
+								if(mdata.themebootstrap3classpfx){
+
+									JQuery('#bfThemeBootstrap3Classpfx').val(mdata.themebootstrap3classpfx);
 								}
 
 								if (mdata.themebootstrapThemeEngine == 'bootstrap') {
@@ -4743,12 +4767,28 @@ class QuickModeHtml {
 													<label class="bfPropertyLabel hasTip"
 													       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP' ) ); ?>"
 													       for="bfThemeBootstrap"><?php echo BFText::_( 'COM_BREEZINGFORMS_THEME_BOOTSTRAP' ); ?></label>
-													<select id="bfThemeBootstrap">
+													<?php
+													$dbObject = Zend_Json::decode( $dataObjectString );
+													$useBs3 = false;
+													if( isset( $dbObject['properties']['themebootstrapUse3'] ) && $dbObject['properties']['themebootstrapUse3'] ){
+														$useBs3 = true;
+													}
+													?>
+													<select id="bfThemeBootstrap"<?php echo $useBs3 ? ' style="display: none;"' : ''; ?>>
 														<option value="">Default</option>
 														> <?php
 														$tCount = count( $themesbootstrap );
 														for ( $i = 0; $i < $tCount; $i ++ ) {
 															echo '<option value="' . $themesbootstrap[ $i ] . '">' . $themesbootstrap[ $i ] . '</option>' . "\n";
+														}
+														?>
+													</select>
+													<select id="bfThemeBootstrap3"<?php echo !$useBs3 ? ' style="display: none;"' : ''; ?>>
+														<option value="">Default</option>
+														> <?php
+														$tCount = count( $themesbootstrap3 );
+														for ( $i = 0; $i < $tCount; $i ++ ) {
+															echo '<option value="' . $themesbootstrap3[ $i ] . '">' . $themesbootstrap3[ $i ] . '</option>' . "\n";
 														}
 														?>
 													</select>
@@ -4761,6 +4801,40 @@ class QuickModeHtml {
 													<?php
 												}
 												?>
+
+
+												<div class="bfPropertyWrap">
+													<label class="bfPropertyLabel hasTip"
+													       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_THEME_USE_BOOTSTRAP3_TIP' ) ); ?>"
+													       for="bfThemeBootstrapUse3Yes"><?php echo BFText::_( 'COM_BREEZINGFORMS_QM_THEME_USE_BOOTSTRAP3' ); ?></label>
+
+													<input onclick="JQuery('#bfThemeBootstrap3').css('display','block');JQuery('#bfThemeBootstrap').css('display','none');" type="radio" name="bfThemeBootstrapUse3" value=""
+													       id="bfThemeBootstrapUse3Yes"/> <?php echo BFText::_( 'COM_BREEZINGFORMS_YES' ); ?>
+													<input onclick="JQuery('#bfThemeBootstrap').css('display','block');JQuery('#bfThemeBootstrap3').css('display','none');" checked="checked" type="radio" name="bfThemeBootstrapUse3"
+													       value=""
+													       id="bfThemeBootstrapUse3No"/> <?php echo BFText::_( 'COM_BREEZINGFORMS_NO' ); ?>
+												</div>
+
+												<div class="bfPropertyWrap">
+													<label class="bfPropertyLabel hasTip"
+													       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP3_BUILTIN_TIP' ) ); ?>"
+													       for="bfThemeBootstrap3BuiltInYes"><?php echo BFText::_( 'COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP3_BUILTIN' ); ?></label>
+
+													<input checked="checked" type="radio" name="bfThemeBootstrap3BuiltIn" value=""
+													       id="bfThemeBootstrap3BuiltInYes"/> <?php echo BFText::_( 'COM_BREEZINGFORMS_YES' ); ?>
+													<input type="radio" name="bfThemeBootstrap3BuiltIn"
+													       value=""
+													       id="bfThemeBootstrap3BuiltInNo"/> <?php echo BFText::_( 'COM_BREEZINGFORMS_NO' ); ?>
+												</div>
+
+												<div class="bfPropertyWrap">
+													<label class="bfPropertyLabel hasTip"
+													       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP3_CLASSPFX_TIP' ) ); ?>"
+													       for="bfThemeBootstrap3Classpfx"><?php echo BFText::_( 'COM_BREEZINGFORMS_QM_THEME_BOOTSTRAP3_CLASSPFX' ); ?></label>
+													<input type="text" value="" id="bfThemeBootstrap3Classpfx"/>
+												</div>
+
+
 												<?php
 												if ( version_compare( $version->getShortVersion(), '3.0', '<' ) ) {
 													?>
@@ -4843,7 +4917,11 @@ class QuickModeHtml {
 												$dbObject = Zend_Json::decode( $dataObjectString );
 												if ( isset( $dbObject['properties']['themebootstrap'] ) ) {
 													$themeboostrapfolder  = $dbObject['properties']['themebootstrap'];
-													$themesbootstrap_path = JPATH_SITE . DS . 'media' . DS . 'breezingforms' . DS . 'themes-bootstrap' . DS . $themeboostrapfolder . DS;
+													$folder = 'themes-bootstrap';
+													if( isset( $dbObject['properties']['themebootstrapUse3'] ) && $dbObject['properties']['themebootstrapUse3'] ){
+														$folder = 'themes-bootstrap3';
+													}
+													$themesbootstrap_path = JPATH_SITE . DS . 'media' . DS . 'breezingforms' . DS . $folder . DS . $themeboostrapfolder . DS;
 													if ( JFolder::exists( $themesbootstrap_path ) && JFile::exists( $themesbootstrap_path . 'vars.txt' ) ) {
 														$varscontent = htmlentities( JFile::read( $themesbootstrap_path . 'vars.txt' ), ENT_QUOTES, 'UTF-8' );
 														if ( $varscontent ) {
@@ -5601,7 +5679,7 @@ class QuickModeHtml {
 													<input checked="checked" type="checkbox" value=""
 													       id="bfElementFileAdvancedUseUrl"/>
 												</div>
-												<div class="bfPropertyWrap">
+												<div class="bfPropertyWrap" style="display:none;"> <!-- legacy and hidden as not required any longer -->
 													<label class="bfPropertyLabel hasTip"
 													       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_FILE_USEURL_DIR' ) ); ?>"
 													       for="bfElementFileAdvancedUseUrlDownloadDirectory"><?php echo BFText::_( 'COM_BREEZINGFORMS_USE_URL_DOWNLOAD_DIRECTORY' ); ?></label>

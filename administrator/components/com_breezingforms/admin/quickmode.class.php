@@ -159,7 +159,15 @@ class QuickMode {
 				if ( isset( $mdata['themebootstrap'] ) && $mdata['themebootstrap'] && isset( $mdata['themebootstrapvars'] ) && $mdata['themebootstrapvars'] && isset( $mdata['themebootstrapbefore'] ) && $mdata['themebootstrapbefore'] == $mdata['themebootstrap'] ) {
 					jimport( 'joomla.filesystem.file' );
 					jimport( 'joomla.filesystem.folder' );
-					$themepath     = JPATH_SITE . DS . 'media' . DS . 'breezingforms' . DS . 'themes-bootstrap' . DS . $mdata['themebootstrap'] . DS;
+
+					$folder = 'themes-bootstrap';
+
+					if( isset( $mdata['themebootstrapUse3'] ) && $mdata['themebootstrapUse3'] ){
+
+						$folder = 'themes-bootstrap3';
+					}
+
+					$themepath     = JPATH_SITE . DS . 'media' . DS . 'breezingforms' . DS . $folder . DS . $mdata['themebootstrap'] . DS;
 					$themevarspath = $themepath . 'vars.txt';
 					if ( JFile::exists( $themevarspath ) ) {
 						JFile::write( $themevarspath, $mdata['themebootstrapvars'] );
@@ -340,8 +348,8 @@ class QuickMode {
 				$element['orderNumber']         = $mdata['orderNumber'] != - 1 ? $mdata['orderNumber'] : $areas->container[0]['elementCount'];
 				$element['tabIndex']            = $mdata['tabIndex'];
 				$element['logging']             = $mdata['logging'];
-				$element['options']['readonly'] = $mdata['readonly'];
-				$element['flag2']               = $mdata['readonly'] ? 1 : 0;
+				$element['options']['readonly'] = isset($mdata['readonly']) ? $mdata['readonly'] : false;
+				$element['flag2']               = isset($mdata['readonly']) && $mdata['readonly'] ? 1 : 0;
 				// validation
 				$element['script3id']   = $mdata['validationId'];
 				$element['script3code'] = $mdata['validationCode'];
@@ -827,6 +835,23 @@ class QuickMode {
 	public function getThemesBootstrap() {
 		$themes = array();
 		$folder = JPATH_SITE . '/media/breezingforms/themes-bootstrap/';
+		if ( $handle = opendir( $folder ) ) {
+			while ( false !== ( $file = readdir( $handle ) ) ) {
+				if ( $file != "images" && $file != "." && $file != ".." && strtolower( $file ) != '.csv' && strtolower( $file ) != '.svn' && strtolower( $file ) != 'img' ) {
+					if ( @is_dir( $folder . $file ) ) {
+						$themes[] = $file;
+					}
+				}
+			}
+			closedir( $handle );
+		}
+
+		return $themes;
+	}
+
+	public function getThemesBootstrap3() {
+		$themes = array();
+		$folder = JPATH_SITE . '/media/breezingforms/themes-bootstrap3/';
 		if ( $handle = opendir( $folder ) ) {
 			while ( false !== ( $file = readdir( $handle ) ) ) {
 				if ( $file != "images" && $file != "." && $file != ".." && strtolower( $file ) != '.csv' && strtolower( $file ) != '.svn' && strtolower( $file ) != 'img' ) {
