@@ -572,7 +572,7 @@ display:none;
 										theText = calc(theText);
 									}
 								}
-								JQuery("#"+bfSummarizers[i].id).text( theText );
+								JQuery("#"+bfSummarizers[i].id).html( theText );
 								summVal = theText;
 							}
 						break;
@@ -595,7 +595,7 @@ display:none;
 										theText = calc(theText);
 									}
 								}
-								JQuery("#"+bfSummarizers[i].id).text( theText );
+								JQuery("#"+bfSummarizers[i].id).html( theText );
 								summVal = theText;
 							}
 						break;
@@ -1959,8 +1959,17 @@ display:none;
 						    if(arguments[0] !== false){
 						    
 						        bf_signaturePad' . $mdata['dbId'] . '.fromDataURL(data);
-						        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data);
+						        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data.replace("data:image/png;base64,",""));
 						    }
+						    
+						    bf_signaturePad' . $mdata['dbId'] . ' = new SignaturePad(bf_canvas' . $mdata['dbId'] . ', {
+							    backgroundColor: "rgb(255,255,255)",
+							    penColor: "rgb(0,0,0)",
+							    onEnd: function(){
+							        var data = bf_signaturePad' . $mdata['dbId'] . '.toDataURL();
+							        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data.replace("data:image/png;base64,",""));
+							    }
+							});
 						}
 						
 						function bf_Signature' . $mdata['dbId'] . 'Reset(sig) {
@@ -1976,14 +1985,12 @@ display:none;
 							
 							bf_resizeCanvas' . $mdata['dbId'] . 'Func(false);
 							
-							bf_signaturePad' . $mdata['dbId'] . ' = new SignaturePad(bf_canvas' . $mdata['dbId'] . ', {
-							    backgroundColor: "rgb(255,255,255)",
-							    penColor: "rgb(0,0,0)",
-							    onEnd: function(){
-							        var data = bf_signaturePad' . $mdata['dbId'] . '.toDataURL();
-							        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data);
-							    }
-							});
+							// make sure the canvas is resized if dimensions are zero
+							setInterval(function(){
+								if( bf_canvas' . $mdata['dbId'] . '.width == 0 && bf_canvas' . $mdata['dbId'] . '.height == 0 ){
+									bf_resizeCanvas' . $mdata['dbId'] . 'Func(false);
+								}
+							}, 500);
 							
 						});
 						');

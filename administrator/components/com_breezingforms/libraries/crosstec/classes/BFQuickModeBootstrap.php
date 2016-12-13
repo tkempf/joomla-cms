@@ -56,6 +56,26 @@ class BFQuickModeBootstrap{
 
 	private $hasResponsiveDatePicker = false;
 
+	private $bsVersion = '';
+
+	private $bsClasses = array();
+
+	private $bsClassPrefix = '';
+
+	function bsClass($key){
+
+		if($this->bsVersion == ''){
+
+			$ver = 2;
+		}
+		else
+		{
+			$ver = $this->bsVersion;
+		}
+
+		return $this->bsClasses[$ver][$key];
+	}
+
 	function __construct( HTML_facileFormsProcessor $p ){
 
 		jimport('joomla.version');
@@ -71,6 +91,132 @@ class BFQuickModeBootstrap{
 		$this->dataObject = Zend_Json::decode( bf_b64dec($this->p->formrow->template_code) );
 
 		$this->rootMdata = $this->dataObject['properties'];
+
+		if(isset($this->rootMdata['themebootstrap3classpfx']) && trim($this->rootMdata['themebootstrap3classpfx']) != ''){
+
+			$this->bsClassPrefix = $this->rootMdata['themebootstrap3classpfx'];
+		}
+		else{
+
+			if(isset($this->rootMdata['themebootstrapUse3']) && $this->rootMdata['themebootstrapUse3']
+			   && isset($this->rootMdata['themebootstrap3builtin']) && $this->rootMdata['themebootstrap3builtin'] )
+			{
+				$this->bsClassPrefix = 'bfbs3-';
+			}
+			else{
+
+				$this->bsClassPrefix = '';
+			}
+
+		}
+
+		$this->bsClasses[2] = array(
+			'bar' => 'bar',
+			'progress' => 'progress',
+			'span1' => 'span1',
+			'span2' => 'span2',
+			'span3' => 'span3',
+			'span4' => 'span4',
+			'span5' => 'span5',
+			'span6' => 'span6',
+			'span7' => 'span7',
+			'span8' => 'span8',
+			'span9' => 'span9',
+			'span10' => 'span10',
+			'span11' => 'span11',
+			'span12' => 'span12',
+			'control-group' => 'control-group',
+			'control-label' => 'control-label',
+			'row-fluid' => 'row-fluid',
+			'icon-asterisk' => 'icon-asterisk',
+			'icon-question-sign' => 'icon-question-sign',
+			'form-actions' => 'form-actions',
+			'form-actions-buttons' => '',
+			'btn' => 'btn',
+			'btn-primary' => 'btn-primary',
+			'btn-secondary' => 'btn-secondary',
+			'alert' => 'alert',
+			'alert-error' => 'alert-error',
+			'controls' => 'controls',
+			'form-inline' => 'form-inline',
+			'form-group' => '',
+			'well' => 'well',
+			'well-small' => 'well-small',
+			'hero-unit' => 'hero-unit',
+			'pull-left' => 'pull-left',
+			'pull-right' => 'pull-right',
+			'radio' => 'radio',
+			'checkbox' => 'checkbox',
+			'inline' => 'inline',
+			'radio-form-group' => '',
+			'checkbox-form-group' => '',
+			'input-append' => 'input-append',
+			'input-group-btn' => '',
+			'form-control' => '',
+			'icon-calendar' => 'icon-calendar',
+			'icon-refresh' => 'icon-refresh',
+			'icon-play' => 'icon-play',
+			'icon-picture' => 'icon-picture',
+			'img-polaroid' => 'img-polaroid',
+			'icon-upload' => 'icon-upload',
+			'nonform-control' => '',
+			'other-form-group' => '',
+			'custom-form-control' => ''
+		);
+
+		$this->bsClasses[3] = array(
+			'bar' => $this->bsClassPrefix.'progress-bar',
+			'progress' => $this->bsClassPrefix.'progress',
+			'span1' => $this->bsClassPrefix.'col-sm-1',
+			'span2' => $this->bsClassPrefix.'col-sm-2',
+			'span3' => $this->bsClassPrefix.'col-sm-3',
+			'span4' => $this->bsClassPrefix.'col-sm-4',
+			'span5' => $this->bsClassPrefix.'col-sm-5',
+			'span6' => $this->bsClassPrefix.'col-sm-6',
+			'span7' => $this->bsClassPrefix.'col-sm-7',
+			'span8' => $this->bsClassPrefix.'col-sm-8',
+			'span9' => $this->bsClassPrefix.'col-sm-9',
+			'span10' => $this->bsClassPrefix.'col-sm-10',
+			'span11' => $this->bsClassPrefix.'col-sm-11',
+			'span12' => $this->bsClassPrefix.'col-sm-12',
+			'control-group' => '',
+			'control-label' => $this->bsClassPrefix.'control-label',
+			'row-fluid' => $this->bsClassPrefix.'row',
+			'icon-asterisk' => $this->bsClassPrefix.'glyphicon '.$this->bsClassPrefix.'glyphicon-asterisk',
+			'icon-question-sign' => $this->bsClassPrefix.'glyphicon '.$this->bsClassPrefix.'glyphicon-question-sign',
+			'form-actions' => $this->bsClassPrefix.'form-group '.$this->bsClassPrefix.'form-group-actions',
+			'form-actions-buttons' => $this->bsClassPrefix.'col-sm-12',
+			'btn' => $this->bsClassPrefix.'btn',
+			'btn-primary' => $this->bsClassPrefix.'btn-primary',
+			'btn-secondary' => $this->bsClassPrefix.'btn-default',
+			'alert' => $this->bsClassPrefix.'alert',
+			'alert-error' => $this->bsClassPrefix.'alert-danger',
+			'controls' => '',
+			'form-inline' => $this->bsClassPrefix.'form-inline',
+			'form-group' => $this->bsClassPrefix.'form-group',
+			'well' => $this->bsClassPrefix.'well',
+			'well-small' => $this->bsClassPrefix.'well-sm',
+			'hero-unit' => $this->bsClassPrefix.'jumbotron',
+			'pull-left' => $this->bsClassPrefix.'pull-left',
+			'pull-right' => $this->bsClassPrefix.'pull-right',
+			'radio' => $this->bsClassPrefix.'radio-inline',
+			'checkbox' => $this->bsClassPrefix.'checkbox-inline',
+			'inline' => $this->bsClassPrefix.'inline',
+			'radio-form-group' => $this->bsClassPrefix.'radio-form-group',
+			'checkbox-form-group' => $this->bsClassPrefix.'checkbox-form-group',
+			'input-append' => $this->bsClassPrefix.'input-group',
+			'input-group-btn' => $this->bsClassPrefix.'input-group-btn',
+			'form-control' => $this->bsClassPrefix.'form-control',
+			'icon-calendar' => $this->bsClassPrefix.'glyphicon '.$this->bsClassPrefix.'glyphicon-calendar',
+			'icon-refresh' => $this->bsClassPrefix.'glyphicon '.$this->bsClassPrefix.'glyphicon-refresh',
+			'icon-play' => $this->bsClassPrefix.'glyphicon '.$this->bsClassPrefix.'glyphicon-play',
+			'icon-picture' => $this->bsClassPrefix.'glyphicon '.$this->bsClassPrefix.'glyphicon-picture',
+			'img-polaroid' => $this->bsClassPrefix.'thumbnail',
+			'icon-upload' => $this->bsClassPrefix.'glyphicon '.$this->bsClassPrefix.'glyphicon-upload',
+			'nonform-control' => $this->bsClassPrefix.'nonform-control',
+			'other-form-group' => $this->bsClassPrefix.'other-form-group',
+			'custom-form-control' => $this->bsClassPrefix.'custom-form-control'
+		);
 
 		if(JRequest::getVar('ff_applic','') != 'mod_facileforms' && JRequest::getVar('ff_applic','') != 'plg_facileforms'){
 			/* translatables */
@@ -91,13 +237,21 @@ class BFQuickModeBootstrap{
 
 		mt_srand();
 		$this->flashUploadTicket = md5( strtotime('now') .  mt_rand( 0, mt_getrandmax() ) );
-		$this->cancelImagePath = JURI::root(true) . '/media/breezingforms/themes-bootstrap/cancel.png';
-		$this->uploadImagePath = JURI::root(true) . '/media/breezingforms/themes-bootstrap/upload.png';
-		if(isset($this->rootMdata['themebootstrap']) && @file_exists(JPATH_SITE .'/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/images/cancel.png')){
-			$this->cancelImagePath = JURI::root(true) . '/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/images/cancel.png';
+
+		if( isset( $this->rootMdata['themebootstrapUse3'] ) && $this->rootMdata['themebootstrapUse3'] ){
+
+			$this->bsVersion = '3';
 		}
-		if(isset($this->rootMdata['themebootstrap']) && @file_exists(JPATH_SITE .'/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/images/upload.png')){
-			$this->uploadImagePath = JURI::root(true) . '/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/images/upload.png';
+
+		$this->cancelImagePath = JURI::root( true ) . '/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/cancel.png';
+		$this->uploadImagePath = JURI::root( true ) . '/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/upload.png';
+		if ( isset( $this->rootMdata['themebootstrap'] ) && @file_exists( JPATH_SITE . '/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/' . $this->rootMdata['themebootstrap'] . '/images/cancel.png' ) )
+		{
+			$this->cancelImagePath = JURI::root( true ) . '/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/' . $this->rootMdata['themebootstrap'] . '/images/cancel.png';
+		}
+		if ( isset( $this->rootMdata['themebootstrap'] ) && @file_exists( JPATH_SITE . '/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/' . $this->rootMdata['themebootstrap'] . '/images/upload.png' ) )
+		{
+			$this->uploadImagePath = JURI::root( true ) . '/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/' . $this->rootMdata['themebootstrap'] . '/images/upload.png';
 		}
 	}
 
@@ -143,7 +297,7 @@ class BFQuickModeBootstrap{
 	public function render(){
 
 		if( isset($this->rootMdata['themebootstrapUseProgress']) && $this->rootMdata['themebootstrapUseProgress'] ){
-			echo '<div class="progress"><div id="bfProgressBar" class="bar"></div></div>
+			echo '<div class="'.$this->bsClass('progress').'"><div id="bfProgressBar" class="'.$this->bsClass('bar').'"></div></div>
                         <script type="text/javascript">
                         <!--
                         function bfUpdateProgress(){
@@ -328,11 +482,11 @@ class BFQuickModeBootstrap{
 			$span = '';
 			if(($parentFullChildrenLength-$reduce) > 0 && $parentInline){
 				switch(12/($parentFullChildrenLength-$reduce)){
-					case 6:   $span = ' span6'; break;
-					case 4:   $span = ' span4'; break;
-					case 3:   $span = ' span3'; break;
-					case 2.4: $span = ' span2'; break;
-					case 2:   $span = ' span2'; break;
+					case 6:   $span = ' ' . $this->bsClass('span6'); break;
+					case 4:   $span = ' ' . $this->bsClass('span4'); break;
+					case 3:   $span = ' ' . $this->bsClass('span3'); break;
+					case 2.4: $span = ' ' . $this->bsClass('span2'); break;
+					case 2:   $span = ' ' . $this->bsClass('span2'); break;
 				}
 			}
 
@@ -364,7 +518,7 @@ class BFQuickModeBootstrap{
 
 				if(trim($mdata['pageIntro'])!=''){
 
-					echo '<div class="'.(isset($this->rootMdata['themebootstrapUseHeroUnit']) && $this->rootMdata['themebootstrapUseHeroUnit'] ? 'hero-unit' : '').$this->fadingClass.'">'."\n";
+					echo '<div class="'.(isset($this->rootMdata['themebootstrapUseHeroUnit']) && $this->rootMdata['themebootstrapUseHeroUnit'] ? $this->bsClass('hero-unit') : '').$this->fadingClass.'">'."\n";
 
 					$regex		= '/{loadposition\s+(.*?)}/i';
 					$introtext = $mdata['pageIntro'];
@@ -395,7 +549,7 @@ class BFQuickModeBootstrap{
 				}
 
 				if(!$this->useErrorAlerts){
-					echo '<div class="bfErrorMessage alert alert-error" style="display:none"></div>'."\n";
+					echo '<div class="bfErrorMessage '.$this->bsClass('alert').' '.$this->bsClass('alert-error').'" style="display:none"></div>'."\n";
 				}
 
 			} else if($mdata['type'] == 'section'){
@@ -403,7 +557,6 @@ class BFQuickModeBootstrap{
 				if(isset($dataObject['properties']['name']) && isset($mdata['off']) && $mdata['off']){
 					echo '<script type="text/javascript"><!--'."\n".'bfDeactivateSection.push("'.$dataObject['properties']['name'].'");'."\n".'//--></script>'."\n";
 				}
-
 				/* translatables */
 				if(isset($mdata['title_translation'.$this->language_tag]) && $mdata['title_translation'.$this->language_tag] != ''){
 					$mdata['title'] = $mdata['title_translation'.$this->language_tag];
@@ -417,12 +570,12 @@ class BFQuickModeBootstrap{
 						echo '<legend>'.htmlentities(trim($mdata['title']), ENT_QUOTES, 'UTF-8').'</legend>'."\n";
 					}
 
-					echo '<div class="row-fluid"><i style="display:none;"></i>';
+					echo '<div class="'.$this->bsClass('row-fluid').'"><i style="display:none;"></i>';
 				}
 				else if( $mdata['bfType'] == 'normal' ) {
 					if(isset($dataObject['properties']['name']) && $dataObject['properties']['name'] != ''){
 						echo '<section '.(isset($mdata['off']) && $mdata['off'] ? 'style="display:none" ' : ' class="'.$span.' '.$this->fadingClass.'"').(isset($dataObject['properties']['name']) && $dataObject['properties']['name'] != "" ? ' id="'.$dataObject['properties']['name'].'"' : '').'>'."\n";
-						echo '<div class="row-fluid"><i style="display:none;"></i>';
+						echo '<div class="'.$this->bsClass('row-fluid').'"><i style="display:none;"></i>';
 					}
 				}
 
@@ -433,7 +586,7 @@ class BFQuickModeBootstrap{
 				/* translatables end */
 
 				if(trim($mdata['description'])!=''){
-					echo '<div class="bfSectionDescription'.(isset($this->rootMdata['themebootstrapUseWell']) && $this->rootMdata['themebootstrapUseWell'] ? ' well well-small' : '').'">'."\n";
+					echo '<div class="bfSectionDescription'.(isset($this->rootMdata['themebootstrapUseWell']) && $this->rootMdata['themebootstrapUseWell'] ? ' ' . $this->bsClass('well').' '.$this->bsClass('well-small') : '').'">'."\n";
 
 					$regex		= '/{loadposition\s+(.*?)}/i';
 					$introtext = $mdata['description'];
@@ -461,6 +614,7 @@ class BFQuickModeBootstrap{
 					echo $introtext."\n";
 					echo '</div>'."\n";
 				}
+
 
 			} else if($mdata['type'] == 'element'){
 
@@ -490,7 +644,7 @@ class BFQuickModeBootstrap{
 				}
 
 				if($mdata['bfType'] != 'bfHidden'){
-					echo '<div '.(isset($mdata['off']) && $mdata['off'] ? 'style="display:none" ' : '').'class="bfElemWrap control-group'.$span.(isset($mdata['off']) && $mdata['off'] ? '' : $this->fadingClass).'" id="bfElemWrap'.$mdata['dbId'].'">'."\n";
+					echo '<div '.(isset($mdata['off']) && $mdata['off'] ? 'style="display:none" ' : '').'class="bfElemWrap '.$this->bsClass('control-group').''.$span.(isset($mdata['off']) && $mdata['off'] ? '' : $this->fadingClass).'" id="bfElemWrap'.$mdata['dbId'].'">'."\n";
 
 				}
 
@@ -535,7 +689,7 @@ class BFQuickModeBootstrap{
 					}
 
 					if($tipOpen){
-						$tipOpen = $tipOpen.'<i class="icon-question-sign">&nbsp;</i> ';
+						$tipOpen = $tipOpen.'<i class="'.$this->bsClass('icon-question-sign').'">&nbsp;</i> ';
 					}
 
 					$for = '';
@@ -559,9 +713,9 @@ class BFQuickModeBootstrap{
 					}
 					$required = '';
 					if($mdata['required']){
-						$required = ' <i class="icon-asterisk"></i> '."\n";
+						$required = ' <i class="'.$this->bsClass('icon-asterisk').'"></i> '."\n";
 					}
-					$label = '<label class="control-label'.(isset($this->rootMdata['themebootstrapLabelTop']) && $this->rootMdata['themebootstrapLabelTop'] ? ' bfLabelBlock' : '').'" id="bfLabel'.$mdata['dbId'].'" '.$for.'>'.$tipOpen.str_replace("***","\"",$labelText).$tipClose.$required.'</label>'."\n";
+					$label = '<label class="'.$this->bsClass('control-label').(isset($this->rootMdata['themebootstrapLabelTop']) && $this->rootMdata['themebootstrapLabelTop'] ? ' bfLabelBlock' : '').'" id="bfLabel'.$mdata['dbId'].'" '.$for.'>'.$tipOpen.str_replace("***","\"",$labelText).$tipClose.$required.'</label>'."\n";
 				}
 
 				$readonly = '';
@@ -656,9 +810,11 @@ class BFQuickModeBootstrap{
 						}
 						/* translatables end */
 
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').'">';
 						echo $label;
-						echo '<input '.(isset($mdata['placeholder']) && $mdata['placeholder'] ? 'placeholder="'.htmlentities($mdata['placeholder'], ENT_QUOTES, 'UTF-8').'" ' : '').'class="ff_elem inputbox" '.$size.$tabIndex.$maxlength.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" value="'.htmlentities(trim($mdata['value']), ENT_QUOTES, 'UTF-8').'" id="ff_elem'.$mdata['dbId'].'"/>'."\n";
+						echo '<input '.(isset($mdata['placeholder']) && $mdata['placeholder'] ? 'placeholder="'.htmlentities($mdata['placeholder'], ENT_QUOTES, 'UTF-8').'" ' : '').'class="'.$this->bsClass('form-control').' ff_elem inputbox" '.$size.$tabIndex.$maxlength.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" value="'.htmlentities(trim($mdata['value']), ENT_QUOTES, 'UTF-8').'" id="ff_elem'.$mdata['dbId'].'"/>'."\n";
+						echo '</div>';
 						echo '</div>';
 						if($mdata['mailbackAsSender']){
 							echo '<input type="hidden" name="mailbackSender['.$mdata['bfName'].']" value="true"/>'."\n";
@@ -694,7 +850,8 @@ class BFQuickModeBootstrap{
 						//}
 						/* translatables end */
 
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').'">';
 						echo $label;
 						if( isset($mdata['is_html']) && $mdata['is_html'] ){
 							echo '<div style="display: inline-block; vertical-align: top; width: '.strip_tags($mdata['width']).';">';
@@ -705,8 +862,9 @@ class BFQuickModeBootstrap{
 							echo '</div>';
 							echo '<style type="text/css">.toggle-editor{display: none;}</style>';
 						} else {
-							echo '<textarea '.(isset($mdata['placeholder']) && $mdata['placeholder'] ? 'placeholder="'.htmlentities($mdata['placeholder'], ENT_QUOTES, 'UTF-8').'" ' : '').'cols="20" rows="5" class="ff_elem inputbox" '.$onkeyup.$size.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'.htmlentities(trim($mdata['value']), ENT_QUOTES, 'UTF-8').'</textarea>'."\n";
+							echo '<textarea '.(isset($mdata['placeholder']) && $mdata['placeholder'] ? 'placeholder="'.htmlentities($mdata['placeholder'], ENT_QUOTES, 'UTF-8').'" ' : '').'class="'.$this->bsClass('form-control').' ff_elem inputbox" '.$onkeyup.$size.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'.htmlentities(trim($mdata['value']), ENT_QUOTES, 'UTF-8').'</textarea>'."\n";
 						}
+						echo '</div>';
 						echo '</div>';
 						break;
 
@@ -720,8 +878,10 @@ class BFQuickModeBootstrap{
 
 						if($mdata['group'] != ''){
 
-							echo '<div class="controls form-inline">';
+							echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+							echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('radio-form-group').'">';
 							echo $label;
+							echo '<span class="'.$this->bsClass('nonform-control').'">';
 							if($mdata['wrap']){
 								echo '<div style="display: inline-block; vertical-align: top;">';
 							}
@@ -733,14 +893,18 @@ class BFQuickModeBootstrap{
 								$iEx = explode(";", $gEx[$i]);
 								$iCnt = count($iEx);
 								if($iCnt == 3){
-									echo '<label '.($mdata['wrap'] ? 'style="display: block;" ' : 'style="vertical-align: baseline;" ').'class="radio'.(!$mdata['wrap'] ? ' inline ' : '').'" id="bfGroupLabel'.$mdata['dbId'].$idExt.'" for="ff_elem'.$mdata['dbId'].$idExt.'">';
+
+									echo '<label '.($mdata['wrap'] ? 'style="display: block;" ' : 'style="vertical-align: baseline;" ').'class="'.$this->bsClass('radio').''.(!$mdata['wrap'] ? ' '.$this->bsClass('inline').' ' : '').'" id="bfGroupLabel'.$mdata['dbId'].$idExt.'" for="ff_elem'.$mdata['dbId'].$idExt.'">';
 									echo '<input '.($iEx[0] == 1 ? 'checked="checked" ' : '').' class="ff_elem" '.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.($readonly ? ' disabled="disabled" ' : '').'type="radio" name="ff_nm_'.$mdata['bfName'].'[]" value="'.htmlentities(trim($iEx[2]), ENT_QUOTES, 'UTF-8').'" id="ff_elem'.$mdata['dbId'].$idExt.'"/>'."\n";
 									echo trim($iEx[1]).'</label>'.($i + 1 < $lines && $mdata['wrap'] ? '<div style="clear:both;"></div>' : '');
+
 								}
 							}
 							if($mdata['wrap']){
 								echo '</div>';
 							}
+							echo '</span>';
+							echo '</div>';
 							echo '</div>';
 						}
 
@@ -753,8 +917,10 @@ class BFQuickModeBootstrap{
 						//}
 						/* translatables end */
 						if($mdata['group'] != ''){
-							echo '<div class="controls form-inline">';
+							echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+							echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('radio-form-group').'">';
 							echo $label;
+							echo '<span class="'.$this->bsClass('nonform-control').'">';
 							if($mdata['wrap']){
 								echo '<div style="display: inline-block; vertical-align: top;">';
 							}
@@ -767,7 +933,7 @@ class BFQuickModeBootstrap{
 								$iEx = explode(";", $gEx[$i]);
 								$iCnt = count($iEx);
 								if($iCnt == 3){
-									echo '<label '.($mdata['wrap'] ? 'style="display: block;" ' : 'style="vertical-align: baseline;" ').'class="checkbox'.(!$mdata['wrap'] ? ' inline ' : '').'" id="bfGroupLabel'.$mdata['dbId'].$idExt.'" for="ff_elem'.$mdata['dbId'].$idExt.'">';
+									echo '<label '.($mdata['wrap'] ? 'style="display: block;" ' : 'style="vertical-align: baseline;" ').'class="'.$this->bsClass('checkbox').''.(!$mdata['wrap'] ? ' '.$this->bsClass('inline').' ' : '').'" id="bfGroupLabel'.$mdata['dbId'].$idExt.'" for="ff_elem'.$mdata['dbId'].$idExt.'">';
 									echo '<input '.($iEx[0] == 1 ? 'checked="checked" ' : '').' class="ff_elem" '.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.($readonly ? ' disabled="disabled" ' : '').'type="checkbox" name="ff_nm_'.$mdata['bfName'].'[]" value="'.htmlentities(trim($iEx[2]), ENT_QUOTES, 'UTF-8').'" id="ff_elem'.$mdata['dbId'].$idExt.'"/>'."\n";
 									echo trim($iEx[1]).'</label>'.($i + 1 < $lines && $mdata['wrap'] ? '<div style="clear:both;"></div>' : '');
 								}
@@ -775,15 +941,21 @@ class BFQuickModeBootstrap{
 							if($mdata['wrap']){
 								echo '</div>';
 							}
+							echo '</span>';
+							echo '</div>';
 							echo '</div>';
 						}
 
 						break;
 
 					case 'bfCheckbox':
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 						echo '<input style="vertical-align: baseline;" class="ff_elem" '.($mdata['checked'] ? 'checked="checked" ' : '').$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.($readonly ? ' disabled="disabled" ' : '').'type="checkbox" name="ff_nm_'.$mdata['bfName'].'[]" value="'.htmlentities(trim($mdata['value']), ENT_QUOTES, 'UTF-8').'" id="ff_elem'.$mdata['dbId'].'"/>'."\n";
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						if($mdata['mailbackAccept']){
 							echo '<input type="hidden" class="ff_elem" name="mailbackConnectWith['.$mdata['mailbackConnectWith'].']" value="true_'.$mdata['bfName'].'"/>'."\n";
@@ -815,9 +987,10 @@ class BFQuickModeBootstrap{
 							$mdata['list'] = str_replace("\r", '', $mdata['list']);
 							$gEx = explode("\n", $mdata['list']);
 							$lines = count($gEx);
-							echo '<div class="controls form-inline">';
+							echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+							echo '<div class="'.$this->bsClass('form-group').'">';
 							echo $label;
-							echo '<select data-chosen="no-chzn" class="ff_elem chzn-done" '.$size.($mdata['multiple'] ? 'multiple="multiple" ' : '').$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'."\n";
+							echo '<select data-chosen="no-chzn" class="'.$this->bsClass('form-control').' ff_elem chzn-done" '.$size.($mdata['multiple'] ? 'multiple="multiple" ' : '').$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'."\n";
 							for($i = 0; $i < $lines; $i++){
 								$iEx = explode(";", $gEx[$i]);
 								$iCnt = count($iEx);
@@ -827,13 +1000,16 @@ class BFQuickModeBootstrap{
 							}
 							echo '</select>'."\n";
 							echo '</div>';
+							echo '</div>';
 						}
 
 						break;
 
 					case 'bfFile':
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 						if( ( isset( $mdata['flashUploader'] ) && $mdata['flashUploader'] ) || ( isset( $mdata['html5'] ) && $mdata['html5'] ) ){
 
 							$base = explode('/',JURI::base());
@@ -858,7 +1034,7 @@ class BFQuickModeBootstrap{
 							$bytes = (isset($mdata['flashUploaderBytes']) && is_numeric($mdata['flashUploaderBytes']) && $mdata['flashUploaderBytes'] > 0 ? "max_file_size : '" . intval($mdata['flashUploaderBytes']) ."'," : '');
 							echo "
                                                         <span id=\"bfUploadContainer".$mdata['dbId']."\">
-                                                            <button type=\"button\" class=\"btn bfUploadButton button\" id=\"bfPickFiles".$mdata['dbId']."\"><i class=\"icon-upload\"></i></button>
+                                                            <button type=\"button\" class=\"".$this->bsClass('btn')." ".$this->bsClass('btn-primary')." bfUploadButton button\" id=\"bfPickFiles".$mdata['dbId']."\"><i class=\"".$this->bsClass('icon-upload')."\"></i></button>
 							</span>
                                                         <span id=\"bfUploader".$mdata['bfName']."\"></span>
                                                         <div class=\"bfFlashFileQueueClass\" id=\"bfFlashFileQueue".$mdata['dbId']."\"></div>
@@ -1018,6 +1194,8 @@ class BFQuickModeBootstrap{
 						if($mdata['attachToUserMail']){
 							echo '<input type="hidden" name="attachToUserMail['.$mdata['bfName'].']" value="true"/>'."\n";
 						}
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 
@@ -1031,8 +1209,10 @@ class BFQuickModeBootstrap{
 						//}
 						/* translatables end */
 
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 						$value = '';
 						$type = 'submit';
 						$src = '';
@@ -1050,10 +1230,12 @@ class BFQuickModeBootstrap{
 							$onclick = 'onclick="if(typeof bf_htmltextareainit != \'undefined\'){ bf_htmltextareainit() }populateSummarizers();if(document.getElementById(\'bfPaymentMethod\')){document.getElementById(\'bfPaymentMethod\').value=\'\';};return false;" ';
 						}
 						if($src == ''){
-							echo '<button type="button" class="ff_elem btn button bfCustomSubmitButton" '.$value.$src.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'.$mdata['value'].'</button>'."\n";
+							echo '<button type="button" class="ff_elem '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' button bfCustomSubmitButton" '.$value.$src.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'">'.$mdata['value'].'</button>'."\n";
 						}else{
 							echo '<input type="button" class="ff_elem bfCustomSubmitButton" '.$value.$src.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" alt="" name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'" value="'.$mdata['value'].'"/>'."\n";
 						}
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 
@@ -1068,8 +1250,10 @@ class BFQuickModeBootstrap{
 							$mdata['emptyMessage'] = $mdata['emptyMessage_translation'.$this->language_tag];
 						}
 						/* translatables end */
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 						echo '<div style="display: inline-block; vertical-align: top;" class="ff_elem bfSummarize" id="ff_elem'.$mdata['dbId'].'"></div>'."\n";
 						echo '<script type="text/javascript"><!--'."\n".'bfRegisterSummarize("ff_elem'.$mdata['dbId'].'", "'.$mdata['connectWith'].'", "'.$mdata['connectType'].'", "'.addslashes($mdata['emptyMessage']).'", '.($mdata['hideIfEmpty'] ? 'true' : 'false').')'."\n".'//--></script>';
 						if(trim($mdata['fieldCalc']) != ''){
@@ -1085,13 +1269,17 @@ class BFQuickModeBootstrap{
                                                         //-->
 							</script>';
 						}
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 
 					case 'bfReCaptcha':
 
-						echo '<div class="controls form-inline'.(isset($mdata['pubkey']) && $mdata['pubkey'] ? '' : ' well well-small').'">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').''.(isset($mdata['pubkey']) && $mdata['pubkey'] ? '' : ' '.$this->bsClass('well').' '.$this->bsClass('well-small').'').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 						if(isset($mdata['pubkey']) && $mdata['pubkey'] != ''){
 
 							if(isset($mdata['newCaptcha']) && $mdata['newCaptcha']){
@@ -1109,8 +1297,8 @@ class BFQuickModeBootstrap{
 
 								echo '
                                                     <div style="display: inline-block !important; vertical-align: middle;">
-                                                        <div class="control-group">
-                                                            <div class="controls">
+                                                        <div class="'.$this->bsClass('control-group').'">
+                                                            <div class="'.$this->bsClass('controls').'">
                                                                     <div id="newrecaptcha"></div>
                                                                 </div>
                                                         </div>
@@ -1149,21 +1337,21 @@ class BFQuickModeBootstrap{
 								JFactory::getDocument()->addScript($http.'://www.google.com/recaptcha/api/js/recaptcha.js');
 								echo '<div class="bfReCaptchaDiv" id="recaptcha_widget" style="display: inline-block !important;">
 
-                                                            <div class="control-group">
+                                                            <div class="'.$this->bsClass('control-group').'">
 
-                                                                <div class="controls">
-                                                                    <span id="recaptcha_image" class="thumbnail"></span>
+                                                                <div class="'.$this->bsClass('controls').'">
+                                                                    <span id="recaptcha_image"></span>
                                                                 </div>
                                                             </div>
 
-                                                           <div class="control-group">
+                                                           <div class="'.$this->bsClass('control-group').'">
 
-                                                              <div class="controls">
+                                                              <div class="'.$this->bsClass('controls').'">
                                                                       <input type="text" id="recaptcha_response_field" name="recaptcha_response_field" class="input-recaptcha" />
-                                                                      <button type="button" class="btn button" onclick="Recaptcha.reload()"><i class="icon-refresh"></i></button>
-                                                                      <button type="button" class="btn recaptcha_only_if_image button" onclick="Recaptcha.switch_type(\'audio\')"><i title="Get an audio CAPTCHA" class="icon-play"></i></button>
-                                                                      <button type="button" class="btn recaptcha_only_if_audio button" onclick="Recaptcha.switch_type(\'image\')"><i title="Get an image CAPTCHA" class="icon-picture"></i></button>
-                                                                      <button type="button" class="btn button" onclick="Recaptcha.showhelp()"><i class="icon-question-sign"></i></button>
+                                                                      <button type="button" class="'.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' button" onclick="Recaptcha.reload()"><i class="'.$this->bsClass('icon-refresh').'"></i></button>
+                                                                      <button type="button" class="'.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' recaptcha_only_if_image button" onclick="Recaptcha.switch_type(\'audio\')"><i title="Get an audio CAPTCHA" class="'.$this->bsClass('icon-play').'"></i></button>
+                                                                      <button type="button" class="'.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' recaptcha_only_if_audio button" onclick="Recaptcha.switch_type(\'image\')"><i title="Get an image CAPTCHA" class="'.$this->bsClass('icon-picture').'"></i></button>
+                                                                      <button type="button" class="'.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' button" onclick="Recaptcha.showhelp()"><i class="'.$this->bsClass('icon-question-sign').'"></i></button>
                                                               </div>
                                                         </div>
 
@@ -1189,14 +1377,18 @@ class BFQuickModeBootstrap{
 							echo '</span>'."\n";
 						}
 
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 
 						break;
 
 					case 'bfCaptcha':
 
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 
 						if(JFactory::getApplication()->isSite())
 						{
@@ -1209,15 +1401,18 @@ class BFQuickModeBootstrap{
 
 						echo '<div style="display: inline-block;">';
 
-						echo '<img alt="" '.(isset($mdata['width']) && intval($mdata['width']) > 0 ? ' style="width: '.intval($mdata['width']).'px !important;min-width: '.intval($mdata['width']).'px !important;max-width: '.intval($mdata['width']).'px !important;"' : 'style="width: 230px !important;min-width: 230px !important;max-width: 230px !important;"' ).' id="ff_capimgValue" class="ff_capimg img-polaroid" src="'.$captcha_url.'"/>'."\n";
-						echo '<br/>';
-						echo '<br/>';
-						echo '<div class="input-append">';
-						echo '<input '.(isset($mdata['width']) && intval($mdata['width']) > 0 ? ' style="width:'.(intval($mdata['width'])-45).'px !important;min-width:'.(intval($mdata['width'])-45).'px !important;max-width:'.(intval($mdata['width'])-45).'px !important;"' : ' style="width: 185px !important;min-width: 185px !important;max-width: 185px !important;"' ).' autocomplete="off" class="ff_elem bfCaptchaField" type="text" name="bfCaptchaEntry" id="bfCaptchaEntry" />'."\n";
-						echo '<button type="button" class="ff_elem btn button" onclick="document.getElementById(\'bfCaptchaEntry\').value=\'\';document.getElementById(\'bfCaptchaEntry\').focus();document.getElementById(\'ff_capimgValue\').src = \''.$captcha_url.'?bfMathRandom=\' + Math.random(); return false"><i class="icon-refresh"></i></button>'."\n";
+						echo '<img alt="" '.(isset($mdata['width']) && intval($mdata['width']) > 0 ? ' style="width: '.intval($mdata['width']).'px !important;min-width: '.intval($mdata['width']).'px !important;max-width: '.intval($mdata['width']).'px !important;"' : 'style="width: 230px !important;min-width: 230px !important;max-width: 230px !important;"' ).' id="ff_capimgValue" class="ff_capimg '.$this->bsClass('img-polaroid').'" src="'.$captcha_url.'"/>'."\n";
+						echo '<div style="height: 10px;"></div>';
+						echo '<div class="'.$this->bsClass('input-append').'">';
+						echo '<input '.(isset($mdata['width']) && intval($mdata['width']) > 0 ? ' style="width:'.(intval($mdata['width'])-45).'px !important;min-width:'.(intval($mdata['width'])-45).'px !important;max-width:'.(intval($mdata['width'])-45).'px !important;"' : ' style="width: 185px !important;min-width: 185px !important;max-width: 185px !important;"' ).' autocomplete="off" class="'.$this->bsClass('form-control').' '.$this->bsClass('custom-form-control').' ff_elem bfCaptchaField" type="text" name="bfCaptchaEntry" id="bfCaptchaEntry" />'."\n";
+						echo '<span class="'.$this->bsClass('input-group-btn').'">';
+						echo '<button type="button" class="ff_elem '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' button" onclick="document.getElementById(\'bfCaptchaEntry\').value=\'\';document.getElementById(\'bfCaptchaEntry\').focus();document.getElementById(\'ff_capimgValue\').src = \''.$captcha_url.'?bfMathRandom=\' + Math.random(); return false"><i class="'.$this->bsClass('icon-refresh').'"></i></button>'."\n";
+						echo '</span>';
 						echo '</div>';
 						echo '</div>';
 
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 
 						break;
@@ -1231,8 +1426,10 @@ class BFQuickModeBootstrap{
 							$mdata['format'] = $mdata['format_translation'.$this->language_tag];
 						}
 						/* translatables end */
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 						JHTML::_( 'behavior.calendar' );
 
 						$size = '';
@@ -1251,9 +1448,11 @@ class BFQuickModeBootstrap{
 							$right = trim($exploded[0]);
 						}
 
-						echo '<div class="input-append">'."\n";
-						echo '<input autocomplete="off" class="ff_elem" '.$size.'type="text" name="ff_nm_'.$mdata['bfName'].'[]"  id="ff_elem'.$mdata['dbId'].'" value="'.htmlentities($left, ENT_QUOTES, 'UTF-8').'"/>'."\n";
-						echo '<button type="button" id="ff_elem'.$mdata['dbId'].'_calendarButton" type="submit" class="bfCalendar btn button" value="'.htmlentities($right, ENT_QUOTES, 'UTF-8').'"><span><i class="icon-calendar"></i>'.htmlentities($right == '...' ? '' : $right, ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+						echo '<div class="'.$this->bsClass('input-append').'">';
+						echo '<input autocomplete="off" class="'.$this->bsClass('form-control').' '.$this->bsClass('custom-form-control').' ff_elem" '.$size.'type="text" name="ff_nm_'.$mdata['bfName'].'[]"  id="ff_elem'.$mdata['dbId'].'" value="'.htmlentities($left, ENT_QUOTES, 'UTF-8').'"/>'."\n";
+						echo '<span class="'.$this->bsClass('input-group-btn').'">';
+						echo '<button type="button" id="ff_elem'.$mdata['dbId'].'_calendarButton" type="submit" class="bfCalendar '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' button" value="'.htmlentities($right, ENT_QUOTES, 'UTF-8').'"><span><i class="'.$this->bsClass('icon-calendar').'"></i>'.htmlentities($right == '...' ? '' : $right, ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+						echo '</span>'."\n";
 						echo '</div>'."\n";
 
 						echo '<script type="text/javascript">
@@ -1267,6 +1466,8 @@ class BFQuickModeBootstrap{
                                                     });
                                                 //-->
                                                 </script>'."\n";
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 
@@ -1279,8 +1480,10 @@ class BFQuickModeBootstrap{
 							$mdata['format'] = $mdata['format_translation'.$this->language_tag];
 						}
 						/* translatables end */
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 
 						$size = '';
 						if($mdata['size']!=''){
@@ -1298,9 +1501,11 @@ class BFQuickModeBootstrap{
 							$right = trim($exploded[0]);
 						}
 
-						echo '<div class="input-append">'."\n";
-						echo '<input autocomplete="off" class="ff_elem" '.$size.'type="text" name="ff_nm_'.$mdata['bfName'].'[]"  id="ff_elem'.$mdata['dbId'].'" value="'.htmlentities($left, ENT_QUOTES, 'UTF-8').'"/>'."\n";
-						echo '<button style="cursor:pointer !important;" type="button" id="ff_elem'.$mdata['dbId'].'_calendarButton" type="submit" class="bfCalendar btn button" value="'.htmlentities($right, ENT_QUOTES, 'UTF-8').'"><span><i class="icon-calendar"></i>'.htmlentities($right == '...' ? '' : $right, ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+						echo '<div class="'.$this->bsClass('input-append').'">';
+						echo '<input autocomplete="off" class="'.$this->bsClass('form-control').' '.$this->bsClass('custom-form-control').' ff_elem" '.$size.'type="text" name="ff_nm_'.$mdata['bfName'].'[]"  id="ff_elem'.$mdata['dbId'].'" value="'.htmlentities($left, ENT_QUOTES, 'UTF-8').'"/>'."\n";
+						echo '<span class="'.$this->bsClass('input-group-btn').'">';
+						echo '<button style="cursor:pointer !important;" type="button" id="ff_elem'.$mdata['dbId'].'_calendarButton" type="submit" class="bfCalendar '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' button" value="'.htmlentities($right, ENT_QUOTES, 'UTF-8').'"><span><i class="'.$this->bsClass('icon-calendar').'"></i>'.htmlentities($right == '...' ? '' : $right, ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+						echo '</span>'."\n";
 						echo '</div>'."\n";
 
 						$container = 'JQuery("body").append("<div class=\"bfCalendarResponsiveContainer'.$mdata['dbId'].'\" style=\"display:block;position:absolute;left:-9999px;\"></div>");';
@@ -1380,6 +1585,8 @@ class BFQuickModeBootstrap{
 
 						$this->hasResponsiveDatePicker = true;
 
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 
@@ -1406,8 +1613,17 @@ class BFQuickModeBootstrap{
 						    if(arguments[0] !== false){
 						    
 						        bf_signaturePad' . $mdata['dbId'] . '.fromDataURL(data);
-						        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data);
+						        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data.replace("data:image/png;base64,",""));
 						    }
+						    
+						    bf_signaturePad' . $mdata['dbId'] . ' = new SignaturePad(bf_canvas' . $mdata['dbId'] . ', {
+							    backgroundColor: "rgb(255,255,255)",
+							    penColor: "rgb(0,0,0)",
+							    onEnd: function(){
+							        var data = bf_signaturePad' . $mdata['dbId'] . '.toDataURL();
+							        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data.replace("data:image/png;base64,",""));
+							    }
+							});
 						}
 						
 						function bf_Signature' . $mdata['dbId'] . 'Reset(sig) {
@@ -1423,23 +1639,25 @@ class BFQuickModeBootstrap{
 							
 							bf_resizeCanvas' . $mdata['dbId'] . 'Func(false);
 							
-							bf_signaturePad' . $mdata['dbId'] . ' = new SignaturePad(bf_canvas' . $mdata['dbId'] . ', {
-							    backgroundColor: "rgb(255,255,255)",
-							    penColor: "rgb(0,0,0)",
-							    onEnd: function(){
-							        var data = bf_signaturePad' . $mdata['dbId'] . '.toDataURL();
-							        jQuery("#ff_elem' . $mdata['dbId'] . '").val(data);
-							    }
-							});
+							// make sure the canvas is resized if dimensions are zero
+							setInterval(function(){
+								if( bf_canvas' . $mdata['dbId'] . '.width == 0 && bf_canvas' . $mdata['dbId'] . '.height == 0 ){
+									bf_resizeCanvas' . $mdata['dbId'] . 'Func(false);
+								}
+							}, 500);
 							
 						});
 						');
 
-						echo '<div class="controls form-inline bfSignatureWrap">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').' bfSignatureWrap">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 
 						echo '<div class="bfSignature" id="bfSignature' . $mdata['dbId'] . '"><div class="bfSignatureCanvasBorder"><canvas></canvas></div>'."\n";
-						echo '<button onclick="bf_Signature' . $mdata['dbId'] . 'Reset(bf_signaturePad' . $mdata['dbId'] . ');" class="bfSignatureResetButton button btn btn-primary"><span>'.JText::_('COM_BREEZINGFORMS_SIGNATURE_RESET_BUTTON').'</span></button>'."\n";
+						echo '<button onclick="bf_Signature' . $mdata['dbId'] . 'Reset(bf_signaturePad' . $mdata['dbId'] . ');" class="bfSignatureResetButton button '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').'"><span>'.JText::_('COM_BREEZINGFORMS_SIGNATURE_RESET_BUTTON').'</span></button>'."\n";
+						echo '</div>';
+						echo '</span>';
 						echo '</div>';
 						echo '</div>';
 						echo '<input class="ff_elem" type="hidden" name="ff_nm_' . $mdata['bfName'] . '[]" value="" id="ff_elem' . $mdata['dbId'] . '"/>' . "\n";
@@ -1452,8 +1670,11 @@ class BFQuickModeBootstrap{
 							$mdata['image'] = $mdata['image_translation'.$this->language_tag];
 						}
 						/* translatables end */
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
+
 						$value = '';
 						$type = 'submit';
 						$src = '';
@@ -1469,6 +1690,8 @@ class BFQuickModeBootstrap{
 							$onclick = 'onclick="document.getElementById(\'bfPaymentMethod\').value=\'Stripe\';" ';
 						}
 						echo '<input class="ff_elem" '.$value.$src.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'"/>'."\n";
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 
@@ -1478,8 +1701,11 @@ class BFQuickModeBootstrap{
 							$mdata['image'] = $mdata['image_translation'.$this->language_tag];
 						}
 						/* translatables end */
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
+
 						$value = '';
 						$type = 'submit';
 						$src = '';
@@ -1495,6 +1721,8 @@ class BFQuickModeBootstrap{
 							$onclick = 'onclick="document.getElementById(\'bfPaymentMethod\').value=\'PayPal\';" ';
 						}
 						echo '<input class="ff_elem" '.$value.$src.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'"/>'."\n";
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 
@@ -1504,8 +1732,10 @@ class BFQuickModeBootstrap{
 							$mdata['image'] = $mdata['image_translation'.$this->language_tag];
 						}
 						/* translatables end */
-						echo '<div class="controls form-inline">';
+						echo '<div class="'.$this->bsClass('controls').' '.$this->bsClass('form-inline').'">';
+						echo '<div class="'.$this->bsClass('form-group').' '.$this->bsClass('other-form-group').'">';
 						echo $label;
+						echo '<span class="'.$this->bsClass('nonform-control').'">';
 						$value = '';
 						$type = 'submit';
 						$src = '';
@@ -1521,6 +1751,8 @@ class BFQuickModeBootstrap{
 							$onclick = 'onclick="document.getElementById(\'bfPaymentMethod\').value=\'Sofortueberweisung\';" ';
 						}
 						echo '<input class="ff_elem" '.$value.$src.$tabIndex.$onclick.$onblur.$onchange.$onfocus.$onselect.$readonly.'type="'.$type.'" name="ff_nm_'.$mdata['bfName'].'[]" id="ff_elem'.$mdata['dbId'].'"/>'."\n";
+						echo '</span>';
+						echo '</div>';
 						echo '</div>';
 						break;
 				}
@@ -1555,16 +1787,16 @@ class BFQuickModeBootstrap{
 		}
 
 		if(isset($dataObject['properties']) && $dataObject['properties']['type'] == 'section' && $dataObject['properties']['displayType'] == 'inline'){
-			echo '</div>'."\n";
+			echo '</div><!-- inline -->'."\n";
 		}
 
 		if(isset($dataObject['properties']) && $dataObject['properties']['type'] == 'section' && $dataObject['properties']['bfType'] == 'section'){
-			echo '</div>'; // row-fluid
+			echo '</div><!-- section section -->'; // row-fluid
 			echo '</fieldset>'."\n";
 
 		} else if( isset($dataObject['properties']) && $dataObject['properties']['type'] == 'section' && $dataObject['properties']['bfType'] == 'normal' ) {
 			if(isset($dataObject['properties']['name']) && $dataObject['properties']['name'] != ''){
-				echo '</div>'; // row-fluid
+				echo '</div><!-- section normal -->'; // row-fluid
 				echo '</section>'."\n";
 			}
 		}
@@ -1583,7 +1815,8 @@ class BFQuickModeBootstrap{
 				}
 
 				echo '<div class="bfClearfix"></div>';
-				echo '<div class="form-actions">';
+				echo '<div class="'.$this->bsClass('form-actions').'">';
+				echo '<div class="'.$this->bsClass('form-actions-buttons').'">';
 
 				if($this->rootMdata['pagingInclude'] && $dataObject['properties']['pageNumber'] > 1){
 					/* translatables */
@@ -1591,7 +1824,7 @@ class BFQuickModeBootstrap{
 						$this->rootMdata['pagingPrevLabel'] = $this->rootMdata['pagingPrevLabel_translation'.$this->language_tag];
 					}
 					/* translatables end */
-					echo '<button type="button" class="bfPrevButton btn btn-primary pull-left button'.$this->fadingClass.'" type="submit" onclick="ff_validate_prevpage(this, \'click\');populateSummarizers();if(typeof bfRefreshAll != \'undefined\'){bfRefreshAll();}" value="'.htmlentities(trim($this->rootMdata['pagingPrevLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['pagingPrevLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button type="button" class="bfPrevButton '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' '.$this->bsClass('pull-left').' button'.$this->fadingClass.'" type="submit" onclick="ff_validate_prevpage(this, \'click\');populateSummarizers();if(typeof bfRefreshAll != \'undefined\'){bfRefreshAll();}" value="'.htmlentities(trim($this->rootMdata['pagingPrevLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['pagingPrevLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
 
 				if($this->rootMdata['pagingInclude'] && $dataObject['properties']['pageNumber'] < count($this->dataObject['children']) - $last){
@@ -1600,16 +1833,17 @@ class BFQuickModeBootstrap{
 						$this->rootMdata['pagingNextLabel'] = $this->rootMdata['pagingNextLabel_translation'.$this->language_tag];
 					}
 					/* translatables end */
-					echo '<button type="button" class="bfNextButton btn btn-primary pull-right button'.$this->fadingClass.'" type="submit" onclick="ff_validate_nextpage(this, \'click\');populateSummarizers();if(typeof bfRefreshAll != \'undefined\'){bfRefreshAll();}" value="'.htmlentities(trim($this->rootMdata['pagingNextLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['pagingNextLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button type="button" class="bfNextButton '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' '.$this->bsClass('pull-right').' button'.$this->fadingClass.'" type="submit" onclick="ff_validate_nextpage(this, \'click\');populateSummarizers();if(typeof bfRefreshAll != \'undefined\'){bfRefreshAll();}" value="'.htmlentities(trim($this->rootMdata['pagingNextLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['pagingNextLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
 
 				if($this->rootMdata['cancelInclude'] && $dataObject['properties']['pageNumber'] + 1 > count($this->dataObject['children']) - $last){
+
 					/* translatables */
 					if(isset($this->rootMdata['cancelLabel_translation'.$this->language_tag]) && $this->rootMdata['cancelLabel_translation'.$this->language_tag] != ''){
 						$this->rootMdata['cancelLabel'] = $this->rootMdata['cancelLabel_translation'.$this->language_tag];
 					}
 					/* translatables end */
-					echo '<button class="bfCancelButton btn btn-secondary pull-right button'.$this->fadingClass.'" type="submit" onclick="ff_resetForm(this, \'click\');"  value="'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button class="bfCancelButton '.$this->bsClass('btn').' '.$this->bsClass('btn-secondary').' '.$this->bsClass('pull-right').' button'.$this->fadingClass.'" type="submit" onclick="ff_resetForm(this, \'click\');"  value="'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['cancelLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
 
 				$callSubmit = 'ff_validate_submit(this, \'click\')';
@@ -1622,9 +1856,10 @@ class BFQuickModeBootstrap{
 						$this->rootMdata['submitLabel'] = $this->rootMdata['submitLabel_translation'.$this->language_tag];
 					}
 					/* translatables end */
-					echo '<button type="button" id="bfSubmitButton" class="bfSubmitButton btn btn-primary pull-right button'.$this->fadingClass.'" onclick="this.disabled=true;if(typeof bf_htmltextareainit != \'undefined\'){ bf_htmltextareainit() }if(document.getElementById(\'bfPaymentMethod\')){document.getElementById(\'bfPaymentMethod\').value=\'\';};'.$callSubmit.';" value="'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
+					echo '<button type="button" id="bfSubmitButton" class="bfSubmitButton '.$this->bsClass('btn').' '.$this->bsClass('btn-primary').' '.$this->bsClass('pull-right').' button'.$this->fadingClass.'" onclick="this.disabled=true;if(typeof bf_htmltextareainit != \'undefined\'){ bf_htmltextareainit() }if(document.getElementById(\'bfPaymentMethod\')){document.getElementById(\'bfPaymentMethod\').value=\'\';};'.$callSubmit.';" value="'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'"><span>'.htmlentities(trim($this->rootMdata['submitLabel']), ENT_QUOTES, 'UTF-8').'</span></button>'."\n";
 				}
 
+				echo '</div>';
 				echo '</div>';
 
 			}
@@ -1662,9 +1897,10 @@ display:none;
 		jimport('joomla.version');
 		$version = new JVersion();
 		if(version_compare($version->getShortVersion(), '3.1', '>=')){
+
 			JHtml::_('behavior.framework', true);
 			// force jquery to be loaded after mootools but before any other js (since J! 3.4)
-			JHtml::_('bootstrap.framework');
+			JHtml::_( 'bootstrap.framework' );
 			JHtml::_('jquery.framework');
 			JFactory::getDocument()->addScriptDeclaration('
                     jQuery(document).ready(function()
@@ -1679,8 +1915,6 @@ display:none;
 		} else {
 			JFactory::getDocument()->addScript(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jq.min.js');
 		}
-
-
 
 		if($this->useBalloonErrors){
 			JFactory::getDocument()->addStyleSheet( JURI::root(true) . '/components/com_breezingforms/libraries/jquery/validationEngine.jquery.css' );
@@ -2176,7 +2410,7 @@ display:none;
 										theText = calc(theText);
 									}
 								}
-								JQuery("#"+bfSummarizers[i].id).text( theText );
+								JQuery("#"+bfSummarizers[i].id).html( theText );
 								summVal = theText;
 							}
 						break;
@@ -2199,7 +2433,7 @@ display:none;
 										theText = calc(theText);
 									}
 								}
-								JQuery("#"+bfSummarizers[i].id).text( theText );
+								JQuery("#"+bfSummarizers[i].id).html( theText );
 								summVal = theText;
 							}
 						break;
@@ -2357,6 +2591,7 @@ display:none;
 			// loading theme
 			if(isset($this->rootMdata['themebootstrap'])){
 
+
 				if(version_compare($version->getShortVersion(), '3.0', '<') && isset($this->rootMdata['themeusebootstraplegacy']) && $this->rootMdata['themeusebootstraplegacy']){
 					$stylelink = '<link rel="stylesheet" href="'.JURI::root(true) . '/components/com_breezingforms/libraries/bootstrap/css/bootstrap'.($this->rootMdata['themebootstrap'] == '' ? '-simple' : '').'.css" />' ."\n";
 					JFactory::getDocument()->addCustomTag($stylelink);
@@ -2367,7 +2602,17 @@ display:none;
 					JFactory::getDocument()->addCustomTag($stylelink);
 				}
 
-				$stylelink = '<link rel="stylesheet" href="'.JURI::root(true) . '/components/com_breezingforms/themes/quickmode-bootstrap/system.css" />' ."\n";
+				if(isset($this->rootMdata['themebootstrapUse3']) && $this->rootMdata['themebootstrapUse3']
+				   && isset($this->rootMdata['themebootstrap3builtin']) && $this->rootMdata['themebootstrap3builtin'] )
+				{
+					$stylelink = '<link rel="stylesheet" href="'.JURI::root(true) . '/components/com_breezingforms/libraries/bootstrap3/css/bootstrap.min.css" />' ."\n";
+					JFactory::getDocument()->addCustomTag($stylelink);
+
+					$stylelink = '<link rel="stylesheet" href="'.JURI::root(true) . '/components/com_breezingforms/libraries/bootstrap3/css/bootstrap-theme.min.css" />' ."\n";
+					JFactory::getDocument()->addCustomTag($stylelink);
+				}
+
+				$stylelink = '<link rel="stylesheet" href="'.JURI::root(true) . '/components/com_breezingforms/themes/quickmode-bootstrap'.$this->bsVersion.'/system.css" />' ."\n";
 				JFactory::getDocument()->addCustomTag($stylelink);
 
 				$vars = '';
@@ -2375,10 +2620,10 @@ display:none;
 				$scriptjs = '';
 				$scriptphp = '';
 
-				$themecss_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/theme.css';
-				$vars_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/vars.txt';
-				$scriptjs_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/script.js';
-				$scriptphp_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap/'. $this->rootMdata['themebootstrap'].'/script.php';
+				$themecss_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/'. $this->rootMdata['themebootstrap'].'/theme.css';
+				$vars_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/'. $this->rootMdata['themebootstrap'].'/vars.txt';
+				$scriptjs_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/'. $this->rootMdata['themebootstrap'].'/script.js';
+				$scriptphp_path = JPATH_SITE .'/media/breezingforms/themes-bootstrap'.$this->bsVersion.'/'. $this->rootMdata['themebootstrap'].'/script.php';
 
 				if($this->rootMdata['themebootstrap'] != '' && $this->rootMdata['themebootstrap'] != 'none' && JFile::exists($themecss_path)){
 

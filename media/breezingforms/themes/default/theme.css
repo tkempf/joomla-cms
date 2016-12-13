@@ -115,17 +115,57 @@
 /* ##### buttons ##### */
 
 .bfQuickMode input[type='submit'], .bfQuickMode input[type='reset']  {
+   font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    background: none repeat scroll 0 0 #AB0000;
+    display: inline-block;
+    padding: 3px 8px 2px;
+	border: none;
+	float: left !important;
 
 }
 
 .bfQuickMode .bfNextButton, .bfQuickMode .bfSubmitButton, .bfQuickMode .bfCancelButton {
 
+    font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    background: none repeat scroll 0 0 #AB0000;
+    display: inline-block;
+    padding: 3px 8px 2px;
+	border: none;
+	float: left !important;
+
 }
 
 .bfQuickMode .bfPrevButton {
+   font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    background: none repeat scroll 0 0 #AB0000;
+    display: inline-block;
+    padding: 3px 8px 2px;
+	border: none;
+	float: left !important;
 
 }
 
 .bfQuickMode input.bfCalendar {
 
+}
+
+button {
+   font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    background: none repeat scroll 0 0 #AB0000;
+    display: inline-block;
+    padding: 3px 8px 2px;
+	border: none;
+	float: left !important;
 }

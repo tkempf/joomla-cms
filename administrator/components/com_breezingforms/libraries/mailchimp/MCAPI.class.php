@@ -43,7 +43,7 @@ class MCAPI {
      * @param string $apikey Your MailChimp apikey
      * @param string $secure Whether or not this should use a secure connection
      */
-    function MCAPI($apikey, $secure=false) {
+    function __construct($apikey, $secure=false) {
         //do more "caching" of the uuid for those people that keep instantiating this...
         $this->secure = $secure;
         $this->apiUrl = parse_url("http://api.mailchimp.com/" . $this->version . "/?output=php");

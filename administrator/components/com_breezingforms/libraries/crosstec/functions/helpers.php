@@ -352,20 +352,24 @@ function bf_createMail( $from = '', $fromname = '', $subject, $body, $alt_sender
 
 	$mail = JFactory::getMailer();
 
+	/*
 	try {
 
 		$mail->setSender( array( $alt_sender ? $alt_sender : $_mailfrom, $fromname ? $fromname : $_fromname ) );
 
 	} catch ( Exception $e ) {
 
-	}
+	}*/
 
 	$mail->setSubject( $subject );
 	$mail->setBody( $body );
 
+	$prev_from = $alt_sender ? $alt_sender : $_mailfrom;
+
 	try {
 
-		$mail->SetFrom( $from ? $from : '', $fromname ? $fromname : '' );
+		$mail->SetFrom( $prev_from, $fromname ? $fromname : $_fromname );
+		//$mail->SetFrom( $from ? $from : '', $fromname ? $fromname : '' );
 
 	} catch ( Exception $e ) {
 
@@ -373,19 +377,28 @@ function bf_createMail( $from = '', $fromname = '', $subject, $body, $alt_sender
 
 	try {
 
-		if ( version_compare( $version, '3.0', '<' ) ) {
+		if( $from && $from != $prev_from )
+		{
 
-			$mail->addReplyTo( array( $from ? $from : $_mailfrom, $fromname ? $fromname : $_fromname ) );
+			if ( version_compare( $version, '3.0', '<' ) )
+			{
 
-		} else {
+				$mail->addReplyTo( array( $from, $fromname ? $fromname : $_fromname ) );
 
-			$newfrom     = $from ? $from : $_mailfrom;
-			$newfromname = $fromname ? $fromname : $_fromname;
-
-			if ( ! empty( $newfrom ) ) {
-
-				$mail->addReplyTo( $from ? $from : $_mailfrom, $fromname ? $fromname : $_fromname );
 			}
+			else
+			{
+
+				$newfrom     = $from ? $from : $_mailfrom;
+				$newfromname = $fromname ? $fromname : $_fromname;
+
+				if ( ! empty( $newfrom ) )
+				{
+
+					$mail->addReplyTo( $from, $fromname ? $fromname : $_fromname );
+				}
+			}
+
 		}
 
 	} catch ( Exception $e ) {

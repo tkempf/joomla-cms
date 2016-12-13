@@ -213,13 +213,8 @@
 
 /* OPTIONAL BUTTON STYLES for applying custom look and feel: */
 
-.bfQuickMode button {
-    -o-transition: none !important;
-    -ms-transition: none !important;
-    -moz-transition: none !important;
-    -webkit-transition: none !important;
-    transition: none !important;
-    padding: 0 15px 0 0 !important; 
+.bfQuickMode button { 
+    padding: 0 15px 0 0; 
     margin-right:5px; 
     font-size: 12px;
     font-weight:bold; 
