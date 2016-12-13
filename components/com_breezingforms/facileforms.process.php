@@ -2156,15 +2156,39 @@ class HTML_facileFormsProcessor {
         
         jimport('joomla.version');
         $version = new JVersion();
-        $is3 = false;
-        if (version_compare($version->getShortVersion(), '3.0', '>=')) {
+
+	    $is3 = false;
+	    if (version_compare($version->getShortVersion(), '3.0', '>=')) {
             $is3 = true;
         }
-        
+
+	    $tz = 'UTC';
+	    if($is3){
+		    $tz = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
+	    }
+
+	    $date_stamp1 = date('Y_m_d');
+	    $date_stamp2 = date('H_i_s');
+	    $date_stamp3 = date('Y_m_d_H_i_s');
+
+	    if($is3){
+		    $date_ = JFactory::getDate($this->submitted, $tz);
+		    $offset = $date_->getOffsetFromGMT();
+		    if($offset > 0){
+			    $date_->add(new DateInterval('PT'.$offset.'S'));
+		    }else if($offset < 0){
+			    $offset = $offset*-1;
+			    $date_->sub(new DateInterval('PT'.$offset.'S'));
+		    }
+		    $date_stamp1 = $date_->format('Y_m_d', true);
+		    $date_stamp2 = $date_->format('H_i_s', true);
+		    $date_stamp3 = $date_->format('Y_m_d_H_i_s', true);
+	    }
+
         $_now = JFactory::getDate();
-        $path = str_replace('{date}', $is3 ? $_now->format('Y-m-d') : $_now->toFormat('Y-m-d'), $path);
-        $path = str_replace('{time}', $is3 ? $_now->format('H:i:s') : $_now->toFormat('H:i:s'), $path);
-        $path = str_replace('{datetime}', $is3 ? $_now->format('Y-m-d H:i:s') : $_now->toFormat('Y-m-d H:i:s'), $path);
+        $path = str_replace('{date}', $date_stamp1, $path);
+        $path = str_replace('{time}', $date_stamp2, $path);
+        $path = str_replace('{datetime}', $date_stamp3, $path);
         
         $endpath = $this->makeSafeFolder($path);
         
@@ -2298,7 +2322,14 @@ class HTML_facileFormsProcessor {
             $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             $rootMdata = $dataObject['properties'];
             $is_device = false;
-            $useragent = $_SERVER['HTTP_USER_AGENT'];
+
+
+	        $useragent = 'Unknown';
+
+	        if(isset($_SERVER['HTTP_USER_AGENT'])){
+		        $useragent = $_SERVER['HTTP_USER_AGENT'];
+	        }
+
             if(JRequest::getVar('ff_applic','') != 'mod_facileforms' && JRequest::getInt('ff_frame', 0) != 1 && bf_is_mobile())
             {
                     $is_device = true;
@@ -2355,7 +2386,7 @@ class HTML_facileFormsProcessor {
             echo '<script type="text/javascript" src="' . JURI::root() . 'administrator/components/com_breezingforms/libraries/wz_dragdrop/wz_dragdrop.js"></script>';
         }
         if (trim($this->formrow->template_code_processed) == 'QuickMode' && $this->legacy_wrap)
-            echo '<table style="display:none;width:100%;" border="" id="bfReCaptchaWrap"><tr><td><div id="bfReCaptchaDiv"></div></td></tr></table>';
+            echo '<table style="display:none;width:100%;" id="bfReCaptchaWrap"><tr><td><div id="bfReCaptchaDiv"></div></td></tr></table>';
         echo '<div id="ff_formdiv' . $this->form . '"';
         echo ' class="bfFormDiv' . ($this->formrow->class1 != '' ? ' ' . $this->getClassName($this->formrow->class1) : '') . '"';
         if($this->legacy_wrap){
@@ -6761,7 +6792,7 @@ class HTML_facileFormsProcessor {
             $tz = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
         }
 
-        $date_stamp = date('YmdHis');
+        $date_stamp = date('Y_m_d_H_i_s');
         if(version_compare($_version, '3.2', '>=')){
             $date_ = JFactory::getDate($this->submitted, $tz);
             $offset = $date_->getOffsetFromGMT();
@@ -6771,7 +6802,7 @@ class HTML_facileFormsProcessor {
                 $offset = $offset*-1;
                 $date_->sub(new DateInterval('PT'.$offset.'S'));
             }
-            $date_stamp = $date_->format('YmdHis', true);
+            $date_stamp = $date_->format('Y_m_d_H_i_s', true);
         }
         
         $baseDir = JPath::clean(str_replace($this->findtags, $this->replacetags, $destpath));
@@ -6795,6 +6826,8 @@ class HTML_facileFormsProcessor {
                 $fname = JRequest::getVar( 'ff_nm_' . $row->name, array(), 'POST', 'ARRAY', JREQUEST_ALLOWRAW );
                 foreach($fname As $_fname){
                     $fm = str_replace('{filemask:'.strtolower($row->name).'}', JFile::makeSafe(trim($_fname)), $fm);
+	                // so it works the same like for folders
+	                $fm = str_replace( '{' . strtolower( $row->name ) . ':value}', JFile::makeSafe( trim( $_fname ) ), $fm );
                 }
             }
             $fm = str_replace('{filemask:_separator}', '_', $fm);
@@ -6847,8 +6880,11 @@ class HTML_facileFormsProcessor {
         } // if
 
         $serverPath = $path;
-        if ($useUrl && $useUrlDownloadDirectory != '') {
-            $path = $useUrlDownloadDirectory . '/' . basename($path);
+        if ($useUrl) {
+
+        	$cleaned = str_replace(JPATH_SITE . '/', '', $baseDir);
+
+            $path = Juri::root() . rtrim($cleaned,'/') . '/' . basename($path);
         }
         
         // resize if image
@@ -7192,12 +7228,14 @@ class HTML_facileFormsProcessor {
                                         //if ($cbResult !== null && isset($cbResult['data']) && $cbResult['data'] != null) {
                                             $rowpath1 = $this->cbCreatePathByTokens($rowpath1, $this->rows);
                                         //}
+
                                         $pathInfo = $this->saveUpload($tmp_name[$i], bf_sanitizeFilename($name[$i]), $rowpath1, $row->flag1, $useUrl, $useUrlDownloadDirectory,$resize_target_width,$resize_target_height,$resize_type,$resize_bgcolor);
                                         $path = $pathInfo['default'];
                                         $serverPath = $pathInfo['server'];
                                         if ($this->status != _FF_STATUS_OK)
                                             return;
                                         $paths[] = $path;
+
                                         $serverPaths[] = $serverPath;
                                         $this->submitdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $path);
                                         // CONTENTBUILDER
@@ -7222,7 +7260,7 @@ class HTML_facileFormsProcessor {
                                             $tz = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
                                         }
 
-                                        $date_stamp = date('YmdHis');
+                                        $date_stamp = date('Y_m_d_H_i_s');
                                         if(version_compare($_version, '3.2', '>=')){
                                             $date_ = JFactory::getDate($this->submitted, $tz);
                                             $offset = $date_->getOffsetFromGMT();
@@ -7232,7 +7270,7 @@ class HTML_facileFormsProcessor {
                                                 $offset = $offset*-1;
                                                 $date_->sub(new DateInterval('PT'.$offset.'S'));
                                             }
-                                            $date_stamp = $date_->format('YmdHis', true);
+                                            $date_stamp = $date_->format('Y_m_d_H_i_s', true);
                                         }
                                         
                                         while (false !== ($file = @readdir($handle))) {
@@ -7262,14 +7300,20 @@ class HTML_facileFormsProcessor {
 
                                                                 if($fmtest != basename($_baseDir)){
                                                                     $fm = basename($_baseDir);
-                                                                    
-                                                                    foreach($this->rows As $row){
-                                                                        $fname = JRequest::getVar( 'ff_nm_' . $row->name, array(), 'POST', 'ARRAY', JREQUEST_ALLOWRAW );
-                                                                        foreach($fname As $_fname){
-                                                                            $fm = str_replace('{filemask:'.strtolower($row->name).'}', JFile::makeSafe(trim($_fname)), $fm);
-                                                                        }
-                                                                    }
-                                                                    
+
+	                                                                foreach($this->rows As $row2)
+	                                                                {
+
+		                                                                $fname = JRequest::getVar( 'ff_nm_' . $row2->name, array(), 'POST', 'ARRAY', JREQUEST_ALLOWRAW );
+		                                                                foreach ( $fname As $_fname )
+		                                                                {
+			                                                                $fm = str_replace( '{filemask:' . strtolower( $row2->name ) . '}', JFile::makeSafe( trim( $_fname ) ), $fm );
+			                                                                // so it works the same like for folders
+			                                                                $fm = str_replace( '{' . strtolower( $row2->name ) . ':value}', JFile::makeSafe( trim( $_fname ) ), $fm );
+		                                                                }
+
+	                                                                }
+
                                                                     $fm = str_replace('{filemask:_separator}', '_', $fm);
                                                                     $fm = str_replace('{filemask:_username}', trim(JFactory::getUser()->get('username')), $fm);
                                                                     $fm = str_replace('{filemask:_userid}', trim(JFactory::getUser()->get('id')), $fm);
@@ -7283,7 +7327,7 @@ class HTML_facileFormsProcessor {
                                                                     }
                                                                     $userfile_name = $fm . '.' . JFile::getExt($userfile_name);
                                                                 }
-                                                                
+
                                                                 if ($row->flag1)
                                                                     $userfile_name = $date_stamp . '_' . $userfile_name;
                                                                 $path = $baseDir . DS . $userfile_name;
@@ -7319,9 +7363,13 @@ class HTML_facileFormsProcessor {
                                                                 @JFile::delete($sourcePath . $file);
 
                                                                 $serverPath = $path;
-                                                                if ($useUrl && $useUrlDownloadDirectory != '') {
-                                                                    $path = $useUrlDownloadDirectory . '/' . basename($path);
-                                                                }
+
+	                                                            if ($useUrl) {
+
+		                                                            $cleaned = str_replace(JPATH_SITE . '/', '', $baseDir);
+
+		                                                            $path = Juri::root() . rtrim($cleaned,'/') . '/' . basename($path);
+	                                                            }
                                                                 
                                                                 $paths[] = $path;
                                                                 $serverPaths[] = $serverPath;
@@ -7422,8 +7470,16 @@ class HTML_facileFormsProcessor {
                                 }
                                 
                                 if (($this->formrow->emaillog == 1 && $this->trim($paths)) ||
-                                        $this->formrow->emaillog == 2)
-                                    $this->maildata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $paths, $serverPaths);
+                                        $this->formrow->emaillog == 2) {
+	                                $this->maildata[] = array(
+		                                $row->id,
+		                                $row->name,
+		                                strip_tags( $row->title ),
+		                                $row->type,
+		                                $paths,
+		                                $serverPaths
+	                                );
+                                }
                             } // if
                             break;
                         case 'Text':
@@ -7466,9 +7522,8 @@ class HTML_facileFormsProcessor {
 			                                $def = '';
 			                                JFile::write(JPATH_SITE . '/media/breezingforms/signatures/index.html', $def);
 										}
-										$sig_exploded = explode(',', $value);
-		                                $sig_decoded = bf_b64dec($sig_exploded[1]);
-		                                $sig_file = JPATH_SITE . '/media/breezingforms/signatures/'.$row->name.'-'.md5($sig_exploded[1]).'.png';
+		                                $sig_decoded = bf_b64dec($value);
+		                                $sig_file = JPATH_SITE . '/media/breezingforms/signatures/'.$row->name.'-'.md5($value).'.png';
 		                                JFile::write($sig_file, $sig_decoded);
 		                                $value = basename($sig_file);
 
@@ -7979,7 +8034,63 @@ class HTML_facileFormsProcessor {
 				                $html = '';
 
 				                if (!$this->inline)
-					                $html .= '<html><head></head><body>';
+					                $html .= '<html><head><style> .stripe_checkout_app { height: 580px !important; } </style>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css">
+.thebutton {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    width: 120px;
+    height: 37px;
+    border: 0;
+    text-decoration: none;
+    background: #45b1e8;
+    cursor: pointer;
+    background-image: -webkit-linear-gradient(#45b1e8,#3097de);
+    background-image: -moz-linear-gradient(#45b1e8,#3097de);
+    background-image: -ms-linear-gradient(#45b1e8,#3097de);
+    background-image: -o-linear-gradient(#45b1e8,#3097de);
+    background-image: -webkit-linear-gradient(#45b1e8,#3097de);
+    background-image: -moz-linear-gradient(#45b1e8,#3097de);
+    background-image: -ms-linear-gradient(#45b1e8,#3097de);
+    background-image: -o-linear-gradient(#45b1e8,#3097de);
+    background-image: linear-gradient(#45b1e8,#3097de);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    font-family: "Helvetica Neue","Helvetica",Arial,sans-serif;
+    font-weight: bold;
+    font-size: 17px;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(46,86,153,0.3);
+    -webkit-box-shadow: 0 1px 0 rgba(46,86,153,0.15),0 0 4px rgba(86,149,219,0),inset 0 2px 0 rgba(41,102,20,0);
+    -moz-box-shadow: 0 1px 0 rgba(46,86,153,0.15),0 0 4px rgba(86,149,219,0),inset 0 2px 0 rgba(41,102,20,0);
+    -ms-box-shadow: 0 1px 0 rgba(46,86,153,0.15),0 0 4px rgba(86,149,219,0),inset 0 2px 0 rgba(41,102,20,0);
+    -o-box-shadow: 0 1px 0 rgba(46,86,153,0.15),0 0 4px rgba(86,149,219,0),inset 0 2px 0 rgba(41,102,20,0);
+    box-shadow: 0 1px 0 rgba(46,86,153,0.15),0 0 4px rgba(86,149,219,0),inset 0 2px 0 rgba(41,102,20,0);
+    -webkit-transition: box-shadow .15s linear;
+    -moz-transition: box-shadow .15s linear;
+    -ms-transition: box-shadow .15s linear;
+    -o-transition: box-shadow .15s linear;
+    transition: box-shadow .15s linear;
+}
+</style></head><body>';
 
 				                $current_tag = JFactory::getLanguage()->getTag();
 				                $exploded = explode('-', $current_tag);
@@ -8010,14 +8121,7 @@ class HTML_facileFormsProcessor {
 								  }
 								});
 								
-								
-								// Close Checkout on page navigation:
-								window.addEventListener(\'popstate\', function() {
-								  handler.close();
-								});
-								
-								window.onload = function(){
-								  handler.open({
+								var options = {
 									    name: '.json_encode(isset( $head['properties']['title_translation'.JFactory::getLanguage()->getTag()] ) ? $head['properties']['title_translation'.JFactory::getLanguage()->getTag()] : $this->formrow->title).',
 									    description: '.json_encode( $options['itemname'] ) .',
 									    currency: '.json_encode(strtolower($options['currencyCode'])).',
@@ -8029,15 +8133,26 @@ class HTML_facileFormsProcessor {
 									        
 									            location.href = '.json_encode(JURI::root()).'; 
 									        }
+									    },
+									    opened: function(){
+									        document.querySelector(".thebutton").style.display = "none";
 									    }
-								  });
+								  };
+								
+								// Close Checkout on page navigation:
+								window.addEventListener(\'popstate\', function() {
+								  handler.close();
+								});
+								
+								window.onload = function(){
+								  handler.open(options);
 								};
 								</script>
 			                	
 			                	';
 
 				                if (!$this->inline)
-					                $html .= "</form></body></html>";
+					                $html .= "</form><div style='margin-top: 25%; text-align: center; width: 100%;'><button class='thebutton' onclick='handler.open(options);'>Click To Pay</button></body></div></html>";
 
 				                echo $html;
 			                }
