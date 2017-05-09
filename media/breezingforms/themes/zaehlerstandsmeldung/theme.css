@@ -1,0 +1,199 @@
+/*
+ ########## BreezingForms 1.6.5 QuickMode ##########
+ @autor crosstec.de
+ @copyright Copyright (C) 2009 crosstec.de. All rights reserved.
+ ########################################
+*/
+
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700italic,900,700,900italic);
+
+body#print {
+		margin-top: 0px;
+}
+
+
+.bfElementGroup input[type='radio']{
+    vertical-align: top;
+}
+.bfElementGroupNoWrap input[type='radio']{
+    vertical-align: top;
+}
+.bfElementGroup input[type='checkbox']{
+    vertical-align: top;
+}
+.bfElementGroupNoWrap input[type='checkbox']{
+    vertical-align: top;
+}
+/* ##### General BreezingForms styles ##### */
+
+.bfQuickMode {
+	font-family: 'Roboto', sans-serif;	
+	font-weight: 300;
+	color:#383431;
+}
+
+
+
+.bfQuickMode fieldset {
+    border: 1px solid #EFEFEF;
+}
+
+.bfQuickMode legend {
+
+}
+
+.bfQuickMode p.bfElemWrap {
+
+}
+
+.bfQuickMode span.bfElemWrap {
+
+}
+
+/* ##### inline ##### */
+
+.bfQuickMode fieldset fieldset legend {
+
+}
+
+.bfQuickMode fieldset.bfInline {
+
+}
+
+.bfQuickMode fieldset.bfInline p {
+
+}
+
+/* ##### Input Fields ##### */
+
+.bfQuickMode input[type=text], .bfQuickMode input[type=password], .bfQuickMode textarea, .bfQuickMode select {
+	border: 1px solid #E7E7E7;
+	padding: 4px;
+	color: #777;
+	font-weight: 300;
+	-webkit-appearance:none;
+	border-radius: 0;	
+}
+
+.bfQuickMode textarea:hover, .bfQuickMode input[type='text']:hover, .bfQuickMode input[type='password']:hover, .bfQuickMode select:hover {
+
+}
+
+.bfQuickMode textarea:focus, .bfQuickMode input[type='text']:focus, .bfQuickMode input[type='password']:focus, .bfQuickMode select:focus {
+
+}
+
+.bfQuickMode input[type='button'], .bfQuickMode input[type='submit'], .bfQuickMode input[type='checkbox'], .bfQuickMode input[type='image'], .bfQuickMode input[type='radio'], .bfQuickMode input[type='reset'], .bfQuickMode select, .bfQuickMode button {
+
+}
+
+.bfQuickMode input[type='reset']:after {
+	content: "asdasd"
+}
+
+.bfQuickMode input[type='hidden'] { display: none; }
+
+/* ##### page intro ##### */
+
+.bfQuickMode .bfPageIntro {
+
+}
+
+/* ##### error messages #####*/
+
+.bfQuickMode .bfErrorMessage {
+
+}
+
+/* ##### max length message ##### */
+
+.bfMaxLengthCounter {
+    color: #666;
+}
+
+/* ##### tooltip ##### */
+
+.bfQuickMode span.hasTip {
+	background: none !important;
+}
+
+.bfQuickMode span.bfTooltip {
+	background: url("img/icon_info.png") no-repeat scroll left;
+}
+.tool-tip, .tool-text, .tool-title {
+	background:red !important;
+}
+	
+
+/* ##### Section Description #####*/
+
+.bfQuickMode .bfSectionDescription {
+
+}
+
+.bfQuickMode .bfSectionDescription p {
+
+}
+
+/* ##### required ##### */
+
+.bfQuickMode .bfRequired {
+	color: #13244E;
+	font-weight: 100;
+}
+
+/* ##### buttons ##### */
+
+.bfQuickMode input[type='submit'], .bfQuickMode input[type='reset']  {
+
+}
+
+.bfQuickMode .bfNextButton, .bfQuickMode .bfSubmitButton, .bfQuickMode .bfCancelButton {
+	float: left;
+	border: none;
+	border-radius: none;
+	background-color: #6ac123;
+	color: #fff;
+	padding: 4px 10px;
+	margin:10px 0 0 5px;
+}
+
+.bfQuickMode .bfPrevButton {
+	border: none;
+	border-radius: none;
+	background-color: #6ac123;
+	color: #fff;
+	padding: 4px 10px;
+}
+
+.bfQuickMode input.bfCalendar {
+
+}
+
+/* #### eingene #### */
+.bfQuickMode .bfLabelLeft label {
+	font-weight: 300;
+}
+
+.bfQuickMode select {
+	 -webkit-appearance: none;  /*Removes default chrome and safari style*/
+     -moz-appearance: none;  /*Removes default style Firefox*/
+	 background:url(img/select.png)no-repeat right;
+}
+
+.bfQuickMode select::-moz-focus-inner {
+  border: 0;
+}
+
+
+/* Cookie Meldung ausblenden*/
+.cadre_alert_cookies, #cadre_alert_cookies .pull-left {
+	display: none !important;
+	max-height: 0px !important;
+	opacity: 0 !important;
+	width: 0px !important;
+	background-color: #fff;	
+}
+
+

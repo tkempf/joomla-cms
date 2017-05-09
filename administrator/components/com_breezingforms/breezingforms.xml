@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5" method="upgrade">
 	<name>COM_BREEZINGFORMS</name>
-	<creationDate>2016-12-08</creationDate>
+	<creationDate>2017-05-04</creationDate>
 	<author>Markus Bopp | Until FacileForms Version 1.4.7: Peter Koch</author>
 	<copyright>This Joomla! component is released under the GNU/GPL license</copyright>
         <license>GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html</license>
 	<authorEmail>markus.bopp@crosstec.org</authorEmail>
 	<authorUrl>www.crosstec.org</authorUrl>
-	<version>1.8.7 Stable (899)</version>
+	<version>1.9.0 Stable (924)</version>
 	<description>Installation successful. Next find BreezingForms in the Components menu, and finish the installation process.</description>
 	<installfile>install.php</installfile>
         <uninstallfile>uninstall.php</uninstallfile>
@@ -94,6 +94,9 @@
                         <folder>pdftpl</folder>
                         <folder>sql</folder>
                         <folder>views</folder>
+                        <folder>plugins</folder>
+
+                        <folder>assets</folder>
                 </files>
 
 		<languages folder="admin">

@@ -11,6 +11,9 @@ if(!defined('DS')){
     define('DS', DIRECTORY_SEPARATOR);
 }
 
+jimport('joomla.filesystem.file');
+jimport('joomla.filesystem.folder');
+
 class com_breezingformsInstallerScript
 {
         /**
@@ -87,9 +90,29 @@ class com_breezingformsInstallerScript
 	{
             
             jimport('joomla.filesystem.file');
+			jimport('joomla.version');
 
-    
-            jimport('joomla.version');
+			$db = JFactory::getDbo();
+
+			$plugins = $this->getPlugins();
+
+			$installer = new JInstaller();
+
+			foreach($plugins As $folder => $subplugs){
+
+				foreach($subplugs As $plugin){
+
+					$db->setQuery('SELECT `extension_id` FROM #__extensions WHERE `type` = "plugin" AND `element` = "'.$plugin.'" AND `folder` = "'.$folder.'"');
+
+					$id = $db->loadResult();
+
+					if($id)
+					{
+						$installer->uninstall('plugin',$id,1);
+					}
+				}
+			}
+
             $version = new JVersion();
 
             if(version_compare($version->getShortVersion(), '3.0', '>=')){
@@ -146,7 +169,27 @@ class com_breezingformsInstallerScript
 	function postflight($type, $parent) 
 	{
             $db = JFactory::getDBO();
-            
+
+		$plugins = $this->getPlugins();
+
+
+			$base_path = JPATH_SITE . DS . 'administrator' . DS . 'components' . DS . 'com_breezingforms' . DS . 'plugins';
+
+			$folders = JFolder::folders($base_path);
+
+			$installer = new JInstaller();
+
+			foreach( $folders As $folder ){
+				$installer->install( $base_path . DS . $folder );
+			}
+
+			foreach($plugins As $folder => $subplugs){
+				foreach($subplugs As $plugin){
+					$db->setQuery('Update #__extensions Set `enabled` = 1 WHERE `type` = "plugin" AND `element` = "'.$plugin.'" AND `folder` = "'.$folder.'"');
+					$db->execute();
+				}
+			}
+
             $db->setQuery("Select id From `#__menu` Where `alias` = 'root'");
             if(!$db->loadResult()){
                 $db->setQuery("INSERT INTO `#__menu` VALUES(1, '', 'Menu_Item_Root', 'root', '', '', '', '', 1, 0, 0, 0, 0, '0000-00-00 00:00:00', 0, 0, '', 0, '', 0, ( Select mlftrgt From (Select max(mlft.rgt)+1 As mlftrgt From #__menu As mlft) As tbone ), 0, '*', 0)");
@@ -165,6 +208,13 @@ class com_breezingformsInstallerScript
                 $db->setQuery("Delete From #__updates Where update_site_id = " . $db->quote($site_id));
                 $db->execute();
             }
+	}
+
+	function getPlugins(){
+		$plugins = array();
+		$plugins['system'] = array();
+		$plugins['system'][] = 'sysbreezingforms';
+		return $plugins;
 	}
 }
 

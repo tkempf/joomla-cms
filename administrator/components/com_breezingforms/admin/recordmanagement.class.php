@@ -552,7 +552,7 @@ class bfRecordManagement {
 
 		JFactory::getDocument()->addScript(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jq.min.js');
 		JFactory::getDocument()->addScript(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jq-ui.min.js');
-		JFactory::getDocument()->addScript(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jtable/jq.jtable.min.js');
+		JFactory::getDocument()->addScript(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jtable/jq.jtable.js');
 
 		$lang = JFactory::getLanguage()->getTag();
 		$lang = explode('-', $lang);
@@ -568,8 +568,8 @@ class bfRecordManagement {
 
 		JFactory::getDocument()->addScriptDeclaration('jQuery.noConflict();' . "\n");
 
-		JFactory::getDocument()->addStyleSheet(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jtable/themes/metro/recordmanager/jtable.css');
 		JFactory::getDocument()->addStyleSheet(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jtable/themes/metro/jq.ui.css');
+		JFactory::getDocument()->addStyleSheet(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/jtable/themes/metro/blue/jtable.css');
 		JFactory::getDocument()->addStyleSheet(JURI::root() . 'administrator/components/com_breezingforms/admin/style.css');
 
 		JFactory::getDocument()->addStyleSheet(JURI::root(true) . '/components/com_breezingforms/libraries/jquery/pickadate/themes/default.css');
@@ -2329,6 +2329,14 @@ class bfRecordManagement {
 		if (JRequest::getInt('form_selection', 0) && count($recs)) {
 				
 			$form_name = $recs[0]->name;
+		}
+
+		if($form_name != ''){
+
+			$file2 = JPATH_SITE . '/media/breezingforms/pdftpl/'.$form_name.'_export_pdf.php';
+			if (JFile::exists($file2)) {
+				$file = JPATH_SITE . '/media/breezingforms/pdftpl/'.$form_name.'_export_pdf.php';
+			}
 		}
 		
 		$updIds = array();

@@ -1,19 +1,45 @@
 <?php
 /**
-* BreezingForms - A Joomla Forms Application
-* @version 1.8
-* @package BreezingForms
-* @copyright (C) 2008-2012 by Markus Bopp
-* @license Released under the terms of the GNU General Public License
-**/
+ * BreezingForms - A Joomla Forms Application
+ * @version 1.8
+ * @package BreezingForms
+ * @copyright (C) 2008-2012 by Markus Bopp
+ * @license Released under the terms of the GNU General Public License
+ **/
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+
+jimport('joomla.version');
+$version = new JVersion();
 
 $active_language_code = JRequest::getVar('active_language_code', '');
 if($active_language_code != ''){
-    $active_language_code = '_translation'.$active_language_code;
+	$active_language_code = '_translation'.$active_language_code;
 }
 
 JImport( 'joomla.html.editor' );
+$editor = JFactory::getEditor();
+
+// make it work for both 3.6- and 3.7+
+$description00 = $editor->setContent('bfEditor','\'+item.properties[key]+\'');
+$description   = $editor->setContent('bfEditor','\'+item.properties[key]+\'');
+$description0  = $editor->setContent('bfEditor','item.properties[key]');
+
+$intro = $editor->setContent('bfEditor','\'+item.properties[key]+\'');
+$intro0 = $editor->setContent('bfEditor','item.properties[key]');
+$intro00 = $editor->setContent('bfEditor','\'+item.properties[key]+\'');
+
+if(version_compare($version->getShortVersion(), '3.7', '>=')) {
+
+	// unfortunately, we must replace as setContent adds auto quotes
+	$description00 = str_replace('\'','"', $description00);
+	$description = str_replace('\'','"', $description);
+	$description0 = str_replace('item.properties[key]','"+item.properties[key]+"', $description0);
+
+	$intro = str_replace('\'','"', $intro);
+	$intro00 = str_replace('\'','"', $intro);
+	$intro0 = str_replace('item.properties[key]','"+item.properties[key]+"', $intro0);
+}
+
 $editor = JFactory::getEditor();
 echo '<input type="submit" class="btn btn-primary" value="'.JText::_('SAVE').'" onclick="saveText();parent.SqueezeBox.close();"/><br/><br/>';
 echo '<div style="width:700px;">'.$editor->display("bfEditor",'',700,300,40,20,1).'</div>';
@@ -60,9 +86,10 @@ function setIntro0(){
         if(typeof item.properties[key] == "undefined"){
             item.properties[key] = "";
         }
-	'.$editor->setContent('bfEditor','item.properties[key]').'
+	'.$intro0.'
         var testEditor = '.$editor->getContent('bfEditor').'
-        if( testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[\'pageIntro'.$active_language_code.'\']</div>" ){
+        
+        if( testEditor == "<div>\"+item.properties[key]+\"</div>" || testEditor == "<p>\"+item.properties[key]+\"</p>" || testEditor == "\"+item.properties[key]+\"" || testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[\'pageIntro'.$active_language_code.'\']</div>" ){
             setTimeout("setIntro00()",250);
         }
 }
@@ -72,7 +99,7 @@ function setIntro00(){
     if(typeof item.properties[key] == "undefined"){
         item.properties[key] = "";
     }
-    '.$editor->setContent('bfEditor','\'+item.properties[key]+\'').'
+    '.$intro00.'
 }
 function setDescription0(){
         var key = "description'.$active_language_code.'";
@@ -80,10 +107,10 @@ function setDescription0(){
         if(typeof item.properties[key] == "undefined"){
             item.properties[key] = "";
         }
-	'.$editor->setContent('bfEditor','item.properties[key]').'
+	'.$description0.'
         var testEditor = '.$editor->getContent('bfEditor').'
             
-        if( testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[key]</div>"){
+        if( testEditor == "<div>\"+item.properties[key]+\"</div>" || testEditor == "<p>\"+item.properties[key]+\"</p>" || testEditor == "\"+item.properties[key]+\"" || testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[key]</div>"){
         
             setTimeout("setDescription00()",250);
         }
@@ -94,12 +121,12 @@ function setDescription00(){
     if(typeof item.properties[key] == "undefined"){
         item.properties[key] = "";
     }
-    '.$editor->setContent('bfEditor','\'+item.properties[key]+\'').'
+    '.$description00.'
 }
 function setIntro(){
         var key = "pageIntro'.$active_language_code.'";
 	var item = parent.app.findDataObjectItem(parent.app.selectedTreeElement.id, parent.app.dataObject);
-	'.$editor->setContent('bfEditor','\'+item.properties[key]+\'').'
+	'.$intro.'
 }
 function setDescription(){
         var key = "description'.$active_language_code.'";
@@ -107,7 +134,7 @@ function setDescription(){
         if(typeof item.properties[key] == "undefined"){
             item.properties[key] = "";
         }
-	'.$editor->setContent('bfEditor','\'+item.properties[key]+\'').'
+	'.$description.'
 }
 
 setTimeout("bfLoadText()",500);
