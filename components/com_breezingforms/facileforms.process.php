@@ -2551,7 +2551,7 @@ class HTML_facileFormsProcessor {
 				function bfCheckCaptcha(){
 					if(checkFileExtensions()){
                                                var ao = new bfAjaxObject101();
-                                               ao.sndReq("get","' . JURI::root(true) . ( JFactory::getApplication()->isAdmin() ? '/administrator/' : (BFJoomlaConfig::get('config.sef') && !BFJoomlaConfig::get('config.sef_rewrite') ? '/index.php/' : '/').(JRequest::getCmd('lang','') && BFJoomlaConfig::get('config.sef') ? JRequest::getCmd('lang','') . ( BFJoomlaConfig::get('config.sef_rewrite') ? '/index.php' : '/' )  : 'index.php') ) . '?lang='.JRequest::getCmd('lang','').'&raw=true&option=com_breezingforms&checkCaptcha=true&Itemid=0&tmpl=component&value="+document.getElementById("bfCaptchaEntry").value,"");
+                                               ao.sndReq("get","' . JRoute::_("index.php?raw=true&option=com_breezingforms&checkCaptcha=true&Itemid=0&tmpl=component&value=", false) .'"+document.getElementById("bfCaptchaEntry").value,"");
 					}
 				}';
                 break;
@@ -2567,7 +2567,7 @@ class HTML_facileFormsProcessor {
                                                         responseField = JQuery("input#recaptcha_response_field").val();
                                                         var html = JQuery.ajax({
                                                         type: "POST",
-                                                        url: "' . JURI::root(true) . ( JFactory::getApplication()->isAdmin() ? '/administrator/' : (BFJoomlaConfig::get('config.sef') && !BFJoomlaConfig::get('config.sef_rewrite') ? '/index.php/' : '/').(JRequest::getCmd('lang','') && BFJoomlaConfig::get('config.sef') ? JRequest::getCmd('lang','') . ( BFJoomlaConfig::get('config.sef_rewrite') ? '/index.php' : '/' ) : 'index.php') ) . '?lang='.JRequest::getCmd('lang','').'&raw=true&option=com_breezingforms&bfReCaptcha=true&form=' . $this->form . '&Itemid=0&tmpl=component",
+                                                        url: "' . JRoute::_("index.php?raw=true&option=com_breezingforms&bfReCaptcha=true&form=" . $this->form . "&Itemid=0&tmpl=component") . '",
                                                         data: "recaptcha_challenge_field=" + challengeField + "&recaptcha_response_field=" + responseField,
                                                         async: false
                                                         }).responseText;
@@ -2608,21 +2608,29 @@ class HTML_facileFormsProcessor {
                                                     }
                                                     else{
                                                         
+                                                        if(typeof bfInvisibleRecaptcha != "undefined"){
+                                                        
+                                                            grecaptcha.execute();
+                                                        }
+                                                        
                                                         var gresponse = grecaptcha.getResponse();
                                                         
                                                         if(gresponse == ""){
                                                             
-                                                            if(typeof bfUseErrorAlerts == "undefined"){
-                                                                    alert("' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '");
-                                                            } else {
-                                                                if(typeof inlineErrorElements != "undefined"){
-                                                                    inlineErrorElements.push(["bfReCaptchaEntry","' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '"]);
-                                                                }
-                                                                bfShowErrors("' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '");
+                                                            if(typeof bfInvisibleRecaptcha == "undefined"){
+                                                            
+	                                                            if(typeof bfUseErrorAlerts == "undefined"){
+	                                                                    alert("' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '");
+	                                                            } else {
+	                                                                if(typeof inlineErrorElements != "undefined"){
+	                                                                    inlineErrorElements.push(["bfReCaptchaEntry","' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '"]);
+	                                                                }
+	                                                                bfShowErrors("' . addslashes(BFText::_('COM_BREEZINGFORMS_CAPTCHA_MISSING_WRONG')) . '");
+	                                                            }
+                                                            
+                                                            
+                                                                if(ff_currentpage != ' . $row->page . ')ff_switchpage(' . $row->page . ');
                                                             }
-
-                                                            if(ff_currentpage != ' . $row->page . ')ff_switchpage(' . $row->page . ');
-           
                                                             if(document.getElementById("bfSubmitButton")){
                                                                 document.getElementById("bfSubmitButton").disabled = false;
                                                             }
@@ -3175,12 +3183,14 @@ class HTML_facileFormsProcessor {
 
 	                    	    $sig_encoded = bf_b64enc(JFile::read($sig_path . $cbEntry->recValue));
 
+			                    $base = 'ba'.'se'.'64';
+
 			                    $js .= '
 										JQuery(document).ready(function(){
 											if(typeof bf_signaturePad' . $cbEntry->recElementId . ' != "undefined"){
 												if('.( strlen($sig_encoded) > 0 ? 'true' : 'false' ).'){
-													JQuery("[name=\"ff_nm_'.$cbEntry->recName.'[]\"]").val('.json_encode('data:image/png;base64,' . $sig_encoded).')
-													bf_signaturePad' . $cbEntry->recElementId . '.fromDataURL('.json_encode('data:image/png;base64,' . $sig_encoded).');
+													JQuery("[name=\"ff_nm_'.$cbEntry->recName.'[]\"]").val('.json_encode('data:image/png;'.$base.',' . $sig_encoded).')
+													bf_signaturePad' . $cbEntry->recElementId . '.fromDataURL('.json_encode('data:image/png;'.$base.',' . $sig_encoded).');
 												}
 											}
 										});';
@@ -3598,7 +3608,7 @@ class HTML_facileFormsProcessor {
                             } // switch
                             if ($this->trim($selected)) {
                                 $attribs = '';
-                                if ($this->trim($value)) {
+                                if ($this->trim($value) != '') {
                                     if ($value == '""' || $value == "''")
                                         $value = '';
                                     $attribs .= ' value="' . htmlspecialchars($value, ENT_QUOTES) . '"';
@@ -5225,7 +5235,8 @@ class HTML_facileFormsProcessor {
                 $this->status = _FF_STATUS_ATTACHMENT_FAILED;
             } // if
         } else {
-            if (!JFile::write($csvname, $head . $out)) {
+        	$head_out = $head . $out;
+            if (!JFile::write($csvname, $head_out)) {
                 $this->status = _FF_STATUS_ATTACHMENT_FAILED;
             } // if
         }
@@ -5342,17 +5353,23 @@ class HTML_facileFormsProcessor {
             $recipient = $ff_config->emailadr;
 
         $recipients = explode(';', $recipient);
-        $recipientsSize = count($recipients);
+        $cleaned_recipients = array();
 
         $alt_sender = '';
+
         foreach($recipients As $recipient){
             
             $test = explode(':', $recipient);
             if(count($test) == 2 && strtolower(trim($test[0])) == 'sender' ) {
                 $alt_sender = trim($test[1]);
-                break;
+            }
+            else{
+	            $cleaned_recipients[] = $recipient;
             }
         }
+
+	    $recipients = $cleaned_recipients;
+	    $recipientsSize = count($recipients);
         
         // dynamic receipients
         $all_recipients = array();
@@ -5993,17 +6010,16 @@ class HTML_facileFormsProcessor {
             $_senders = $ff_config->emailadr;
 
         $_senders = explode(';', $_senders);
-        
+
         $alt_sender = '';
         foreach($_senders As $_sender){
             
             $test = explode(':', $_sender);
             if(count($test) == 2 && strtolower(trim($test[0])) == 'sender' ) {
                 $alt_sender = trim($test[1]);
-                break;
             }
         }
-        
+
         $accept = JRequest::getVar('mailbackConnectWith', array());
         $sender = JRequest::getVar('mailbackSender', array());
         $attachToUserMail = JRequest::getVar('attachToUserMail', array());
@@ -6329,12 +6345,12 @@ class HTML_facileFormsProcessor {
                             $subject = str_replace('{' . $DATA[_FF_DATA_NAME] . '}', $DATA[_FF_DATA_VALUE], $subject);
                             $DATA[_FF_DATA_TITLE] = $trans_title != '' ? $trans_title : strip_tags($DATA[_FF_DATA_TITLE]);
                             $MAILDATA[] = $DATA;
+
+	                        if($DATA[_FF_DATA_TYPE] == 'Signature'){
+
+		                        $signatures[] = JPATH_SITE . '/media/breezingforms/signatures/' . $DATA[_FF_DATA_VALUE];
+	                        }
                         }
-
-	                    if($DATA[_FF_DATA_TYPE] == 'Signature'){
-
-		                    $signatures[] = JPATH_SITE . '/media/breezingforms/signatures/' . $DATA[_FF_DATA_VALUE];
-	                    }
                     }
                 }
 
@@ -7250,7 +7266,7 @@ class HTML_facileFormsProcessor {
                                 mt_srand();
                                 if (isset($tickets[JRequest::getVar('bfFlashUploadTicket', mt_rand(0, mt_getrandmax()))])) {
                                     $sourcePath = JPATH_SITE . '/components/com_breezingforms/uploads/';
-                                    if (@file_exists($sourcePath) && @is_readable($sourcePath) && @is_dir($sourcePath) && $handle = @opendir($sourcePath)) {
+                                    if (@file_exists($sourcePath) && @is_readable($sourcePath) && @is_dir($sourcePath)) {
                                         
                                         jimport('joomla.version');
                                         $version = new JVersion();
@@ -7272,8 +7288,12 @@ class HTML_facileFormsProcessor {
                                             }
                                             $date_stamp = $date_->format('Y_m_d_H_i_s', true);
                                         }
-                                        
-                                        while (false !== ($file = @readdir($handle))) {
+
+                                        // trying glob instead of readdir()
+	                                    foreach (glob($sourcePath . '*') as $glob_file) {
+
+		                                    $file = basename($glob_file);
+
                                             if ($file != "." && $file != "..") {
                                                 $parts = explode('_', $file);
                                                 if (count($parts) >= 5) {
@@ -7391,7 +7411,6 @@ class HTML_facileFormsProcessor {
                                                 }
                                             }
                                         }
-                                        @closedir($handle);
                                     }
                                 }
                             }
@@ -7494,8 +7513,8 @@ class HTML_facileFormsProcessor {
                         case 'Hidden Input':
 						case 'Signature':
                             if ($row->logging == 1) {
-                                
-                                $values = @JRequest::getVar("ff_nm_" . $row->name, array(''));
+
+                                $values = @JRequest::getVar("ff_nm_" . $row->name, array(''), 'POST', 'ARRAY', JREQUEST_ALLOWHTML);
                                 
                                 if( $row->type == 'Textarea' ){
                                     require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
@@ -7576,14 +7595,14 @@ class HTML_facileFormsProcessor {
 
                                     if ($loadData) {
                                         // submitdata
-                                        if ($this->trim($value))
+                                        if ($this->trim($value) != '')
                                             $this->submitdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $value);
 
-                                        if (($this->formrow->emaillog == 1 && $this->trim($value)) ||
+                                        if (($this->formrow->emaillog == 1 && $this->trim($value) != '') ||
                                                 $this->formrow->emaillog == 2 && ( ($this->formrow->emailxml == 1 ||
                                                 $this->formrow->emailxml == 2 || $this->formrow->emailxml == 3 || $this->formrow->emailxml == 4)))
                                             $this->xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $value);
-                                        if (($this->formrow->mb_emaillog == 1 && $this->trim($value)) ||
+                                        if (($this->formrow->mb_emaillog == 1 && $this->trim($value) != '') ||
                                                 $this->formrow->mb_emaillog == 2 && ( ($this->formrow->mb_emailxml == 1 ||
                                                 $this->formrow->mb_emailxml == 2 || $this->formrow->mb_emailxml == 3 || $this->formrow->mb_emailxml == 4)))
                                             $this->mb_xmldata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $value);
@@ -8229,7 +8248,7 @@ class HTML_facileFormsProcessor {
                                     } else {
                                         $html .= "<input type=\"hidden\" name=\"notify_url\" value=\"" . $returnurl . "\"/>";
                                     }
-                                    $html .= "<input type=\"hidden\" name=\"return\" value=\"" . $returnurl . "\"/>";
+	                                $html .= "<input type=\"hidden\" name=\"return\" value=\"" . ( $options['thankYouPage'] ? $options['thankYouPage'] : $returnurl  ) . "\"/>";
                                     $html .= "<input type=\"hidden\" name=\"cancel_return\" value=\"" . $cancelurl . "\"/>";
                                     $html .= "<input type=\"hidden\" name=\"rm\" value=\"2\"/>";
                                     $html .= "<input type=\"hidden\" name=\"lc\" value=\"" . $options['locale'] . "\"/>";

@@ -366,10 +366,12 @@ function bf_createMail( $from = '', $fromname = '', $subject, $body, $alt_sender
 
 	$prev_from = $alt_sender ? $alt_sender : $_mailfrom;
 
+
 	try {
 
-		$mail->SetFrom( $prev_from, $fromname ? $fromname : $_fromname );
+		//$mail->SetFrom( $prev_from, $fromname ? $fromname : $_fromname );
 		//$mail->SetFrom( $from ? $from : '', $fromname ? $fromname : '' );
+		$mail->setSender( array( $prev_from, $fromname ? $fromname : $_fromname ) );
 
 	} catch ( Exception $e ) {
 

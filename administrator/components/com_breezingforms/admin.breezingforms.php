@@ -144,10 +144,10 @@ if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'downloadtpl')){
 }
 
 if(!JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php')){
-	JFile::copy(
-		JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php',
-		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php'
-	);
+    JFile::copy(
+        JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php',
+        JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'downloadtpl'.DS.'stripe_download.php'
+    );
 }
 
 #### UPLOADS
@@ -216,14 +216,14 @@ if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstra
 }
 
 if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstrap3')){
-	JFolder::copy(
-		JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode-bootstrap3'.DS,
-		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'quickmode-bootstrap3'.DS
-	);
-	JFolder::move(
-		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'quickmode-bootstrap3'.DS,
-		JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstrap3'.DS
-	);
+    JFolder::copy(
+        JPATH_SITE.DS.'components'.DS.'com_breezingforms'.DS.'themes'.DS.'quickmode-bootstrap3'.DS,
+        JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'quickmode-bootstrap3'.DS
+    );
+    JFolder::move(
+        JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'quickmode-bootstrap3'.DS,
+        JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstrap3'.DS
+    );
 }
 
 if(!JFolder::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes'.DS.'images')){
@@ -291,19 +291,19 @@ if(JFile::exists(JPATH_SITE.DS.'media'.DS.'breezingforms'.DS.'themes-bootstrap'.
 
 if(JRequest::getBool('bfReCaptcha')){
 
-	@ob_end_clean();
+    @ob_end_clean();
         require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
-	require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
+    require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
         $db = JFactory::getDBO();
         $db->setQuery( "Select * From #__facileforms_forms Where id = " . $db->Quote( JRequest::getInt('form',-1) ) );
-	$list = $db->loadObjectList();
-	if(count($list) == 0){
-		exit;
-	}
-	$form = $list[0];
-	$areas = Zend_Json::decode($form->template_areas);
+    $list = $db->loadObjectList();
+    if(count($list) == 0){
+        exit;
+    }
+    $form = $list[0];
+    $areas = Zend_Json::decode($form->template_areas);
         foreach($areas As $area){
-		foreach($area['elements'] As $element){
+        foreach($area['elements'] As $element){
 
                     if($element['bfType'] == 'ReCaptcha'){
                         if(!function_exists('recaptcha_check_answer')){
@@ -332,22 +332,22 @@ if(JRequest::getBool('bfReCaptcha')){
                     }
                 }
         }
-	
-	exit;
+    
+    exit;
 
 } else if(JRequest::getBool('checkCaptcha')){
-	
-	ob_end_clean();
+    
+    ob_end_clean();
         
-	require_once(JPATH_SITE . '/components/com_breezingforms/images/captcha/securimage.php');
-	$securimage = new Securimage();
-	if(!$securimage->check(str_replace('?','',JRequest::getVar('value', '')))){
-		echo 'capResult=>false';
-	} else {
-		echo 'capResult=>true';
-	}
-	exit;
-	
+    require_once(JPATH_SITE . '/components/com_breezingforms/images/captcha/securimage.php');
+    $securimage = new Securimage();
+    if(!$securimage->check(str_replace('?','',JRequest::getVar('value', '')))){
+        echo 'capResult=>false';
+    } else {
+        echo 'capResult=>true';
+    }
+    exit;
+    
 }
 
 $mainframe = JFactory::getApplication();
@@ -630,13 +630,13 @@ if(version_compare($version->getShortVersion(), '3.1', '>=')){
     JFactory::getDbo()->setQuery("Select type_id From #__content_types Where type_alias = 'com_breezingforms.form'");
     $tag_typeid = JFactory::getDbo()->loadResult();
     if(!$tag_typeid){
-        $contenttype['type_id']		= 0;
-        $contenttype['type_title']	= 'BreezingForms';
-        $contenttype['type_alias']	= 'com_breezingforms.form';
-        $contenttype['table']		= '';
-        $contenttype['rules']		= '';
-        $contenttype['router']		= 'BreezingformsHelperRoute::getFormRoute';
-        $contenttype['field_mappings']	= '';
+        $contenttype['type_id']     = 0;
+        $contenttype['type_title']  = 'BreezingForms';
+        $contenttype['type_alias']  = 'com_breezingforms.form';
+        $contenttype['table']       = '';
+        $contenttype['rules']       = '';
+        $contenttype['router']      = 'BreezingformsHelperRoute::getFormRoute';
+        $contenttype['field_mappings']  = '';
         $table = JTable::getInstance('Contenttype', 'JTable');
         $table->save($contenttype);
     }
@@ -655,37 +655,37 @@ jimport('joomla.version');
 $version = new JVersion();
 
 if(version_compare($version->getShortVersion(), '1.6', '>=')){
-
-JSubMenuHelper::addEntry(
-                        BFText::_('COM_BREEZINGFORMS_MANAGERECS'),
+  
+JSubMenuHelper::addEntry('<i class="fa fa-folder-open" aria-hidden="true"></i> ' . '<m>'.
+                        BFText::_('COM_BREEZINGFORMS_MANAGERECS') .'</m>',
                         'index.php?option=com_breezingforms&act=managerecs', JRequest::getVar('act','') == 'managerecs' || JRequest::getVar('act','') == 'recordmanagement' || JRequest::getVar('act','') == '');
 
-JSubMenuHelper::addEntry(
-                        BFText::_('COM_BREEZINGFORMS_MANAGEFORMS'),
+JSubMenuHelper::addEntry('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> ' .'<m>'.
+                        BFText::_('COM_BREEZINGFORMS_MANAGEFORMS') .'</m>',
                         'index.php?option=com_breezingforms&act=manageforms', JRequest::getVar('act','') == 'manageforms' || JRequest::getVar('act','') == 'easymode' || JRequest::getVar('act','') == 'quickmode');
 
-JSubMenuHelper::addEntry(
-                        BFText::_('COM_BREEZINGFORMS_MANAGESCRIPTS'),
+JSubMenuHelper::addEntry('<i class="fa fa-code" aria-hidden="true"></i> ' .'<m>'.
+                        BFText::_('COM_BREEZINGFORMS_MANAGESCRIPTS') .'</m>',
                         'index.php?option=com_breezingforms&act=managescripts', JRequest::getVar('act','') == 'managescripts');
 
-JSubMenuHelper::addEntry(
-                        BFText::_('COM_BREEZINGFORMS_MANAGEPIECES'),
+JSubMenuHelper::addEntry('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> '  .'<m>'.
+                        BFText::_('COM_BREEZINGFORMS_MANAGEPIECES') .'</m>',
                         'index.php?option=com_breezingforms&act=managepieces', JRequest::getVar('act','') == 'managepieces');
 
-JSubMenuHelper::addEntry(
-                        BFText::_('COM_BREEZINGFORMS_INTEGRATOR'),
+JSubMenuHelper::addEntry('<i class="fa fa-link" aria-hidden="true"></i> ' .'<m>'.
+                        BFText::_('COM_BREEZINGFORMS_INTEGRATOR') .'</m>',
                         'index.php?option=com_breezingforms&act=integrate', JRequest::getVar('act','') == 'integrate');
 
-JSubMenuHelper::addEntry(
-                        BFText::_('COM_BREEZINGFORMS_MANAGEMENUS'),
+JSubMenuHelper::addEntry('<i class="fa fa-bars" aria-hidden="true"></i> '  .'<m>'.
+                        BFText::_('COM_BREEZINGFORMS_MANAGEMENUS') .'</m>',
                         'index.php?option=com_breezingforms&act=managemenus', JRequest::getVar('act','') == 'managemenus');
 
-JSubMenuHelper::addEntry(
-                        BFText::_('COM_BREEZINGFORMS_CONFIG'),
+JSubMenuHelper::addEntry('<i class="fa fa-cog" aria-hidden="true"></i> '  .'<m>'.
+                        BFText::_('COM_BREEZINGFORMS_CONFIG') .'</m>',
                         'index.php?option=com_breezingforms&act=configuration', JRequest::getVar('act','') == 'configuration');
 
-JSubMenuHelper::addEntry(
-                        BFText::_('Docs & Support'),
+JSubMenuHelper::addEntry('<i class="fa fa-file-text-o" aria-hidden="true"></i> '  .'<m>'.
+                        BFText::_('Docs & Support') .'</m>',
                         'http://crosstec.org/en/support/breezingforms-documentation.html' );
 
 }
@@ -708,8 +708,8 @@ global $ff_config, $ff_compatible, $ff_install;
 $my = JFactory::getUser();
 
 if (!isset($ff_compath)) { // joomla!
-	
-	jimport('joomla.version');
+    
+    jimport('joomla.version');
         $version = new JVersion();
 
         if(version_compare($version->getShortVersion(), '1.6', '<')){
@@ -719,14 +719,14 @@ if (!isset($ff_compath)) { // joomla!
             } // if
         }
 
-	// get paths
-	$comppath = '/components/com_breezingforms';
-	$ff_admpath = dirname(__FILE__);
-	$ff_mospath = str_replace('\\','/',dirname(dirname(dirname($ff_admpath))));
-	$ff_admpath = str_replace('\\','/',$ff_admpath);
-	$ff_compath = $ff_mospath.$comppath;
+    // get paths
+    $comppath = '/components/com_breezingforms';
+    $ff_admpath = dirname(__FILE__);
+    $ff_mospath = str_replace('\\','/',dirname(dirname(dirname($ff_admpath))));
+    $ff_admpath = str_replace('\\','/',$ff_admpath);
+    $ff_compath = $ff_mospath.$comppath;
 
-	require_once($ff_admpath.'/toolbar.facileforms.php');
+    require_once($ff_admpath.'/toolbar.facileforms.php');
 } // if
 
 $errors = array();
@@ -734,144 +734,144 @@ $errmode = 'die';   // die or log
 
 // compatibility check
 if (!$ff_compatible) {
-	echo '<h1>'.BFText::_('COM_BREEZINGFORMS_INCOMPATIBLE').'</h1>';
-	exit;
+    echo '<h1>'.BFText::_('COM_BREEZINGFORMS_INCOMPATIBLE').'</h1>';
+    exit;
 } // if
 
 // load ff parameters
 $ff_request = array();
 reset($_REQUEST);
 while (list($prop, $val) = each($_REQUEST))
-	if (is_scalar($val) && substr($prop,0,9)=='ff_param_')
-		$ff_request[$prop] = $val;
+    if (is_scalar($val) && substr($prop,0,9)=='ff_param_')
+        $ff_request[$prop] = $val;
 
 if ($ff_install) {
-	$act = 'installation';
-	$task = 'step2';
+    $act = 'installation';
+    $task = 'step2';
 } // if
 
 $ids = JRequest::getVar( 'ids', array());
 
 switch($act) {
-	case 'installation':
-		require_once($ff_admpath.'/admin/install.php');
-		break;
-	case 'configuration':
-		require_once($ff_admpath.'/admin/config.php');
-		break;
-	case 'managemenus':
-		require_once($ff_admpath.'/admin/menu.php');
-		break;
-	case 'manageforms':
-		require_once($ff_admpath.'/admin/form.php');
-		break;
-	case 'editpage':
-		require_once($ff_admpath.'/admin/element.php');
-		break;
-	case 'managescripts':
-		require_once($ff_admpath.'/admin/script.php');
-		break;
-	case 'managepieces':
-		require_once($ff_admpath.'/admin/piece.php');
-		break;
-	case 'run':
-		require_once($ff_admpath.'/admin/run.php');
-		break;
-	case 'easymode':
-		require_once($ff_admpath.'/admin/easymode.php');
-		break;
-	case 'quickmode':
-		require_once($ff_admpath.'/admin/quickmode.php');
-		break;
-	case 'quickmode_editor':
-		require_once($ff_admpath.'/admin/quickmode-editor.php');
-		break;
-	case 'integrate':
-		require_once($ff_admpath.'/admin/integrator.php');
-		break;
-	case 'recordmanagement':
-		require_once($ff_admpath.'/admin/recordmanagement.php');
-		break;
-	default:
-		require_once($ff_admpath.'/admin/recordmanagement.php');
-		break;
+    case 'installation':
+        require_once($ff_admpath.'/admin/install.php');
+        break;
+    case 'configuration':
+        require_once($ff_admpath.'/admin/config.php');
+        break;
+    case 'managemenus':
+        require_once($ff_admpath.'/admin/menu.php');
+        break;
+    case 'manageforms':
+        require_once($ff_admpath.'/admin/form.php');
+        break;
+    case 'editpage':
+        require_once($ff_admpath.'/admin/element.php');
+        break;
+    case 'managescripts':
+        require_once($ff_admpath.'/admin/script.php');
+        break;
+    case 'managepieces':
+        require_once($ff_admpath.'/admin/piece.php');
+        break;
+    case 'run':
+        require_once($ff_admpath.'/admin/run.php');
+        break;
+    case 'easymode':
+        require_once($ff_admpath.'/admin/easymode.php');
+        break;
+    case 'quickmode':
+        require_once($ff_admpath.'/admin/quickmode.php');
+        break;
+    case 'quickmode_editor':
+        require_once($ff_admpath.'/admin/quickmode-editor.php');
+        break;
+    case 'integrate':
+        require_once($ff_admpath.'/admin/integrator.php');
+        break;
+    case 'recordmanagement':
+        require_once($ff_admpath.'/admin/recordmanagement.php');
+        break;
+    default:
+        require_once($ff_admpath.'/admin/recordmanagement.php');
+        break;
 } // switch
 
 // some general purpose functions for admin
 
 function isInputElement($type)
 {
-	switch ($type) {
-		case 'Static Text/HTML':
-		case 'Rectangle':
-		case 'Image':
-		case 'Tooltip':
-		case 'Query List':
-		case 'Regular Button':
-		case 'Graphic Button':
-		case 'Icon':
-			return false;
-		default:
-			break;
-	} // switch
-	return true;
+    switch ($type) {
+        case 'Static Text/HTML':
+        case 'Rectangle':
+        case 'Image':
+        case 'Tooltip':
+        case 'Query List':
+        case 'Regular Button':
+        case 'Graphic Button':
+        case 'Icon':
+            return false;
+        default:
+            break;
+    } // switch
+    return true;
 } // isInputElement
 
 function isVisibleElement($type)
 {
-	switch ($type) {
-		case 'Hidden Input':
-			return false;
-		default:
-			break;
-	} // switch
-	return true;
+    switch ($type) {
+        case 'Hidden Input':
+            return false;
+        default:
+            break;
+    } // switch
+    return true;
 } // isVisibleElement
 
 function _ff_query($sql, $insert = 0)
 {
-	global $database, $errors;
-	$database = JFactory::getDBO();
-	$id = null;
-	$database->setQuery($sql);
-	$database->query();
-	if ($database->getErrorNum()) {
-		if (isset($errmode) && $errmode=='log')
-			$errors[] = $database->getErrorMsg();
-		else
-			die($database->stderr());
-	} // if
-	if ($insert) $id = $database->insertid();
-	return $id;
+    global $database, $errors;
+    $database = JFactory::getDBO();
+    $id = null;
+    $database->setQuery($sql);
+    $database->query();
+    if ($database->getErrorNum()) {
+        if (isset($errmode) && $errmode=='log')
+            $errors[] = $database->getErrorMsg();
+        else
+            die($database->stderr());
+    } // if
+    if ($insert) $id = $database->insertid();
+    return $id;
 } // _ff_query
 
 function _ff_select($sql)
 {
-	global $database, $errors;
-	$database = JFactory::getDBO();
-	$database->setQuery($sql);
-	$rows = $database->loadObjectList();
-	if ($database->getErrorNum()) {
-		if (isset($errmode) && $errmode=='log')
-			$errors[] = $database->getErrorMsg();
-		else
-			die($database->stderr());
-	} // if
-	
-	return $rows;
+    global $database, $errors;
+    $database = JFactory::getDBO();
+    $database->setQuery($sql);
+    $rows = $database->loadObjectList();
+    if ($database->getErrorNum()) {
+        if (isset($errmode) && $errmode=='log')
+            $errors[] = $database->getErrorMsg();
+        else
+            die($database->stderr());
+    } // if
+    
+    return $rows;
 } // _ff_select
 
 function _ff_selectValue($sql)
 {
-	global $database, $errors;
-	$database = JFactory::getDBO();
-	$database->setQuery($sql);
-	$value = $database->loadResult();
-	if ($database->getErrorNum()) {
-		
-			die($database->stderr());
-	} // if
-	return $value;
+    global $database, $errors;
+    $database = JFactory::getDBO();
+    $database->setQuery($sql);
+    $value = $database->loadResult();
+    if ($database->getErrorNum()) {
+        
+            die($database->stderr());
+    } // if
+    return $value;
 } // _ff_selectValue
 
 function protectedComponentIds()
@@ -882,38 +882,38 @@ function protectedComponentIds()
     if(version_compare($version->getShortVersion(), '1.6', '>=')){
 
         $rows = _ff_select(
-		"select id, parent_id As parent from #__menu ".
-		"where ".
-		" link in (".
-			"'index.php?option=com_breezingforms&act=managerecs',".
-			"'index.php?option=com_breezingforms&act=managemenus',".
-			"'index.php?option=com_breezingforms&act=manageforms',".
-			"'index.php?option=com_breezingforms&act=managescripts',".
-			"'index.php?option=com_breezingforms&act=managepieces',".
-			"'index.php?option=com_breezingforms&act=share',".
-			"'index.php?option=com_breezingforms&act=integrate',".
-			"'index.php?option=com_breezingforms&act=configuration'".
-		") ".
-		"order by id"
-	);
+        "select id, parent_id As parent from #__menu ".
+        "where ".
+        " link in (".
+            "'index.php?option=com_breezingforms&act=managerecs',".
+            "'index.php?option=com_breezingforms&act=managemenus',".
+            "'index.php?option=com_breezingforms&act=manageforms',".
+            "'index.php?option=com_breezingforms&act=managescripts',".
+            "'index.php?option=com_breezingforms&act=managepieces',".
+            "'index.php?option=com_breezingforms&act=share',".
+            "'index.php?option=com_breezingforms&act=integrate',".
+            "'index.php?option=com_breezingforms&act=configuration'".
+        ") ".
+        "order by id"
+    );
 
     }else{
 
-	$rows = _ff_select(
-		"select id, parent from #__components ".
-		"where `option`='com_breezingforms' ".
-		"and admin_menu_link in (".
-			"'option=com_breezingforms&act=managerecs',".
-			"'option=com_breezingforms&act=managemenus',".
-			"'option=com_breezingforms&act=manageforms',".
-			"'option=com_breezingforms&act=managescripts',".
-			"'option=com_breezingforms&act=managepieces',".
-			"'option=com_breezingforms&act=share',".
-			"'option=com_breezingforms&act=integrate',".
-			"'option=com_breezingforms&act=configuration'".
-		") ".
-		"order by id"
-	);
+    $rows = _ff_select(
+        "select id, parent from #__components ".
+        "where `option`='com_breezingforms' ".
+        "and admin_menu_link in (".
+            "'option=com_breezingforms&act=managerecs',".
+            "'option=com_breezingforms&act=managemenus',".
+            "'option=com_breezingforms&act=manageforms',".
+            "'option=com_breezingforms&act=managescripts',".
+            "'option=com_breezingforms&act=managepieces',".
+            "'option=com_breezingforms&act=share',".
+            "'option=com_breezingforms&act=integrate',".
+            "'option=com_breezingforms&act=configuration'".
+        ") ".
+        "order by id"
+    );
 
     }
     
@@ -934,19 +934,19 @@ function protectedComponentIds()
 
 function addComponentMenu($row, $parent, $copy = false)
 {
-	$db = JFactory::getDBO();
-	$admin_menu_link = '';
-	if ($row->name!='') {
-		$admin_menu_link =
-			'option=com_breezingforms'.
-			'&act=run'.
-			'&ff_name='.htmlentities($row->name, ENT_QUOTES, 'UTF-8');
-		if ($row->page!=1) $admin_menu_link .= '&ff_page='.htmlentities($row->page, ENT_QUOTES, 'UTF-8');
-		if ($row->frame==1) $admin_menu_link .= '&ff_frame=1';
-		if ($row->border==1) $admin_menu_link .= '&ff_border=1';
-		if ($row->params!='') $admin_menu_link .= $row->params;
-	} // if
-	if ($parent==0) $ordering = 0; else $ordering = $row->ordering;
+    $db = JFactory::getDBO();
+    $admin_menu_link = '';
+    if ($row->name!='') {
+        $admin_menu_link =
+            'option=com_breezingforms'.
+            '&act=run'.
+            '&ff_name='.htmlentities($row->name, ENT_QUOTES, 'UTF-8');
+        if ($row->page!=1) $admin_menu_link .= '&ff_page='.htmlentities($row->page, ENT_QUOTES, 'UTF-8');
+        if ($row->frame==1) $admin_menu_link .= '&ff_frame=1';
+        if ($row->border==1) $admin_menu_link .= '&ff_border=1';
+        if ($row->params!='') $admin_menu_link .= $row->params;
+    } // if
+    if ($parent==0) $ordering = 0; else $ordering = $row->ordering;
 
         jimport('joomla.version');
         $version = new JVersion();
@@ -998,69 +998,69 @@ function addComponentMenu($row, $parent, $copy = false)
             }
         }
         // if older JVersion
-	return _ff_query(
-		"insert into #__components (".
-			"id, name, link, menuid, parent, ".
-			"admin_menu_link, admin_menu_alt, `option`, ".
-			"ordering, admin_menu_img, iscore, params".
-		") ".
-		"values (".
-			"'', ".$db->Quote($row->title).", '', 0, $parent, ".
-			"'$admin_menu_link', ".$db->Quote($row->title).", 'com_breezingforms', ".
-			"'$ordering', '$row->img', 1, ''".
-		")",
-		true
-	);
+    return _ff_query(
+        "insert into #__components (".
+            "id, name, link, menuid, parent, ".
+            "admin_menu_link, admin_menu_alt, `option`, ".
+            "ordering, admin_menu_img, iscore, params".
+        ") ".
+        "values (".
+            "'', ".$db->Quote($row->title).", '', 0, $parent, ".
+            "'$admin_menu_link', ".$db->Quote($row->title).", 'com_breezingforms', ".
+            "'$ordering', '$row->img', 1, ''".
+        ")",
+        true
+    );
 } // addComponentMenu
 
 function updateComponentMenus($copy = false)
 {
-	// remove unprotected menu items
-	$protids = protectedComponentIds();
-	if(trim($protids)!=''){
+    // remove unprotected menu items
+    $protids = protectedComponentIds();
+    if(trim($protids)!=''){
 
             jimport('joomla.version');
             $version = new JVersion();
 
             if(version_compare($version->getShortVersion(), '1.6', '>=')){
                 _ff_query(
-			"delete from #__menu ".
-			"where `link` Like 'index.php?option=com_breezingforms&act=run%' ".
-			"and id not in ($protids)"
-		);
+            "delete from #__menu ".
+            "where `link` Like 'index.php?option=com_breezingforms&act=run%' ".
+            "and id not in ($protids)"
+        );
             }else{
-		_ff_query(
-			"delete from #__components ".
-			"where `option`='com_breezingforms' ".
-			"and id not in ($protids)"
-		);
+        _ff_query(
+            "delete from #__components ".
+            "where `option`='com_breezingforms' ".
+            "and id not in ($protids)"
+        );
             }
-	} 
-	
-	// add published menu items
-	$rows = _ff_select(
-		"select ".
-			"m.id as id, ".
-			"m.parent as parent, ".
-			"m.ordering as ordering, ".
-			"m.title as title, ".
-			"m.img as img, ".
-			"m.name as name, ".
-			"m.page as page, ".
-			"m.frame as frame, ".
-			"m.border as border, ".
-			"m.params as params, ".
-			"m.published as published ".
-		"from #__facileforms_compmenus as m ".
-			"left join #__facileforms_compmenus as p on m.parent=p.id ".
-		"where m.published=1 ".
-			"and (m.parent=0 or p.published=1) ".
-		"order by ".
-			"if(m.parent,p.ordering,m.ordering), ".
-			"if(m.parent,m.ordering,-1)"
-	);
-	$parent = 0;
-	if (count($rows)) foreach ($rows as $row) {
+    } 
+    
+    // add published menu items
+    $rows = _ff_select(
+        "select ".
+            "m.id as id, ".
+            "m.parent as parent, ".
+            "m.ordering as ordering, ".
+            "m.title as title, ".
+            "m.img as img, ".
+            "m.name as name, ".
+            "m.page as page, ".
+            "m.frame as frame, ".
+            "m.border as border, ".
+            "m.params as params, ".
+            "m.published as published ".
+        "from #__facileforms_compmenus as m ".
+            "left join #__facileforms_compmenus as p on m.parent=p.id ".
+        "where m.published=1 ".
+            "and (m.parent=0 or p.published=1) ".
+        "order by ".
+            "if(m.parent,p.ordering,m.ordering), ".
+            "if(m.parent,m.ordering,-1)"
+    );
+    $parent = 0;
+    if (count($rows)) foreach ($rows as $row) {
 
                 jimport('joomla.version');
                 $version = new JVersion();
@@ -1085,85 +1085,85 @@ function updateComponentMenus($copy = false)
                             addComponentMenu($row, $parent);
                     }
                 }
-	} // foreach
+    } // foreach
 
         return '';
 } // updateComponentMenus
 
 function dropPackage($id)
 {
-	// drop package settings
-	_ff_query("delete from #__facileforms_packages where id = ".JFactory::getDBO()->Quote($id)."");
+    // drop package settings
+    _ff_query("delete from #__facileforms_packages where id = ".JFactory::getDBO()->Quote($id)."");
 
-	// drop backend menus
-	$rows = _ff_select("select id from #__facileforms_compmenus where package = ".JFactory::getDBO()->Quote($id)."");
-	if (count($rows)) foreach ($rows as $row)
-		_ff_query("delete from #__facileforms_compmenus where id=$row->id or parent=$row->id");
-	updateComponentMenus();
+    // drop backend menus
+    $rows = _ff_select("select id from #__facileforms_compmenus where package = ".JFactory::getDBO()->Quote($id)."");
+    if (count($rows)) foreach ($rows as $row)
+        _ff_query("delete from #__facileforms_compmenus where id=$row->id or parent=$row->id");
+    updateComponentMenus();
 
-	// drop forms
-	$rows = _ff_select("select id from #__facileforms_forms where package = ".JFactory::getDBO()->Quote($id)."");
-	if (count($rows)) foreach ($rows as $row) {
-		_ff_query("delete from #__facileforms_elements where form = $row->id");
-		_ff_query("delete from #__facileforms_forms where id = $row->id");
-	} // if
+    // drop forms
+    $rows = _ff_select("select id from #__facileforms_forms where package = ".JFactory::getDBO()->Quote($id)."");
+    if (count($rows)) foreach ($rows as $row) {
+        _ff_query("delete from #__facileforms_elements where form = $row->id");
+        _ff_query("delete from #__facileforms_forms where id = $row->id");
+    } // if
 
-	// drop scripts
-	_ff_query("delete from #__facileforms_scripts where package =  ".JFactory::getDBO()->Quote($id)."");
+    // drop scripts
+    _ff_query("delete from #__facileforms_scripts where package =  ".JFactory::getDBO()->Quote($id)."");
 
-	// drop pieces
-	_ff_query("delete from #__facileforms_pieces where package =  ".JFactory::getDBO()->Quote($id)."");
+    // drop pieces
+    _ff_query("delete from #__facileforms_pieces where package =  ".JFactory::getDBO()->Quote($id)."");
 } // dropPackage
 
 function savePackage($id, $name, $title, $version, $created, $author, $email, $url, $description, $copyright)
 {
-	$db = JFactory::getDBO();
-	$cnt = _ff_selectValue("select count(*) from #__facileforms_packages where id=".JFactory::getDBO()->Quote($id)."");
-	if (!$cnt) {
-		
-		_ff_query(
-			"insert into #__facileforms_packages ".
-					"(id, name, title, version, created, author, ".
-					 "email, url, description, copyright) ".
-			"values (".$db->Quote($id).", ".$db->Quote($name).", ".$db->Quote($title).", ".$db->Quote($version).", ".$db->Quote($created).", ".$db->Quote($author).",
-					".$db->Quote($email).", ".$db->Quote($url).", ".$db->Quote($description).", ".$db->Quote($copyright).")"
-		);
-	} else {
-		_ff_query(
-			"update #__facileforms_packages ".
-				"set name=".$db->Quote($name).", title=".$db->Quote($title).", version=".$db->Quote($version).", created=".$db->Quote($created).", author=".$db->Quote($author).", ".
-				"email=".$db->Quote($email).", url=".$db->Quote($url).", description=".$db->Quote($description).", copyright=".$db->Quote($copyright). " 
-			where id =  ".$db->Quote($id)
-		);
-	} // if
+    $db = JFactory::getDBO();
+    $cnt = _ff_selectValue("select count(*) from #__facileforms_packages where id=".JFactory::getDBO()->Quote($id)."");
+    if (!$cnt) {
+        
+        _ff_query(
+            "insert into #__facileforms_packages ".
+                    "(id, name, title, version, created, author, ".
+                     "email, url, description, copyright) ".
+            "values (".$db->Quote($id).", ".$db->Quote($name).", ".$db->Quote($title).", ".$db->Quote($version).", ".$db->Quote($created).", ".$db->Quote($author).",
+                    ".$db->Quote($email).", ".$db->Quote($url).", ".$db->Quote($description).", ".$db->Quote($copyright).")"
+        );
+    } else {
+        _ff_query(
+            "update #__facileforms_packages ".
+                "set name=".$db->Quote($name).", title=".$db->Quote($title).", version=".$db->Quote($version).", created=".$db->Quote($created).", author=".$db->Quote($author).", ".
+                "email=".$db->Quote($email).", url=".$db->Quote($url).", description=".$db->Quote($description).", copyright=".$db->Quote($copyright). " 
+            where id =  ".$db->Quote($id)
+        );
+    } // if
 } // savePackage
 
 function relinkScripts(&$oldscripts)
 {
-	if (count($oldscripts))
-		foreach ($oldscripts as $row) {
-			$newid = _ff_selectValue("select max(id) from #__facileforms_scripts where name = ".JFactory::getDBO()->Quote($row->name)."");
-			if ($newid) {
-				_ff_query("update #__facileforms_forms set script1id=$newid where script1id=$row->id");
-				_ff_query("update #__facileforms_forms set script2id=$newid where script2id=$row->id");
-				_ff_query("update #__facileforms_elements set script1id=$newid where script1id=$row->id");
-				_ff_query("update #__facileforms_elements set script2id=$newid where script2id=$row->id");
-				_ff_query("update #__facileforms_elements set script3id=$newid where script3id=$row->id");
-			} // if
-		} // foreach
+    if (count($oldscripts))
+        foreach ($oldscripts as $row) {
+            $newid = _ff_selectValue("select max(id) from #__facileforms_scripts where name = ".JFactory::getDBO()->Quote($row->name)."");
+            if ($newid) {
+                _ff_query("update #__facileforms_forms set script1id=$newid where script1id=$row->id");
+                _ff_query("update #__facileforms_forms set script2id=$newid where script2id=$row->id");
+                _ff_query("update #__facileforms_elements set script1id=$newid where script1id=$row->id");
+                _ff_query("update #__facileforms_elements set script2id=$newid where script2id=$row->id");
+                _ff_query("update #__facileforms_elements set script3id=$newid where script3id=$row->id");
+            } // if
+        } // foreach
 } // relinkScripts
 
 function relinkPieces(&$oldpieces)
 {
-	if (count($oldpieces))
-		foreach ($oldpieces as $row) {
-			$newid = _ff_selectValue("select max(id) from #__facileforms_pieces where name = ".JFactory::getDBO()->Quote($row->name)."");
-			if ($newid) {
-				_ff_query("update #__facileforms_forms set piece1id=$newid where piece1id=$row->id");
-				_ff_query("update #__facileforms_forms set piece2id=$newid where piece2id=$row->id");
-				_ff_query("update #__facileforms_forms set piece3id=$newid where piece3id=$row->id");
-				_ff_query("update #__facileforms_forms set piece4id=$newid where piece4id=$row->id");
-			} // if
-		} // foreach
+    if (count($oldpieces))
+        foreach ($oldpieces as $row) {
+            $newid = _ff_selectValue("select max(id) from #__facileforms_pieces where name = ".JFactory::getDBO()->Quote($row->name)."");
+            if ($newid) {
+                _ff_query("update #__facileforms_forms set piece1id=$newid where piece1id=$row->id");
+                _ff_query("update #__facileforms_forms set piece2id=$newid where piece2id=$row->id");
+                _ff_query("update #__facileforms_forms set piece3id=$newid where piece3id=$row->id");
+                _ff_query("update #__facileforms_forms set piece4id=$newid where piece4id=$row->id");
+            } // if
+        } // foreach
 } // relinkPieces
 ?>

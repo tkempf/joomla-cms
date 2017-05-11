@@ -24,6 +24,18 @@ if(version_compare($version->getShortVersion(), '3.0', '>=')){
 
 require_once(JPATH_SITE.DS.'administrator'.DS.'components'.DS.'com_breezingforms'.DS.'admin.breezingforms.php');
 
+if(version_compare($version->getShortVersion(), '3.2', '>=')) {
+
+	if( JFactory::getApplication()->getTemplate() == 'isis' ) {
+
+		JFactory::getDocument()->addScript( JUri::root( true ) . '/administrator/components/com_breezingforms/assets/js/custom.js' );
+		JFactory::getDocument()->addStyleSheet( JUri::root( true ) . '/administrator/components/com_breezingforms/assets/css/custom.css' );
+
+	}
+}
+
+JFactory::getDocument()->addStyleSheet(JUri::root(true) .'/administrator/components/com_breezingforms/assets/font-awesome/css/font-awesome.css');
+
 if(version_compare($version->getShortVersion(), '3.0', '>=')){
     
     $recs        = JRequest::getVar('act','') == 'managerecs' || JRequest::getVar('act','') == 'recordmanagement' || JRequest::getVar('act','') == '';
