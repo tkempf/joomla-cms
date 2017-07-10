@@ -399,7 +399,7 @@ if(
                    
                         
                         if($menu_item_show_page_heading || JRequest::getVar('ff_applic','') == 'com_tags'){
-                            echo '<h2>'.( $menu_item_title != '' ? ( $menu_item_page_heading != '' ? $menu_item_page_heading : $menu_item_title ) : $form->title ).'</h2>'."\n";
+                            echo '<h1>'.( $menu_item_title != '' ? ( $menu_item_page_heading != '' ? $menu_item_page_heading : $menu_item_title ) : $form->title ).'</h1>'."\n";
                         }
                     
 			// process inline

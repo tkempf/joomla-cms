@@ -10,7 +10,7 @@ defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
 global $ff_version, $ff_resnames, $ff_request, $ff_target;
 
-$ff_version = '1.8.7 Stable (build 899)';
+$ff_version = '1.9.0 Stable (build 926)';
 $ff_target  = 0;
 
 $ff_resnames = array(
@@ -90,7 +90,7 @@ function addRequestParams($params)
 	global $ff_request;
 
         $is_quoted = false;
-        
+
 	$px = explode('&amp;',$params);
         if( count( $px ) == 0 ){
             $px = explode('&',$params);
@@ -130,9 +130,9 @@ function initFacileForms()
 {
 	global $ff_mossite, $ff_comsite, $ff_config, $ff_otherparams, $mosConfig_live_site;
 	$mainframe = JFactory::getApplication();
-	
-	
-	
+
+
+
 	if (!isset($ff_mossite)) {
 		if ($ff_config->livesite) {
 			$ff_mossite = str_replace('\\','/', JURI::root());
@@ -158,30 +158,30 @@ function initFacileForms()
 
 	if (!isset($ff_otherparams)) {
 		$ff_otherparams = array();
-		
-		switch (saveOtherParam('option')) { 
-            case 'com_content': 
-                saveOtherParam('Itemid'); 
-                saveOtherParam('task'); 
-                saveOtherParam('sectionid'); 
-                saveOtherParam('id'); 
-                break; 
-            case 'com_contact': 
-            case 'com_contacts': 
-                saveOtherParam('id'); 
-                saveOtherParam('Itemid'); 
-                saveOtherParam('task'); 
-                saveOtherParam('catid'); 
-                saveOtherParam('view'); 
-                saveOtherParam('contact_id'); 
-                break; 
-            case 'com_weblinks': 
-                saveOtherParam('Itemid'); 
-                saveOtherParam('catid'); 
-                break; 
-            default: 
-                saveOtherParam('Itemid'); 
-        } // switch 
+
+		switch (saveOtherParam('option')) {
+            case 'com_content':
+                saveOtherParam('Itemid');
+                saveOtherParam('task');
+                saveOtherParam('sectionid');
+                saveOtherParam('id');
+                break;
+            case 'com_contact':
+            case 'com_contacts':
+                saveOtherParam('id');
+                saveOtherParam('Itemid');
+                saveOtherParam('task');
+                saveOtherParam('catid');
+                saveOtherParam('view');
+                saveOtherParam('contact_id');
+                break;
+            case 'com_weblinks':
+                saveOtherParam('Itemid');
+                saveOtherParam('catid');
+                break;
+            default:
+                saveOtherParam('Itemid');
+        } // switch
 	} // if
 } // initFacileForms
 
@@ -218,7 +218,7 @@ class facileFormsConf {
         var $csvdelimiter = ";";
         var $csvquote = '"';
         var $cellnewline = 1;
-        
+
         var $enable_classic = 0;
 
 	function __construct()
@@ -231,7 +231,7 @@ class facileFormsConf {
 		global $ff_compath, $database;
 
 		$database = JFactory::getDBO();
-		
+
 		$configfile = JPATH_SITE . DS . 'media' . DS . 'breezingforms' . DS . 'facileforms.config.php';
 		if (file_exists($configfile)) {
 			include($configfile);
@@ -245,13 +245,13 @@ class facileFormsConf {
 				"select id, value from #__facileforms_config ".
 				 "where id in (".implode(',', $ids).")"
 			);
-                        
+
                         $rows = array();
                         try{
                             $rows = $database->loadObjectList();
                         }catch(Exception $e){
                         }
-                        
+
 			error_reporting($olderr);
 			if (count($rows))
 				foreach ($rows as $row) {
@@ -266,14 +266,14 @@ class facileFormsConf {
 		global $ff_compath, $database, $mosConfig_fileperms;
 		$database = JFactory::getDBO();
 		$configfile = JPATH_SITE . DS . 'media' . DS . 'breezingforms' . DS . 'facileforms.config.php';
-		
+
 		// prepare output
 		$config = "<?php\n";
 		$arr = get_object_vars($this);
-		
+
 		while (list($prop, $val) = each($arr)) {
 			$config .= "\$this->".$prop." = \"".addslashes($val)."\";\n";
-			
+
 			$database->setQuery(
 				"update #__facileforms_config ".
 				   "set value=".$database->Quote($val)." ".
@@ -457,7 +457,7 @@ class facileFormsForms extends JTable {
         var $dropbox_folder = '';
         var $dropbox_submission_enabled = 0;
         var $dropbox_submission_types = 'pdf';
-        
+
 	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_forms', 'id', $db);
@@ -469,7 +469,7 @@ class facileFormsForms extends JTable {
 
 		$database->setQuery("select * from #__facileforms_forms where id = $id");
 		$rows = $database->loadObjectList();
-		
+
 		if ($rows) {
 			$row = $rows[0];
 			$arr = get_object_vars($this);
@@ -558,7 +558,7 @@ Query List Settings: border / cellspacing / cellpadding / <tr(h)>class / <tr(1)>
 
 	var $mailback       = null;
 	var $mailbackfile       = null;
-	
+
 	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_elements', 'id', $db);
@@ -668,7 +668,7 @@ class facileFormsRecords extends JTable {
 	var $paypal_payment_date = null;
 	var $paypal_testaccount = null;
 	var $paypal_download_tries = null;
-	
+
 	function __construct(&$db)
 	{
 		parent::__construct('#__facileforms_records', 'id', $db);

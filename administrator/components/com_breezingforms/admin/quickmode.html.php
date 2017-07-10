@@ -891,6 +891,8 @@ class QuickModeHtml {
 					mdata.theme = JQuery('#bfElementTypeReCaptchaTheme').val();
 
 					mdata.newCaptcha = JQuery('#bfElementTypeReCaptchaNew').attr('checked');
+					mdata.invisibleCaptcha = JQuery('#bfElementTypeReCaptchaInvisible').attr('checked');
+					mdata.classicCaptcha = JQuery('#bfElementTypeReCaptchaClassic').attr('checked');
 
 					// static properties
 					mdata.bfName = JQuery('#bfElementName').val();
@@ -919,6 +921,8 @@ class QuickModeHtml {
 					JQuery('#bfElementTypeReCaptchaTheme').val(mdata.theme);
 
 					JQuery('#bfElementTypeReCaptchaNew').attr('checked', mdata.newCaptcha);
+					JQuery('#bfElementTypeReCaptchaInvisible').attr('checked', mdata.invisibleCaptcha);
+					JQuery('#bfElementTypeReCaptchaClassic').attr('checked', mdata.classicCaptcha);
 
 					// static properties
 					JQuery('#bfElementName').val(mdata.bfName);
@@ -2954,7 +2958,7 @@ class QuickModeHtml {
 						mdata.name = "<?php echo addslashes( $formName ) ?>";
 						mdata.description = "<?php echo addslashes( str_replace( "\n", '', str_replace( "\r", '', $formDesc ) ) ) ?>";
 						mdata.mailRecipient = "<?php echo addslashes( $formEmailadr ) ?>";
-						mdata.mailNotification = "<?php echo addslashes( $formEmailntf ) == 2 ? true : false ?>";
+						mdata.mailNotification = "<?php echo addslashes( $formEmailntf ) == 2 || addslashes( $formEmailntf ) == 1 ? true : false ?>";
 						item.properties = mdata;
 					}
 				}
@@ -3426,7 +3430,7 @@ class QuickModeHtml {
 												<label class="bfPropertyLabel hasTip"
 												       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_FORM_EMAIL_NOTIFICATION' ) ); ?>""
 												for="bfFormMailNotification"><?php echo BFText::_( 'COM_BREEZINGFORMS_MAIL_NOTIFICATION' ); ?></label>
-												<input <?php echo $formEmailntf == 2 ? 'checked="checked"' : '' ?>
+												<input <?php echo $formEmailntf == 2 || $formEmailntf == 1 ? 'checked="checked"' : '' ?>
 													type="checkbox"
 													value="<?php echo htmlentities( $formEmailntf, ENT_QUOTES, 'UTF-8' ) ?>"
 													id="bfFormMailNotification"/>
@@ -4264,9 +4268,16 @@ class QuickModeHtml {
 												<div class="bfPropertyWrap">
 													<label for="bfElementTypeReCaptchaNew"
 													       class="bfPropertyLabel hasTip"
-													       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_RECAPTCHA_NEW_CAPTCHA_HINT' ) ); ?>"><?php echo BFText::_( 'COM_BREEZINGFORMS_QM_RECAPTCHA_NEW_CAPTCHA' ); ?></label>
-													<input type="checkbox" value="" id="bfElementTypeReCaptchaNew"
-													       checked="checked"/>
+													       title="<?php echo bf_tooltipText( BFText::_( 'COM_BREEZINGFORMS_QM_RECAPTCHA_NEW_CAPTCHA_HINT' ) ); ?>">reCaptcha</label>
+													<label>
+													<input type="radio" name="bfElementTypeReCaptchaNew" value="" id="bfElementTypeReCaptchaClassic"
+													       /><?php echo BFText::_( 'COM_BREEZINGFORMS_QM_RECAPTCHA_CLASSIC_CAPTCHA' ); ?></label>
+													<label>
+													<input type="radio" name="bfElementTypeReCaptchaNew" value="" id="bfElementTypeReCaptchaNew"
+													       checked="checked"/><?php echo BFText::_( 'COM_BREEZINGFORMS_QM_RECAPTCHA_NEW_CAPTCHA' ); ?></label>
+													<label>
+													<input type="radio" name="bfElementTypeReCaptchaNew" value="" id="bfElementTypeReCaptchaInvisible"
+													       /><?php echo BFText::_( 'COM_BREEZINGFORMS_QM_RECAPTCHA_INVISIBLE_CAPTCHA' ); ?></label>
 												</div>
 												<div class="bfPropertyWrap">
 													<label class="bfPropertyLabel hasTip"

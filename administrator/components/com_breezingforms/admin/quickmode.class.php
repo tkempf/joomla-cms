@@ -500,6 +500,19 @@ class QuickMode {
 							script2code = " . $this->db->Quote( $mdata['submittedScriptCode'] );
 			}
 
+
+			$emailntf = 0;
+
+			if($mdata['mailNotification'] && trim($mdata['mailRecipient']) == ''){
+
+				$emailntf = 1;
+			}
+
+			if($mdata['mailNotification'] && trim($mdata['mailRecipient']) != ''){
+
+				$emailntf = 2;
+			}
+
 			$this->db->setQuery(
 				"Update
 							#__facileforms_forms
@@ -510,7 +523,7 @@ class QuickMode {
 							title = " . trim( $this->db->Quote( $formTitle ), "\t, ,\n,\r" ) . ",
 							description = " . trim( $this->db->Quote( $formDescription ), "\t, ,\n,\r" ) . ",
 							pages = " . $this->db->Quote( $pages ) . ",
-							emailntf = " . $this->db->Quote( $mdata['mailNotification'] ? 2 : 0 ) . ",
+							emailntf = " . $this->db->Quote( $emailntf ) . ",
 							emailadr = " . $this->db->Quote( $mdata['mailRecipient'] ) . "
                                                         " . $scriptCond . "
 						 Where
