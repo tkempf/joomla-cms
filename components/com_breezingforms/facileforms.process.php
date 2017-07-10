@@ -481,7 +481,7 @@ class HTML_facileFormsProcessor {
     public $isMobile = false;
     public $quickmode = null;
     public $legacy_wrap = true;
-    
+
     function __construct(
     $runmode, // _FF_RUNMODE_FRONTEND, ..._BACKEND, ..._PREVIEW
             $inframe, // run in iframe
@@ -528,7 +528,7 @@ class HTML_facileFormsProcessor {
             $this->provider = preg_replace('/^./', '', strchr($host, '.'));
         } // if
 
-        
+
         jimport('joomla.version');
         $version = new JVersion();
         $_version = $version->getShortVersion();
@@ -541,13 +541,13 @@ class HTML_facileFormsProcessor {
         if(version_compare($_version, '3.2', '>=')){
             $submitted = JFactory::getDate('now', $tz);
         }
-        
+
         if(version_compare($version->getShortVersion(), '3.0', '>=')){
             $this->submitted = $submitted->format('Y-m-d H:i:s');
         }else{
             $this->submitted = $submitted->toMySQL();
         }
-        
+
         /*
           $format = JText::_('DATE_FORMAT_LC2');
           if ( !$format ) {
@@ -2122,21 +2122,21 @@ class HTML_facileFormsProcessor {
 // header
 
     function cbCreatePathByTokens($path, array $rows){
-        
+
         if(strpos(strtolower($path), '{cbsite}') === 0){
             $path = str_replace(array('{cbsite}','{CBSite}'), array(JPATH_SITE, JPATH_SITE), $path);
         }
-        
+
         $path = str_replace($this->findtags, $this->replacetags, $path);
-        
+
         if( strpos( $path, '|' ) === false ){
             return $path;
         }
-        
+
         $after = str_replace('|','',stristr($path, '|'));
         $path  = stristr($path, '|', true) . '|';
         $path  = str_replace('|', DS, $path);
-        
+
         foreach($rows As $row){
             $value = JRequest::getVar( 'ff_nm_' . $row->name, array(), 'POST', 'ARRAY', JREQUEST_ALLOWRAW );
             $value = implode(DS, $value);
@@ -2145,15 +2145,15 @@ class HTML_facileFormsProcessor {
             }
             $path = str_replace('{'.strtolower($row->name).':value}', trim($value), $path);
         }
-        
+
         foreach($rows As $row){
             $path = str_replace('{field:'.strtolower($row->name).'}', strtolower($row->name), $path);
         }
-        
+
         $path = str_replace('{userid}', JFactory::getUser()->get('id', 0), $path);
         $path = str_replace('{username}', JFactory::getUser()->get('username', 'anonymous') . '_' . JFactory::getUser()->get('id', 0), $path);
         $path = str_replace('{name}', JFactory::getUser()->get('name', 'Anonymous') . '_' . JFactory::getUser()->get('id', 0), $path);
-        
+
         jimport('joomla.version');
         $version = new JVersion();
 
@@ -2189,9 +2189,9 @@ class HTML_facileFormsProcessor {
         $path = str_replace('{date}', $date_stamp1, $path);
         $path = str_replace('{time}', $date_stamp2, $path);
         $path = str_replace('{datetime}', $date_stamp3, $path);
-        
+
         $endpath = $this->makeSafeFolder($path);
-        
+
         $parts = explode(DS, $endpath);
         $inner_path = '';
         foreach( $parts As $part ){
@@ -2199,18 +2199,18 @@ class HTML_facileFormsProcessor {
                 $inner_path .= DS;
             }
             JFolder::create($inner_path.$part);
-            $inner_path .= $part;    
+            $inner_path .= $part;
         }
         return $endpath.$after;
     }
-    
+
     function makeSafeFolder($path)
     {
             //$ds = (DS == '\\') ? '\\/' : DS;
             $regex = array('#[^A-Za-z0-9{}\.:_\\\/-]#');
             return preg_replace($regex, '_', $path);
     }
-    
+
     function cbCheckPermissions() {
         // CONTENTBUILDER BEGIN
         jimport('joomla.filesystem.file');
@@ -2246,15 +2246,15 @@ class HTML_facileFormsProcessor {
             } else {
                 $cbForms = $db->loadColumn();
             }
-            
+
             // if no BF form is associated with contentbuilder, we don't need no further checks
             if(!count($cbForms)){
                 return array('form' => $cbForm, 'record' => $cbRecord, 'frontend' => $cbFrontend, 'data' => $cbData, 'full' => $cbFull);
             }
-            
+
             // test if there is any published contentbuilder view that allows to create new submissions
             if (!JRequest::getInt('cb_record_id', 0) || !JRequest::getInt('cb_form_id', 0)) {
-                
+
                 $cbAuth = false;
                 foreach ($cbForms As $cbFormId) {
                     contentbuilder::setPermissions($cbFormId, 0, $cbFrontend ? '_fe' : '');
@@ -2267,7 +2267,7 @@ class HTML_facileFormsProcessor {
                         break;
                     }
                 }
-                
+
                 if (count($cbForms) && !$cbAuth) {
                     JError::raiseError(403, JText::_('COM_CONTENTBUILDER_PERMISSIONS_NEW_NOT_ALLOWED'));
                 }
@@ -2290,7 +2290,7 @@ class HTML_facileFormsProcessor {
                     $cbFull = $cbFrontend ? contentbuilder::authorizeFe('fullarticle') : contentbuilder::authorize('fullarticle');
                     $cbForm = contentbuilder::getForm('com_breezingforms', $cbData['reference_id']);
                     $cbRecord = $cbForm->getRecord(JRequest::getInt('cb_record_id', 0), $cbData['published_only'], $cbFrontend ? ( $cbData['own_only_fe'] ? JFactory::getUser()->get('id', 0) : -1 ) : ( $cbData['own_only'] ? JFactory::getUser()->get('id', 0) : -1 ), $cbFrontend ? $cbData['show_all_languages_fe'] : true );
-                
+
                     if(!count($cbRecord) && !JRequest::getBool('cbIsNew')){
                         JError::raiseError(404, JText::_('COM_CONTENTBUILDER_RECORD_NOT_FOUND'));
                     }
@@ -2304,11 +2304,11 @@ class HTML_facileFormsProcessor {
     function view() {
         global $ff_mospath, $ff_mossite, $database, $my;
         global $ff_config, $ff_version, $ff_comsite, $ff_otherparams;
-        
+
         $is_mobile_type = '';
-        
+
         if( trim($this->formrow->template_code_processed) == 'QuickMode' ){
-        
+
             if( isset($_GET['non_mobile']) && JRequest::getBool('non_mobile', 0) ){
                 JFactory::getSession()->clear('com_breezingforms.mobile');
             } else if( isset($_GET['mobile']) && JRequest::getBool('mobile', 0) ){
@@ -2336,16 +2336,16 @@ class HTML_facileFormsProcessor {
                     $this->isMobile = isset($rootMdata['mobileEnabled']) && isset($rootMdata['forceMobile']) && $rootMdata['mobileEnabled'] && $rootMdata['forceMobile'] ? true : ( isset($rootMdata['mobileEnabled']) && isset($rootMdata['forceMobile']) && $rootMdata['mobileEnabled'] && JFactory::getSession()->get('com_breezingforms.mobile', false) ? true : false );
             }else {
                 $this->isMobile = false;
-                
+
                 if(isset($rootMdata['themebootstrapThemeEngine']) && $rootMdata['themebootstrapThemeEngine'] == 'bootstrap'){
                     $this->legacy_wrap = false;
                 }
             }
-            
+
             if( $is_device && isset($rootMdata['mobileEnabled']) && isset($rootMdata['forceMobile']) && $rootMdata['mobileEnabled'] && !$rootMdata['forceMobile'] ){
                 $is_mobile_type = 'choose';
             }
-            
+
             if(!$this->isMobile || ( $this->isMobile && JRequest::getVar('ff_task','') == 'submit') ){
 
                 // nothing
@@ -2353,7 +2353,7 @@ class HTML_facileFormsProcessor {
             } else {
 
                 if($this->isMobile){
-                    
+
                     ob_end_clean();
                     ob_start();
                     require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickModeMobile.php');
@@ -2364,7 +2364,7 @@ class HTML_facileFormsProcessor {
                 }
             }
         }
-        
+
         // CONTENTBUILDER BEGIN
         $cbResult = $this->cbCheckPermissions();
         $cbForm = $cbResult['form'];
@@ -2556,7 +2556,7 @@ class HTML_facileFormsProcessor {
 				}';
                 break;
             } else if ($row->type == "ReCaptcha") {
-                
+
                 $capFunc = 'var bfReCaptchaLoaded = true;
                                     function bfCheckCaptcha(){
 					if(checkFileExtensions()){
@@ -2999,7 +2999,7 @@ class HTML_facileFormsProcessor {
         } // if
 
         if (!$this->inline) {
-            
+
             jimport('joomla.version');
             $version = new JVersion();
             $current_url = JURI::getInstance()->toString();
@@ -3031,7 +3031,7 @@ class HTML_facileFormsProcessor {
                     }
                 }
             }
-            
+
             $url = ($this->inframe) ? $ff_mossite . '/index.php?format=html&tmpl=component' : (($this->runmode == _FF_RUNMODE_FRONTEND) ? $current_url : 'index.php?format=html' . ( JRequest::getCmd('tmpl','') ? '&tmpl='.JRequest::getCmd('tmpl','') : $current_url  ));
             $params = ' action="' . $url . '"' .
                     ' method="post"' .
@@ -3127,7 +3127,7 @@ class HTML_facileFormsProcessor {
                     switch ($cbEntry->recType) {
                         case 'File Upload':
                             if (trim($this->formrow->template_code_processed) == 'QuickMode') {
-                                
+
                                 if($cbFlashUploadValidationOverride == ''){
                                     $cbJs .= '
                                             function ff_flashupload_not_empty(element, message)
@@ -3140,7 +3140,7 @@ class HTML_facileFormsProcessor {
                                             }
                                             ';
                                 }
-                                
+
                                 require_once(JPATH_COMPONENT_ADMINISTRATOR . DS . 'classes' . DS . 'contentbuilder_helpers.php');
                                 $cbOut = '';
                                 $cbFiles = explode("\n", str_replace("\r", "", $cbEntry->recValue));
@@ -3326,9 +3326,9 @@ class HTML_facileFormsProcessor {
                 display: inline;
                 vertical-align: text-top;
              }
-             '       
+             '
             );
-            
+
             for ($i = 0; $i < $this->rowcount; $i++) {
                 $row = & $this->rows[$i];
                 if (!is_numeric($row->width))
@@ -3957,34 +3957,34 @@ class HTML_facileFormsProcessor {
         } else if (trim($this->formrow->template_code_processed) == 'QuickMode') {
 
             if($this->isMobile){
-                
+
                 // nothing
-                
+
             }else{
                 //if(true){
-                 
+
                 if(isset($rootMdata['themebootstrapThemeEngine']) && $rootMdata['themebootstrapThemeEngine'] == 'bootstrap'){
-                    
+
                     if( isset($rootMdata['themebootstrapMode']) && $rootMdata['themebootstrapMode'] ){
-                        
+
                         require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickModeOnePage.php');
                         $quickMode = new BFQuickModeOnePage($this);
-                        
+
                     }else{
-                    
+
                         require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickModeBootstrap.php');
                         $quickMode = new BFQuickModeBootstrap($this);
                     }
-                    
+
                     $this->quickmode = $quickMode;
-                    
+
                 }else{
                     require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/crosstec/classes/BFQuickMode.php');
                     $quickMode = new BFQuickMode($this);
                     $this->quickmode = $quickMode;
                 }
             }
-            
+
             if( $is_mobile_type == 'choose' ) {
                 jimport('joomla.version');
                 $version = new JVersion();
@@ -4023,10 +4023,10 @@ class HTML_facileFormsProcessor {
                 </script>';
                 echo '<div style="display: block; text-align: center;"><button class="ff_elem btn btn-primary" onclick="location.href=bf_mobile_url;"><span>'.JText::_('COM_BREEZINGFORMS_MOBILE_VERSION').'</span></button></div><div></div>';
             }
-            
+
             $quickMode->render();
-            
-            
+
+
         } else { // case if forms done with the easy mode
             // always load calendar
             JHTML::_('behavior.calendar');
@@ -4225,7 +4225,7 @@ class HTML_facileFormsProcessor {
             $this->dumpTrace();
         } // if
         restore_error_handler();
-        
+
         if (trim($this->formrow->template_code_processed) == 'QuickMode' && $this->isMobile) {
             $contents = ob_get_contents();
             $ob = 0;
@@ -4233,7 +4233,7 @@ class HTML_facileFormsProcessor {
                 ob_end_clean();
                 $ob++;
             }
-            
+
             echo '<!DOCTYPE html> 
 <html> 
 <head> 
@@ -4299,9 +4299,9 @@ class HTML_facileFormsProcessor {
                 $this->message = $record->getError();
                 return;
             } // if
-            
+
             $record_return = $record->id;
-            
+
             if($record_return && JFile::exists(JPATH_ADMINISTRATOR . DS . 'components' . DS . 'com_contentbuilder' . DS . 'contentbuilder.xml')){
                 $last_update = JFactory::getDate();
                 jimport('joomla.version');
@@ -4325,7 +4325,7 @@ class HTML_facileFormsProcessor {
         }
 
         $this->record_id = $record->id;
-        
+
         $names = array();
         $subrecord = new facileFormsSubrecords($database);
         $subrecord->record = $record->id;
@@ -4333,13 +4333,13 @@ class HTML_facileFormsProcessor {
 
             $cbData = array();
 
-            // CONTENTBUILDER file deletion/upgrade 
+            // CONTENTBUILDER file deletion/upgrade
             if (is_object($cbResult['form'])) {
-                
+
                 $db = JFactory::getDBO();
                 $db->setQuery('Select SQL_CALC_FOUND_ROWS * From #__contentbuilder_forms Where id = ' . JRequest::getInt('cb_form_id', 0) . ' And published = 1');
                 $_settings = $db->loadObject();
-                
+
                 $_record = $cbResult['form']->getRecord(JRequest::getInt('record_id',0), $_settings->published_only, $cbResult['frontend'] ? ( $_settings->own_only_fe ? JFactory::getUser()->get('id', 0) : -1 ) : ( $_settings->own_only ? JFactory::getUser()->get('id', 0) : -1 ), true );
                 foreach($_record As $_rec){
                     $_files_deleted = array();
@@ -4362,7 +4362,7 @@ class HTML_facileFormsProcessor {
                                 }
                             }
                         }
-                    
+
                         if(isset($_files_deleted[$_rec->recElementId]) && is_array($_files_deleted[$_rec->recElementId]) && count($_files_deleted[$_rec->recElementId])){
                             $_i = 0;
                             foreach($this->savedata as $data){
@@ -4385,9 +4385,9 @@ class HTML_facileFormsProcessor {
                            if(true){
                                $next = count($this->savedata);
                                $this->savedata[$next] = array();
-                               $this->savedata[$next][_FF_DATA_ID] = $_rec->recElementId; 
-                               $this->savedata[$next][_FF_DATA_NAME] = $_rec->recName; 
-                               $this->savedata[$next][_FF_DATA_TITLE] = strip_tags($_rec->recTitle); 
+                               $this->savedata[$next][_FF_DATA_ID] = $_rec->recElementId;
+                               $this->savedata[$next][_FF_DATA_NAME] = $_rec->recName;
+                               $this->savedata[$next][_FF_DATA_TITLE] = strip_tags($_rec->recTitle);
                                $this->savedata[$next][_FF_DATA_TYPE] = $_rec->recType;
                                $this->savedata[$next][_FF_DATA_VALUE] = '';
                                $_is_values = explode("\n", $_rec->recValue);
@@ -4435,7 +4435,7 @@ class HTML_facileFormsProcessor {
                     if($data[_FF_DATA_TYPE] == 'File Upload'){
                         $isset[$data[_FF_DATA_ID]] = true;
                     }
-                    
+
                 } else {
 
                     require_once(JPATH_ADMINISTRATOR . DS . 'components' . DS . 'com_contentbuilder' . DS . 'classes' . DS . 'contentbuilder.php');
@@ -4467,13 +4467,13 @@ class HTML_facileFormsProcessor {
                     }
                 }
             } // foreach
-            
+
             // CONTENTBUILDER BEGIN
             if (is_object($cbResult['form'])) {
 
                 JPluginHelper::importPlugin('contentbuilder_submit');
                 $submit_dispatcher = JDispatcher::getInstance();
-                
+
                 jimport('joomla.version');
                 $version = new JVersion();
                 $is15 = true;
@@ -4483,7 +4483,7 @@ class HTML_facileFormsProcessor {
 
                 $values = array();
                 $names = $cbResult['form']->getAllElements();
-                
+
                 foreach ($names As $id => $name) {
                     if (isset($cbData[$id])) {
                         if (in_array($id, $cbFileFields) && trim($cbData[$id]) == '') {
@@ -4497,27 +4497,27 @@ class HTML_facileFormsProcessor {
                 }
 
                 $submit_before_result = $submit_dispatcher->trigger('onBeforeSubmit', array(JRequest::getInt('cb_record_id', 0), $cbResult['form'], $values));
-                    
+
                 $record_return = $cbResult['form']->saveRecord(JRequest::getInt('cb_record_id', 0), $values);
 
                 $db = JFactory::getDBO();
-                
+
                 $db->setQuery('Select SQL_CALC_FOUND_ROWS * From #__contentbuilder_forms Where id = ' . JRequest::getInt('cb_form_id', 0) . ' And published = 1');
                 $cbData = $db->loadObject();
-                
+
                 if($record_return){
-                    
+
                     $this->record_id = $record_return;
-                    
+
                     $sef = '';
                     $ignore_lang_code = '*';
                     if($cbResult['data']['default_lang_code_ignore']){
-                        
+
                         jimport('joomla.version');
                         $version = new JVersion();
 
                         if(version_compare($version->getShortVersion(), '1.6', '>=')){
-                            
+
                             $db->setQuery("Select lang_code From #__languages Where published = 1 And sef = " . $db->Quote(trim(JRequest::getCmd('lang',''))));
                             $ignore_lang_code = $db->loadResult();
                             if(!$ignore_lang_code){
@@ -4534,24 +4534,24 @@ class HTML_facileFormsProcessor {
                                 }
                             }
                         }
-                        
+
                         $sef = trim(JRequest::getCmd('lang',''));
                         if($ignore_lang_code == '*'){
                             $sef = '';
                         }
-                        
+
                     } else {
-                        
+
                         jimport('joomla.version');
                         $version = new JVersion();
 
                         if(version_compare($version->getShortVersion(), '1.6', '>=')){
-                            
+
                             $db->setQuery("Select sef From #__languages Where published = 1 And lang_code = " . $db->Quote($cbResult['data']['default_lang_code']));
                             $sef = $db->loadResult();
-                            
+
                         } else {
-                            
+
                             $codes = contentbuilder::getLanguageCodes();
                             foreach($codes As $code){
                                 if($code == $cbResult['data']['default_lang_code']){
@@ -4564,9 +4564,9 @@ class HTML_facileFormsProcessor {
                             }
                         }
                     }
-                    
+
                     $language = $cbResult['data']['default_lang_code_ignore'] ? $ignore_lang_code : $cbResult['data']['default_lang_code'];
-        
+
                     $db->setQuery("Select id From #__contentbuilder_records Where `type` = 'com_breezingforms' And `reference_id` = ".$db->Quote($cbResult['form']->getReferenceId())." And record_id = " . $db->Quote($record_return));
                     $res = $db->loadResult();
                     $last_update = JFactory::getDate();
@@ -4577,7 +4577,7 @@ class HTML_facileFormsProcessor {
                     }
                     $last_update = $is3 ? $last_update->toSql() : $last_update->toMySQL();
                     if(!$res){
-                        
+
                         $is_future = 0;
                         $created_up = JFactory::getDate();
                         $created_up = $is3 ? $created_up->toSql() : $created_up->toMySQL();
@@ -4591,7 +4591,7 @@ class HTML_facileFormsProcessor {
                             $date = JFactory::getDate(strtotime($created_up.' +'.intval($cbData->default_publish_down_days).' days'));
                             $created_down = $is3 ? $date->toSql() : $date->toMySQL();
                         }
-                        
+
                         $db->setQuery("Insert Into #__contentbuilder_records (session_id,`type`,last_update,is_future,lang_code, sef, published, record_id, reference_id, publish_up, publish_down) Values ('".JFactory::getSession()->getId()."','com_breezingforms',".$db->Quote($last_update).",$is_future, ".$db->Quote($language).",".$db->Quote(trim($sef)).",".$db->Quote($cbData->auto_publish && !$is_future ? 1 : 0).", ".$db->Quote($record_return).", ".$db->Quote($cbResult['form']->getReferenceId()).", ".$db->Quote($created_up).", ".$db->Quote($created_down).")");
                         $db->query();
                     }else{
@@ -4599,20 +4599,27 @@ class HTML_facileFormsProcessor {
                         $db->query();
                     }
                 }
-                
+
                 $article_id = 0;
-                
+
                 // creating the article
                 if (is_object($cbData) && $cbData->create_articles) {
 
                     JRequest::setVar('cb_category_id',null);
                     JRequest::setVar('cb_controller',null);
-                    
+
                     jimport('joomla.version');
                     $version = new JVersion();
 
                     if(JFactory::getApplication()->isSite() && JRequest::getInt('Itemid',0)){
-                        if (version_compare($version->getShortVersion(), '1.6', '>=')) {
+                        if (version_compare($version->getShortVersion(), '3.2', '>=')) {
+                            $menu = JFactory::getApplication()->getMenu();
+                            $item = $menu->getActive();
+                            if (is_object($item)) {
+                                JRequest::setVar('cb_category_id', $item->params->get('cb_category_id', null));
+                                JRequest::setVar('cb_controller', $item->params->get('cb_controller', null));
+                            }
+                        } else if (version_compare($version->getShortVersion(), '1.6', '>=')) {
                             $menu = JSite::getMenu();
                             $item = $menu->getActive();
                             if (is_object($item)) {
@@ -4625,7 +4632,7 @@ class HTML_facileFormsProcessor {
                             JRequest::setVar('cb_controller', $params->get('cb_controller', null));
                         }
                     }
-                    
+
                     $cbData->page_title = $cbData->use_view_name_as_title ? $cbData->name : $cbResult['form']->getPageTitle();
                     $cbData->labels = $cbResult['form']->getElementLabels();
                     $ids = array();
@@ -4648,17 +4655,17 @@ class HTML_facileFormsProcessor {
                     $config = array();
                     $full = false;
                     $article_id = contentbuilder::createArticle(JRequest::getInt('cb_form_id', 0), $record_return, $cbData->items, $ids, $cbData->title_field, $cbResult['form']->getRecordMetadata($record_return), $config, $full, true, JRequest::getVar('cb_category_id',null));
-                
+
                     $cache = JFactory::getCache('com_content');
                     $cache->clean();
                     $cache = JFactory::getCache('com_contentbuilder');
                     $cache->clean();
                 }
-                
+
                 $submit_after_result = $submit_dispatcher->trigger('onAfterSubmit', array($record_return, $article_id, $cbResult['form'], $values));
             }
             // CONTENTBUILDER END
-            
+
             // joomla 3 tagging
             $db = JFactory::getDBO();
             jimport('joomla.version');
@@ -4744,15 +4751,15 @@ class HTML_facileFormsProcessor {
                         }
                     }
                 }
-                
+
                 if(trim($title) == '' && isset($this->savedata[0])){
                     $title = strip_tags($this->savedata[0][_FF_DATA_TITLE]);
                 }else if(trim($title) == '' && !isset($this->savedata[0])){
                     $title = 'Unknown';
                 }
-                
+
                 $tag_date = JFactory::getDate();
-                
+
                 // Clean text for xhtml transitional compliance
                 $introtext = '';
                 $fulltext  = '';
@@ -4767,7 +4774,7 @@ class HTML_facileFormsProcessor {
                 } else {
                     list($introtext, $fulltext) = preg_split($pattern, $tags_body, 2);
                 }
-                
+
                 $db->setQuery("Insert Into 
                     #__content 
                         (
@@ -4824,10 +4831,10 @@ class HTML_facileFormsProcessor {
                 ");
                 $db->query();
                 $item_id = $db->insertid();
-                
+
                 JFactory::getDbo()->setQuery("Select type_id From #__content_types Where type_alias = 'com_content.article'");
                 $tag_typeid = JFactory::getDbo()->loadResult();
-                
+
                 $db->setQuery("Insert Into #__ucm_content (
                     core_catid,
                     core_content_item_id,
@@ -4869,10 +4876,10 @@ class HTML_facileFormsProcessor {
                  )");
                 $db->query();
                 $ucm_id = $db->insertid();
-                
+
                 JFactory::getDbo()->setQuery("Select lang_id From #__languages Where lang_code=".$db->quote($this->formrow->tags_content_default_language));
                 $lang_id = JFactory::getDbo()->loadColumn();
-                
+
                 JFactory::getDbo()->setQuery("Insert Into #__ucm_base (
                     ucm_id, 
                     ucm_item_id, 
@@ -4885,10 +4892,10 @@ class HTML_facileFormsProcessor {
                     ".($lang_id ? intval($lang_id) : 0)."
                  )");
                 JFactory::getDbo()->query();
-                
+
                 $tags_content = explode(',', $this->formrow->tags_content);
                 JArrayHelper::toInteger($tags_content);
-                
+
                 foreach($tags_content As $tags_content_entry){
                         JFactory::getDbo()->setQuery("Insert Into #__contentitem_tag_map (
                         type_alias, 
@@ -4920,7 +4927,7 @@ class HTML_facileFormsProcessor {
                 $integrate->field($data);
             }
         $integrate->commit();
-        
+
         if(isset($record_return)){
             return $record_return;
         }
@@ -4934,7 +4941,7 @@ class HTML_facileFormsProcessor {
         $mail = bf_createMail($from, $fromname, $subject, $body, $alt_sender);
 
         try{
-        
+
             if (is_array($recipient))
                 foreach ($recipient as $to)
                     $mail->AddAddress($to);
@@ -4979,22 +4986,22 @@ class HTML_facileFormsProcessor {
                 $this->status = _FF_STATUS_SENDMAIL_FAILED;
                 $this->message = $mail->ErrorInfo;
             } // if
-        
+
         }catch(Exception $e){
-            
+
             JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
         }
     }
 
-    
-    
+
+
 // sendMail
 
     function endsWith($haystack, $needle)
     {
         return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
     }
-    
+
     function exppdf($filter = array(), $mailback = false, $translate = true) {
         global $ff_compath;
 
@@ -5005,7 +5012,7 @@ class HTML_facileFormsProcessor {
         if(version_compare($_version, '3.2', '>=')){
             $tz = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
         }
-        
+
         $file = JPATH_SITE . '/media/breezingforms/pdftpl/' . $this->formrow->name . '_pdf_attachment.php';
         if (!JFile::exists($file)) {
             $file = JPATH_SITE . '/media/breezingforms/pdftpl/pdf_attachment.php';
@@ -5057,25 +5064,25 @@ class HTML_facileFormsProcessor {
             $this->submitted = $date_->format('Y-m-d H:i:s', true);
             $date_stamp = $date_->format('YmdHis', true);
         }
-        
+
         ob_start();
         require($file);
         $c = ob_get_contents();
         ob_end_clean();
-        
+
         $this->submitted = $submitted;
 
         if(!class_exists('TCPDF')){
             require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/tcpdf/tcpdf.php');
         }
-        
+
         $pdf = new TCPDF();
-        
+
         $active_found = false;
         $font_loaded = false;
-        
+
         if( JFolder::exists(JPATH_SITE.'/media/breezingforms/pdftpl/fonts/') ){
-            
+
             $sourcePath = JPATH_SITE.'/media/breezingforms/pdftpl/fonts/';
             if (@file_exists($sourcePath) && @is_readable($sourcePath) && @is_dir($sourcePath) && $handle = @opendir($sourcePath)) {
                 while (false !== ($file = @readdir($handle))) {
@@ -5109,12 +5116,12 @@ class HTML_facileFormsProcessor {
                 @closedir($handle);
             }
         }
-        
+
         if(!$active_found){
             TCPDF_FONTS::addTTFfont(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/tcpdf/fonts/verdana.ttf', 'TrueTypeUnicode');
             $pdf->SetFont('verdana');
         }
-        
+
         $pdf->setPrintHeader(false);
         $pdf->AddPage();
         $pdf->writeHTML($c);
@@ -5129,16 +5136,16 @@ class HTML_facileFormsProcessor {
         global $ff_config;
 
         $inverted = isset($ff_config->csvinverted) ? $ff_config->csvinverted : false;
-        
+
         jimport('joomla.version');
         $version = new JVersion();
         $_version = $version->getShortVersion();
         $tz = 'UTC';
-        
+
         if(version_compare($_version, '3.2', '>=')){
             $tz = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
         }
-        
+
         $csvdelimiter = stripslashes($ff_config->csvdelimiter);
         $csvquote = stripslashes($ff_config->csvquote);
         $cellnewline = $ff_config->cellnewline == 0 ? "\n" : "\\n";
@@ -5155,7 +5162,7 @@ class HTML_facileFormsProcessor {
         $fields['ZZZ_E_OPSYS'] = true;
 
         $lines[$lineNum]['ZZZ_A_FORM'][] = $this->form;
-        
+
         $date_stamp = date('YmdHis');
         $submitted = $this->submitted;
         if(version_compare($_version, '3.2', '>=')){
@@ -5170,7 +5177,7 @@ class HTML_facileFormsProcessor {
             $submitted = $date_->format('Y-m-d H:i:s', true);
             $date_stamp = $date_->format('YmdHis', true);
         }
-        
+
         $lines[$lineNum]['ZZZ_B_SUBMITTED'][] = $submitted;
         $lines[$lineNum]['ZZZ_C_IP'][] = $this->ip;
         $lines[$lineNum]['ZZZ_D_BROWSER'][] = $this->browser;
@@ -5200,11 +5207,11 @@ class HTML_facileFormsProcessor {
                 $head .= $csvquote . $fieldName . $csvquote . $csvdelimiter;
             }
         }
-        
+
         if($inverted == false){
             $head = substr($head, 0, strlen($head) - 1) . nl();
         }
-        
+
         $out = '';
         for ($i = 0; $i < $lineLength; $i++) {
             ksort($lines[$i]);
@@ -5213,12 +5220,12 @@ class HTML_facileFormsProcessor {
                     $out .= $csvquote . str_replace($csvquote, $csvquote . $csvquote, str_replace("\n", $cellnewline, str_replace("\r", "", $fieldName))) . $csvquote . $csvdelimiter;
                 }
                 $out .= $csvquote . str_replace($csvquote, $csvquote . $csvquote, str_replace("\n", $cellnewline, str_replace("\r", "", implode('|', $line)))) . $csvquote . $csvdelimiter;
-            
+
                 if($inverted == true){
                     $out .= nl();
                 }
             }
-            
+
             if($inverted == false){
                 $out = substr($out, 0, strlen($out) - 1);
                 $out .= nl();
@@ -5253,7 +5260,7 @@ class HTML_facileFormsProcessor {
         if(version_compare($_version, '3.2', '>=')){
             $tz = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
         }
-        
+
         $date_stamp = date('YmdHis');
         $submitted = $this->submitted;
         $date_file = date('Y-m-d H:i:s');
@@ -5270,7 +5277,7 @@ class HTML_facileFormsProcessor {
             $date_stamp = $date_->format('YmdHis', true);
             $date_file = $submitted;
         }
-        
+
         if ($this->dying)
             return '';
         mt_srand();
@@ -5283,9 +5290,9 @@ class HTML_facileFormsProcessor {
             $xml .= indent(1) . '<record id="' . $this->record_id . '">' . nl();
         else
             $xml .= indent(1) . '<record>' . nl();
-        
+
         $title_translated = $this->getFormTitleTranslated();
-        
+
         $xml .= indent(2) . '<submitted>' . $submitted . '</submitted>' . nl() .
                 indent(2) . '<form>' . $this->form . '</form>' . nl() .
                 indent(2) . '<title>' . htmlspecialchars($title_translated != '' ? $title_translated : $this->formrow->title, ENT_QUOTES, 'UTF-8') . '</title>' . nl() .
@@ -5306,12 +5313,12 @@ class HTML_facileFormsProcessor {
 
         if (count($xmldata))
             foreach ($xmldata as $data) {
-            
+
                 if($translate){
                     $title_translated = '';
                     $this->getFieldTranslated('label', $data[_FF_DATA_NAME], $title_translated);
                 }
-            
+
                 if (!in_array($data[_FF_DATA_NAME], $filter) && !in_array($data[_FF_DATA_NAME], $processed)) {
                     $xml .= indent(2) . '<subrecord>' . nl() .
                             indent(3) . '<element>' . $data[_FF_DATA_ID] . '</element>' . nl() .
@@ -5343,8 +5350,8 @@ class HTML_facileFormsProcessor {
 
         if ($this->dying)
             return;
-       
-        
+
+
         $from = $this->formrow->alt_mailfrom != '' ? $this->formrow->alt_mailfrom : $mainframe->getCfg('mailfrom');
         $fromname = $this->formrow->alt_fromname != '' ? $this->formrow->alt_fromname : $mainframe->getCfg('fromname');
         if ($this->formrow->emailntf == 2)
@@ -5358,7 +5365,7 @@ class HTML_facileFormsProcessor {
         $alt_sender = '';
 
         foreach($recipients As $recipient){
-            
+
             $test = explode(':', $recipient);
             if(count($test) == 2 && strtolower(trim($test[0])) == 'sender' ) {
                 $alt_sender = trim($test[1]);
@@ -5370,7 +5377,7 @@ class HTML_facileFormsProcessor {
 
 	    $recipients = $cleaned_recipients;
 	    $recipientsSize = count($recipients);
-        
+
         // dynamic receipients
         $all_recipients = array();
         for($i = 0; $i < $recipientsSize; $i++){
@@ -5379,7 +5386,7 @@ class HTML_facileFormsProcessor {
                 $from_ = trim($from_, '{}');
                 $froms = explode(':', $from_);
                 $field = $froms[0];
-                
+
                 if (count($this->maildata)) {
                     foreach ($this->maildata as $DATA) {
                         if( strtolower($DATA[_FF_DATA_NAME]) == strtolower($field) ){
@@ -5391,20 +5398,20 @@ class HTML_facileFormsProcessor {
                                     if(isset($keyval[1])){
                                         $value = trim($keyval[1]);
                                         $value_exploded = explode("|",$value);
-                                        
+
                                         if($DATA[_FF_DATA_TYPE] == 'Checkbox Group'){
-                                            
+
                                             $data_value = explode(', ', strtolower($DATA[_FF_DATA_VALUE]));
-                                            
+
                                             if( in_array(strtolower($key), $data_value) ){
                                                 foreach($value_exploded As $value2){
                                                     $all_recipients[] = trim($value2);
                                                     unset($recipients[$i]);
                                                 }
                                             }
-                                            
+
                                         }else{
-                                        
+
                                             if( strtolower($key) == strtolower($DATA[_FF_DATA_VALUE]) ){
                                                 foreach($value_exploded As $value2){
                                                     $all_recipients[] = trim($value2);
@@ -5426,12 +5433,12 @@ class HTML_facileFormsProcessor {
                 }
             }
         }
-        
+
         if(count($all_recipients)){
             $recipients = array_merge($all_recipients, $recipients);
             $recipientsSize = count($recipients);
         }
-        
+
         $subject = BFText::_('COM_BREEZINGFORMS_PROCESS_FORMRECRECEIVED');
         if ($this->formrow->custom_mail_subject != '') {
             $subject = $this->formrow->custom_mail_subject;
@@ -5486,7 +5493,7 @@ class HTML_facileFormsProcessor {
                 $NAME = $this->formrow->name;
 
                 $PROCESS_SUBMITTEDAT = BFText::_('COM_BREEZINGFORMS_PROCESS_SUBMITTEDAT');
-                
+
                 jimport('joomla.version');
                 $version = new JVersion();
                 $_version = $version->getShortVersion();
@@ -5505,10 +5512,10 @@ class HTML_facileFormsProcessor {
                         $offset = $offset*-1;
                         $date_->sub(new DateInterval('PT'.$offset.'S'));
                     }
-                    
+
                     $SUBMITTED = $date_->format('Y-m-d H:i:s', true);
                 }
-                
+
                 $PROCESS_SUBMITTERIP = BFText::_('COM_BREEZINGFORMS_PROCESS_SUBMITTERIP');
                 $IP = $this->ip;
 
@@ -5572,10 +5579,10 @@ class HTML_facileFormsProcessor {
                         $offset = $offset*-1;
                         $date_->sub(new DateInterval('PT'.$offset.'S'));
                     }
-                    
+
                     $submitted = $date_->format('Y-m-d H:i:s', true);
                 }
-                
+
                 if ($this->record_id != '')
                     $body .= BFText::_('COM_BREEZINGFORMS_PROCESS_RECORDSAVEDID') . " " . $this->record_id . nl() . nl();
                 $body .=
@@ -5613,7 +5620,7 @@ class HTML_facileFormsProcessor {
             $TITLE = $this->formrow->title;
             $FORMNAME = $this->formrow->name;
             $SUBMITTED = $this->submitted;
-            
+
             jimport('joomla.version');
             $version = new JVersion();
             $_version = $version->getShortVersion();
@@ -5634,7 +5641,7 @@ class HTML_facileFormsProcessor {
 
                 $SUBMITTED = $date_->format('Y-m-d H:i:s', true);
             }
-            
+
             $IP = $this->ip;
             $PROVIDER = $this->provider;
             $BROWSER = $this->browser;
@@ -5743,9 +5750,9 @@ class HTML_facileFormsProcessor {
             }
             //}
         }
-        
+
         // dynamic mailfroms
-        
+
         if( bf_startsWith(trim($from), '{' ) && bf_endsWith(trim($from), '}' ) ){
             $from_ = trim($from);
             $from_ = trim($from_, '{}');
@@ -5761,22 +5768,22 @@ class HTML_facileFormsProcessor {
                                 $key    = trim($keyval[0]);
                                 if(isset($keyval[1])){
                                     $value = trim($keyval[1]);
-                                    
+
                                     if($DATA[_FF_DATA_TYPE] == 'Checkbox Group'){
-                                        
+
                                         $data_value = explode(', ', strtolower($DATA[_FF_DATA_VALUE]));
-                                        
+
                                         if( in_array(strtolower($key), $data_value) ){
                                             $from = $value;
                                         }
-                                            
+
                                     }else{
-                                    
+
                                         if( strtolower($key) == strtolower($DATA[_FF_DATA_VALUE]) ){
                                             $from = $value;
                                             break;
                                         }
-                                    
+
                                     }
                                 }
                             }
@@ -5789,7 +5796,7 @@ class HTML_facileFormsProcessor {
                 }
             }
         }
-        
+
         if( bf_startsWith(trim($fromname), '{' ) && bf_endsWith(trim($fromname), '}' ) ){
             $fromname_ = trim($fromname);
             $fromname_ = trim($fromname_, '{}');
@@ -5798,7 +5805,7 @@ class HTML_facileFormsProcessor {
             if (count($this->maildata)) {
                 foreach ($this->maildata as $DATA) {
                     if( strtolower($DATA[_FF_DATA_NAME]) == strtolower($field) ){
-                        
+
                         if(isset($froms[1])){
                             $valuepairs = explode(',', $froms[1]);
                             foreach($valuepairs As $valuepair){
@@ -5806,15 +5813,15 @@ class HTML_facileFormsProcessor {
                                 $key    = trim($keyval[0]);
                                 if(isset($keyval[1])){
                                     $value = trim($keyval[1]);
-                                    
+
                                     if($DATA[_FF_DATA_TYPE] == 'Checkbox Group'){
-                                        
+
                                         $data_value = explode(', ', strtolower($DATA[_FF_DATA_VALUE]));
-                                        
+
                                         if( strtolower($key) == strtolower($DATA[_FF_DATA_VALUE]) ){
                                             $fromname = $value;
                                         }
-                                            
+
                                     }else{
                                         if( strtolower($key) == strtolower($DATA[_FF_DATA_VALUE]) ){
                                             $fromname = $value;
@@ -5844,15 +5851,15 @@ class HTML_facileFormsProcessor {
                         $cntTestEx = count($testEx);
                         if ($cntTestEx > 1) {
                             for ($ex = 0; $ex < $cntTestEx; $ex++) {
-                                
+
                                 if(strpos(strtolower($testEx[$ex]), '{cbsite}') === 0){
                                     $testEx[$ex] = str_replace(array('{cbsite}','{CBSite}'), array(JPATH_SITE, JPATH_SITE), $testEx[$ex]);
                                 }
-                                
+
                                 if(strpos(strtolower($testEx[$ex]), '{site}') === 0){
                                     $testEx[$ex] = str_replace(array('{site}','{site}'), array(JPATH_SITE, JPATH_SITE), $testEx[$ex]);
                                 }
-                                
+
                                 if (!is_array($attachment) && $attachment != '') {
                                     $attachment = array_merge(array(trim($testEx[$ex])), array($attachment));
                                 } else if (is_array($attachment)) {
@@ -5862,7 +5869,7 @@ class HTML_facileFormsProcessor {
                                 }
                             }
                         } else {
-                            
+
                             if(strpos(strtolower(trim($data[_FF_DATA_FILE_SERVERPATH])), '{cbsite}') === 0){
                                 $data[_FF_DATA_FILE_SERVERPATH] = str_replace(array('{cbsite}','{CBSite}'), array(JPATH_SITE, JPATH_SITE), trim($data[_FF_DATA_FILE_SERVERPATH]));
                             }
@@ -5870,7 +5877,7 @@ class HTML_facileFormsProcessor {
                             if(strpos(strtolower(trim($data[_FF_DATA_FILE_SERVERPATH])), '{site}') === 0){
                                 $data[_FF_DATA_FILE_SERVERPATH] = str_replace(array('{site}','{site}'), array(JPATH_SITE, JPATH_SITE), trim($data[_FF_DATA_FILE_SERVERPATH]));
                             }
-                            
+
                             if (!is_array($attachment) && $attachment != '') {
                                 $attachment = array_merge(array(trim($data[_FF_DATA_FILE_SERVERPATH])), array($attachment));
                             } else if (is_array($attachment)) {
@@ -5944,7 +5951,7 @@ class HTML_facileFormsProcessor {
             $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             $rootMdata = $dataObject['properties'];
             $language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
-                           
+
             /* translatables */
             if(isset($rootMdata['title_translation'.$language_tag]) && $rootMdata['title_translation'.$language_tag] != ''){
                 return $rootMdata['title_translation'.$language_tag];
@@ -5953,20 +5960,20 @@ class HTML_facileFormsProcessor {
             return '';
         }
     }
-    
+
     function getFieldTranslated($field, $name, &$res, $dataObject = null, $childrenLength = 0){
-        
+
         if(count(JLanguageHelper::getLanguages()) == 1){
             return;
         }
-        
+
         if (trim($this->formrow->template_code_processed) == 'QuickMode') {
             if($dataObject === null && $childrenLength == 0){
                 require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
                 require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
                 $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             }
-            
+
             if(isset($dataObject['attributes']) && isset($dataObject['properties']) ){
                 if($dataObject['properties']['type'] == 'element' && isset($dataObject['properties']['bfName'])){
                     $language_tag = '';
@@ -5990,7 +5997,7 @@ class HTML_facileFormsProcessor {
             }
         }
     }
-    
+
     function sendMailbackNotification() {
         global $ff_config;
 
@@ -6002,7 +6009,7 @@ class HTML_facileFormsProcessor {
             return;
         $from = $this->formrow->mb_alt_mailfrom != '' ? $this->formrow->mb_alt_mailfrom : $mainframe->getCfg('mailfrom');
         $fromname = $this->formrow->mb_alt_fromname != '' ? $this->formrow->mb_alt_fromname : $mainframe->getCfg('fromname');
-        
+
         $_senders = '';
         if ($this->formrow->emailntf == 2)
             $_senders = $this->formrow->emailadr;
@@ -6013,7 +6020,7 @@ class HTML_facileFormsProcessor {
 
         $alt_sender = '';
         foreach($_senders As $_sender){
-            
+
             $test = explode(':', $_sender);
             if(count($test) == 2 && strtolower(trim($test[0])) == 'sender' ) {
                 $alt_sender = trim($test[1]);
@@ -6057,7 +6064,7 @@ class HTML_facileFormsProcessor {
                                             $cntTestEx = count($testEx);
                                             if ($cntTestEx > 1) {
                                                 for ($ex = 0; $ex < $cntTestEx; $ex++) {
-                                                    
+
                                                     if(strpos(strtolower(trim($testEx[$ex])), '{cbsite}') === 0){
                                                         $testEx[$ex] = str_replace(array('{cbsite}','{CBSite}'), array(JPATH_SITE, JPATH_SITE), trim($testEx[$ex]));
                                                     }
@@ -6065,11 +6072,11 @@ class HTML_facileFormsProcessor {
                                                     if(strpos(strtolower(trim($testEx[$ex])), '{site}') === 0){
                                                         $testEx[$ex] = str_replace(array('{site}','{site}'), array(JPATH_SITE, JPATH_SITE), trim($testEx[$ex]));
                                                     }
-                                                    
+
                                                     $mailbackfiles[trim($mb[$x])][] = trim($testEx[$ex]);
                                                 }
                                             } else {
-                                                
+
                                                 if(strpos(strtolower(trim($data[_FF_DATA_FILE_SERVERPATH])), '{cbsite}') === 0){
                                                     $data[_FF_DATA_FILE_SERVERPATH] = str_replace(array('{cbsite}','{CBSite}'), array(JPATH_SITE, JPATH_SITE), trim($data[_FF_DATA_FILE_SERVERPATH]));
                                                 }
@@ -6077,7 +6084,7 @@ class HTML_facileFormsProcessor {
                                                 if(strpos(strtolower(trim($data[_FF_DATA_FILE_SERVERPATH])), '{site}') === 0){
                                                     $data[_FF_DATA_FILE_SERVERPATH] = str_replace(array('{site}','{site}'), array(JPATH_SITE, JPATH_SITE), trim($data[_FF_DATA_FILE_SERVERPATH]));
                                                 }
-                                                
+
                                                 $mailbackfiles[trim($mb[$x])][] = trim($data[_FF_DATA_FILE_SERVERPATH]);
                                             }
                                         }
@@ -6121,7 +6128,7 @@ class HTML_facileFormsProcessor {
         }
 
         // dynamic mailfroms
-        
+
         if( bf_startsWith(trim($from), '{' ) && bf_endsWith(trim($from), '}' ) ){
             $from_ = trim($from);
             $from_ = trim($from_, '{}');
@@ -6138,17 +6145,17 @@ class HTML_facileFormsProcessor {
                                     $key    = trim($keyval[0]);
                                     if(isset($keyval[1])){
                                         $value = trim($keyval[1]);
-                                        
+
                                         if($DATA[_FF_DATA_TYPE] == 'Checkbox Group'){
-                                        
+
                                             $data_value = explode(', ', strtolower($DATA[_FF_DATA_VALUE]));
-                                            
+
                                             if( in_array(strtolower($key), $data_value) ){
                                                 $from = $value;
                                             }
-                                            
+
                                         }else{
-                                        
+
                                             if( strtolower($key) == strtolower($DATA[_FF_DATA_VALUE]) ){
                                                 $from = $value;
                                                 break;
@@ -6166,7 +6173,7 @@ class HTML_facileFormsProcessor {
                 }
             }
         }
-        
+
         if( bf_startsWith(trim($fromname), '{' ) && bf_endsWith(trim($fromname), '}' ) ){
             $fromname_ = trim($fromname);
             $fromname_ = trim($fromname_, '{}');
@@ -6184,13 +6191,13 @@ class HTML_facileFormsProcessor {
                                     if(isset($keyval[1])){
                                         $value = trim($keyval[1]);
                                         if($DATA[_FF_DATA_TYPE] == 'Checkbox Group'){
-                                        
+
                                             $data_value = explode(', ', strtolower($DATA[_FF_DATA_VALUE]));
-                                            
+
                                             if( in_array(strtolower($key), $data_value) ){
                                                 $fromname = $value;
                                             }
-                                            
+
                                         }else{
                                             if( strtolower($key) == strtolower($DATA[_FF_DATA_VALUE]) ){
                                                 $fromname = $value;
@@ -6209,7 +6216,7 @@ class HTML_facileFormsProcessor {
                 }
             }
         }
-        
+
         if ($this->formrow->mb_email_type == 0) {
 
             $foundTpl = false;
@@ -6251,7 +6258,7 @@ class HTML_facileFormsProcessor {
                 $FORM = $this->form;
 
                 $PROCESS_FORMTITLE = BFText::_('COM_BREEZINGFORMS_PROCESS_FORMTITLE');
-                
+
                 $form_title_translated = $this->getFormTitleTranslated();
                 $TITLE = $form_title_translated != '' ? $form_title_translated : $this->formrow->title;
 
@@ -6260,8 +6267,8 @@ class HTML_facileFormsProcessor {
 
                 $PROCESS_SUBMITTEDAT = BFText::_('COM_BREEZINGFORMS_PROCESS_SUBMITTEDAT');
                 $SUBMITTED = $this->submitted;
-                
-                
+
+
                 jimport('joomla.version');
                 $version = new JVersion();
                 $_version = $version->getShortVersion();
@@ -6340,9 +6347,9 @@ class HTML_facileFormsProcessor {
 
                 if ($this->record_id != '')
                     $body .= BFText::_('COM_BREEZINGFORMS_PROCESS_RECORDSAVEDID') . " " . $this->record_id . nl() . nl();
-                
+
                 $form_title_translated = $this->getFormTitleTranslated();
-                
+
                 jimport('joomla.version');
                 $version = new JVersion();
                 $_version = $version->getShortVersion();
@@ -6364,7 +6371,7 @@ class HTML_facileFormsProcessor {
 
                     $submitted = $date_->format('Y-m-d H:i:s', true);
                 }
-                
+
                 $body .=
                         BFText::_('COM_BREEZINGFORMS_PROCESS_FORMID') . ": " . $this->form . nl() .
                         BFText::_('COM_BREEZINGFORMS_PROCESS_FORMTITLE') . ": " . ($form_title_translated != '' ? $form_title_translated : $this->formrow->title) . nl() .
@@ -6406,13 +6413,13 @@ class HTML_facileFormsProcessor {
             }
 
             $FORM = $this->form;
-            
+
             $form_title_translated = $this->getFormTitleTranslated();
-                
+
             $TITLE = $form_title_translated != '' ? $form_title_translated : $this->formrow->title;
             $FORMNAME = $this->formrow->name;
             $SUBMITTED = $this->submitted;
-            
+
             jimport('joomla.version');
             $version = new JVersion();
             $_version = $version->getShortVersion();
@@ -6434,7 +6441,7 @@ class HTML_facileFormsProcessor {
 
                 $SUBMITTED = $date_->format('Y-m-d H:i:s', true);
             }
-            
+
             $IP = $this->ip;
             $PROVIDER = $this->provider;
             $BROWSER = $this->browser;
@@ -6579,7 +6586,7 @@ class HTML_facileFormsProcessor {
             }
 
             if (!JFile::exists($paymentCache . $paymentFile)) {
-                
+
                 for ($i = 0; $i < $recipientsSize; $i++) {
                     if (isset($mailbackfiles[$recipients[$i]])) {
                         if (!is_array($attachment) && $attachment != '') {
@@ -6602,7 +6609,7 @@ class HTML_facileFormsProcessor {
 	            else if(count($signatures) > 0){
 		            $attachment = $signatures;
 	            }
-                
+
                 $later_content = serialize(array(
                             'from' => $from,
                             'fromname' => $fromname,
@@ -6619,15 +6626,15 @@ class HTML_facileFormsProcessor {
 
         $this->mailbackRecipients = $recipients;
     }
-    
+
     function sendSalesforceNotification() {
-        
+
         if($this->formrow->salesforce_enabled != 1){
             return;
         }
-        
+
         define("BF_SOAP_CLIENT_BASEDIR", JPATH_SITE . DS . 'administrator' . DS . 'components' . DS . 'com_breezingforms' . DS . 'libraries' . DS . 'salesforce');
-        
+
         if(!class_exists('SforcePartnerClient')){
             require_once (BF_SOAP_CLIENT_BASEDIR . '/SforcePartnerClient.php');
         }
@@ -6636,17 +6643,17 @@ class HTML_facileFormsProcessor {
         }
 
         try {
-            
+
             $mySforceConnection = new SforcePartnerClient();
             $trunc = new AllowFieldTruncationHeader(true);
             $mySforceConnection->setAllowFieldTruncationHeader($trunc);
             $mySoapClient = $mySforceConnection->createConnection(BF_SOAP_CLIENT_BASEDIR . '/partner.wsdl.xml');
             $mylogin = $mySforceConnection->login($this->formrow->salesforce_username, $this->formrow->salesforce_password.$this->formrow->salesforce_token);
             $sobjects = $mySforceConnection->describeSObject($this->formrow->salesforce_type)->fields;
-            
+
             $fields = array();
             $this->formrow->salesforce_fields = explode(',', $this->formrow->salesforce_fields);
-            
+
             foreach($this->formrow->salesforce_fields As $sfields){
                 foreach($this->sfdata As $savedata){
                     $sfield = explode('::',$sfields);
@@ -6665,7 +6672,7 @@ class HTML_facileFormsProcessor {
                                       $savedata[4] = doubleval($savedata[4]);
                                       break;
                               }
-                              break;  
+                              break;
                             }
                         }
                         $fields[$sfield[1]] = '<![CDATA['.$savedata[4].']]>'; // bug in SF Toolkit appeareantly requires CDATA
@@ -6679,7 +6686,7 @@ class HTML_facileFormsProcessor {
             $sObject->type = $this->formrow->salesforce_type;
 
             $createResponse = $mySforceConnection->create(array($sObject));
-            
+
         } catch (Exception $e) {
             echo 'Salesforce Exception: ' . $e->getMessage();
             session_write_close();
@@ -6776,7 +6783,7 @@ class HTML_facileFormsProcessor {
 
         if ($this->dying)
             return '';
-        
+
         jimport('joomla.version');
         $version = new JVersion();
         $_version = $version->getShortVersion();
@@ -6797,22 +6804,22 @@ class HTML_facileFormsProcessor {
             }
             $date_stamp = $date_->format('Y_m_d_H_i_s', true);
         }
-        
+
         $baseDir = JPath::clean(str_replace($this->findtags, $this->replacetags, $destpath));
-        
+
         // test if there is a filemask and remove it from the basepath
         $_baseDir = $baseDir;
         $fmtest = str_replace('{filemask:','',basename($baseDir));
         if($fmtest != basename($baseDir)){
             $baseDir = rtrim( rtrim(str_replace( basename($baseDir),'',$baseDir), '/'), "\\" );
         }
-        
+
         if (!file_exists($baseDir)) {
             $this->status = _FF_STATUS_UPLOAD_FAILED;
             $this->message = BFText::_('COM_BREEZINGFORMS_PROCESS_DIRNOTEXISTS');
             return '';
         } // if
-        
+
         if($fmtest != basename($_baseDir)){
             $fm = basename($_baseDir);
             foreach($this->rows As $row){
@@ -6832,11 +6839,11 @@ class HTML_facileFormsProcessor {
             $fm = str_replace('{filemask:_random}', trim(mt_rand(0, mt_getrandmax())), $fm);
             $fm = str_replace('{filemask:_filename}', trim(basename($userfile_name, '.'.JFile::getExt($userfile_name))), $fm);
             if($fm == ''){
-               $fm = '__empty__'; 
+               $fm = '__empty__';
             }
             $userfile_name = $fm . '.' . JFile::getExt($userfile_name);
         }
-        
+
         if ($timestamp)
             $userfile_name = $date_stamp . '_' . $userfile_name;
         $path = $baseDir . DS . $userfile_name;
@@ -6879,7 +6886,7 @@ class HTML_facileFormsProcessor {
 
             $path = Juri::root() . rtrim($cleaned,'/') . '/' . basename($path);
         }
-        
+
         // resize if image
         // last param = crop or simple. Nothing for exact.
         if(intval($resize_target_height) > 0 && intval($resize_target_width) > 0){
@@ -6887,7 +6894,7 @@ class HTML_facileFormsProcessor {
         }
         return array('default' => $path, 'server' => $serverPath);
     }
-    
+
     public function exifImageType($filename){
         // some hosting providers think it is a good idea not to compile in exif with php...
         if ( ! function_exists( 'exif_imagetype' ) ) {
@@ -6899,12 +6906,12 @@ class HTML_facileFormsProcessor {
             return exif_imagetype($filename);
         }
     }
-    
+
     public function resizeFile($path, $width, $height, $bgcolor = '#ffffff', $type = ''){
         $image = @getimagesize( $path );
 
         if($image !== false){
-            
+
            if($image[0] > 16384){
                return;
            }
@@ -6912,7 +6919,7 @@ class HTML_facileFormsProcessor {
            if($image[1] > 16384){
                return;
            }
-            
+
            $col_ = $bgcolor;
            if($bgcolor !== null){
                $col = array();
@@ -6999,7 +7006,7 @@ class HTML_facileFormsProcessor {
            }
         }
     }
-    
+
     public function resize_image($source_image, $destination_width, $destination_height, $type = 0, $bgcolor = array(0,0,0)) {
         // $type (1=crop to fit, 2=letterbox)
         $source_width = imagesx($source_image);
@@ -7010,30 +7017,30 @@ class HTML_facileFormsProcessor {
         }
         $destination_ratio = $destination_width / $destination_height;
         if($type == 3){
-            
+
             $old_width  = $source_width;
             $old_height = $source_height;
-            
+
             // Target dimensions
             $max_width = $destination_width;
             $max_height = $destination_height;
             // Get current dimensions
-            
+
             // Calculate the scaling we need to do to fit the image inside our frame
             $scale      = min($max_width/$old_width, $max_height/$old_height);
 
             // Get the new dimensions
             $destination_width  = ceil($scale*$old_width);
             $destination_height = ceil($scale*$old_height);
-            
+
             $new_destination_width = $destination_width;
             $new_destination_height = $destination_height;
-            
+
             $source_x = 0;
             $source_y = 0;
             $destination_x = 0;
             $destination_y = 0;
-            
+
         } else if ($type == 1) {
             // crop to fit
             if ($source_ratio > $destination_ratio) {
@@ -7082,7 +7089,7 @@ class HTML_facileFormsProcessor {
         imagecopyresampled($destination_image, $source_image, $destination_x, $destination_y, $source_x, $source_y, $new_destination_width, $new_destination_height, $source_width, $source_height);
         return $destination_image;
     }
-    
+
     public function returnBytes($val) {
         $val = trim($val);
         $last = strtolower($val[strlen($val)-1]);
@@ -7102,11 +7109,11 @@ class HTML_facileFormsProcessor {
     public function findQuickModeElement( array $dataObject, $needle){
 
             if($dataObject['properties']['type'] == 'element'
-                    && isset($dataObject['properties']['bfName']) 
+                    && isset($dataObject['properties']['bfName'])
                         && $dataObject['properties']['bfName'] == $needle){
                 return $dataObject;
             }
-        
+
             if(isset($dataObject['children']) && count($dataObject['children']) != 0){
 
                     $childrenAmount = count($dataObject['children']);
@@ -7120,7 +7127,7 @@ class HTML_facileFormsProcessor {
             }
             return null;
 	}
-    
+
 // saveUpload
 
     public function measureTime()
@@ -7128,7 +7135,7 @@ class HTML_facileFormsProcessor {
         $a = explode (' ',microtime());
         return ((double) $a[0] + $a[1]) / 1000;
     }
-        
+
     function collectSubmitdata($cbResult = null) {
         if ($this->dying || $this->submitdata)
             return;
@@ -7191,7 +7198,7 @@ class HTML_facileFormsProcessor {
                                     break; // just in case
                                 }
                             }
-                            
+
                             $uploadfiles = isset($_FILES['ff_nm_' . $row->name]) ? $_FILES['ff_nm_' . $row->name] : null;
 
                             if ($this->formrow->template_code != '' && isset($_FILES['ff_nm_' . $row->name]) && $_FILES['ff_nm_' . $row->name]['tmp_name'][0] != '' && trim($row->data2) != '') {
@@ -7209,7 +7216,7 @@ class HTML_facileFormsProcessor {
                             $serverPaths = array();
                             // CONTENTBUILDER
                             $is_relative = array();
-                            
+
                             if ($uploadfiles) {
                                 $name = $uploadfiles['name'];
                                 $tmp_name = $uploadfiles['tmp_name'];
@@ -7244,7 +7251,7 @@ class HTML_facileFormsProcessor {
                                 if (isset($tickets[JRequest::getVar('bfFlashUploadTicket', mt_rand(0, mt_getrandmax()))])) {
                                     $sourcePath = JPATH_SITE . '/components/com_breezingforms/uploads/';
                                     if (@file_exists($sourcePath) && @is_readable($sourcePath) && @is_dir($sourcePath)) {
-                                        
+
                                         jimport('joomla.version');
                                         $version = new JVersion();
                                         $_version = $version->getShortVersion();
@@ -7287,7 +7294,7 @@ class HTML_facileFormsProcessor {
                                                                     $rowpath1 = $this->cbCreatePathByTokens($rowpath1, $this->rows);
                                                                 //}
                                                                 $baseDir = JPath::clean(str_replace($this->findtags, $this->replacetags, $rowpath1));
-                                                                
+
                                                                 // test if there is a filemask and remove it from the basepath
                                                                 $_baseDir = $baseDir;
                                                                 $fmtest = str_replace('{filemask:','',basename($baseDir));
@@ -7320,7 +7327,7 @@ class HTML_facileFormsProcessor {
                                                                     $fm = str_replace('{filemask:_random}', trim(mt_rand(0, mt_getrandmax())), $fm);
                                                                     $fm = str_replace('{filemask:_filename}', trim(basename($userfile_name, '.'.JFile::getExt($userfile_name))), $fm);
                                                                     if($fm == ''){
-                                                                       $fm = '__empty__'; 
+                                                                       $fm = '__empty__';
                                                                     }
                                                                     $userfile_name = $fm . '.' . JFile::getExt($userfile_name);
                                                                 }
@@ -7367,17 +7374,17 @@ class HTML_facileFormsProcessor {
 
 		                                                            $path = Juri::root() . rtrim($cleaned,'/') . '/' . basename($path);
 	                                                            }
-                                                                
+
                                                                 $paths[] = $path;
                                                                 $serverPaths[] = $serverPath;
                                                                 $this->submitdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $path);
-                                                                
+
                                                                 // resize if image
                                                                 // last param = crop or simple. Nothing for exact.
                                                                 if(intval($resize_target_height) > 0 && intval($resize_target_width) > 0){
                                                                     $this->resizeFile($serverPath, intval($resize_target_width), intval($resize_target_height), $resize_bgcolor, $resize_type);
                                                                 }
-                                                                
+
                                                                 // CONTENTBUILDER
                                                                 if(strpos(strtolower($row->data1), '{cbsite}') === 0){
                                                                     $is_relative[$serverPath] = true;
@@ -7396,32 +7403,28 @@ class HTML_facileFormsProcessor {
                             if ($row->logging == 1) {
                                 // db and attachment
 
-                                // DROPBOX SUPPORT
-                                if (version_compare(phpversion(), '5.3.0', '>=')) {
-                                    $dbxClient = null;
-                                    if( $this->formrow->dropbox_email ){
-                                        try{
-                                            require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
-                                            $space = "Dropbox\\Client";
-                                            $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
-                                        }catch(Exception $e){}
-                                    }
+                                // DROPBOX SUPPORT request v2 API
+
+                                if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
+
+                                    require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/v2/autoload.php';
                                 }
-                                
+
                                 foreach($serverPaths As $serverPath){
-                                    
-                                    // DROPBOX
-                                    if (version_compare(phpversion(), '5.3.0', '>=')) {
-                                        if( $this->formrow->dropbox_email && $dbxClient !== null){
-                                            try{
-                                                $f = fopen($serverPath, "rb");
-                                                $space = "Dropbox\\WriteMode";
-                                                $dbxClient->uploadFile('/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($serverPath), call_user_func($space.'::add'), $f);
-                                                fclose($f);
-                                            }catch(Exception $e){}
-                                        }
+
+                                    // DROPBOX File Upload
+                                    if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
+
+                                        Alorel\Dropbox\Operation\AbstractOperation::setDefaultToken($this->formrow->dropbox_email);
+                                        $upload = new Alorel\Dropbox\Operation\Files\Upload();
+                                        $file_to_upload = fopen($serverPath, "rb");
+                                        $upload->raw(
+                                            '/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($serverPath),
+                                            $file_to_upload
+                                        );
+                                        fclose($file_to_upload);
                                     }
-                                    
+
                                     // CONTENTBUILDER: to keep the relative path with prefix
                                     $savedata_path = $serverPath;
                                     foreach($this->findtags As $tag){
@@ -7429,12 +7432,12 @@ class HTML_facileFormsProcessor {
                                             $savedata_path = JPath::clean(str_replace(array(JPATH_SITE, JPATH_SITE), array('{cbsite}','{CBSite}'), $savedata_path));
                                         }
                                     }
-                                    
+
                                     if (($this->formrow->dblog == 1 && $savedata_path != '') ||
                                             $this->formrow->dblog == 2 || ( $cbResult != null && $cbResult['record'] != null) )
                                         $this->savedata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $savedata_path);
                                 }
-                                
+
                                 foreach ($paths as $path) {
                                     if (( ($this->formrow->emaillog == 1 && $this->trim($path)) ||
                                             $this->formrow->emaillog == 2 ) && ($this->formrow->emailxml == 1 ||
@@ -7460,11 +7463,11 @@ class HTML_facileFormsProcessor {
                                 // mail
                                 $paths = implode(nl(), $paths);
                                 $serverPaths = implode(nl(), $serverPaths);
-                                
+
                                 if($this->trim($paths)){
                                     $this->sfadata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $paths, $serverPaths);
                                 }
-                                
+
                                 if (($this->formrow->emaillog == 1 && $this->trim($paths)) ||
                                         $this->formrow->emaillog == 2) {
 	                                $this->maildata[] = array(
@@ -7492,7 +7495,7 @@ class HTML_facileFormsProcessor {
                             if ($row->logging == 1) {
 
                                 $values = @JRequest::getVar("ff_nm_" . $row->name, array(''), 'POST', 'ARRAY', JREQUEST_ALLOWHTML);
-                                
+
                                 if( $row->type == 'Textarea' ){
                                     require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
                                     require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
@@ -7525,28 +7528,23 @@ class HTML_facileFormsProcessor {
 
 		                                $sigValues .= $value;
 
-		                                // DROPBOX SUPPORT
-		                                if (version_compare(phpversion(), '5.3.0', '>=')) {
-			                                $dbxClient = null;
-			                                if( $this->formrow->dropbox_email ){
-				                                try{
-					                                require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
-					                                $space = "Dropbox\\Client";
-					                                $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
-				                                }catch(Exception $e){}
-			                                }
+		                                // DROPBOX SUPPORT request v2 API
+		                                if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
+
+                                            require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/v2/autoload.php';
 		                                }
 
-		                                // DROPBOX
-		                                if (version_compare(phpversion(), '5.3.0', '>=')) {
-			                                if( $this->formrow->dropbox_email && $dbxClient !== null){
-				                                try{
-					                                $f = fopen($sig_file, "rb");
-					                                $space = "Dropbox\\WriteMode";
-					                                $dbxClient->uploadFile('/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($sig_file), call_user_func($space.'::add'), $f);
-					                                fclose($f);
-				                                }catch(Exception $e){}
-			                                }
+		                                // DROPBOX Signature upload
+		                                if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
+
+                                            Alorel\Dropbox\Operation\AbstractOperation::setDefaultToken($this->formrow->dropbox_email);
+                                            $upload = new Alorel\Dropbox\Operation\Files\Upload();
+                                            $file_to_upload = fopen($sig_file, "rb");
+                                            $upload->raw(
+                                                '/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($sig_file),
+                                                $file_to_upload
+                                            );
+                                            fclose($file_to_upload);
 		                                }
 	                                }
 
@@ -7586,7 +7584,7 @@ class HTML_facileFormsProcessor {
                                     }
                                 } // foreach
                                 // for mail
-                                
+
                                 $sfvalues = $values;
 
 	                            if ($row->type == 'Signature') {
@@ -7595,17 +7593,17 @@ class HTML_facileFormsProcessor {
 		                            $sfvalues = $sigValues;
 
 	                            } else if ($row->type == 'Textarea'){
-                                    
+
                                     $values = implode(nl(), $values);
                                     $sfvalues = implode(nl(), $sfvalues);
-                                    
+
                                 } else {
 
                                     // CONTENTBUILDER
                                     $useNewValues = false;
                                     $newValues = array();
                                     $sfnewValues = array();
-                                    
+
                                     foreach ($values as $value) {
                                         switch ($row->type) {
                                             case 'Checkbox':
@@ -7631,11 +7629,11 @@ class HTML_facileFormsProcessor {
                                         $sfvalues = implode(';', $sfvalues);
                                     }
                                 }
-                                
+
                                 if($this->trim($sfvalues)){
                                     $this->sfdata[] = array($row->id, $row->name, strip_tags($row->title), $row->type, $sfvalues);
                                 }
-                                
+
                                 if (($this->formrow->emaillog == 1 && $this->trim($values)) ||
                                         $this->formrow->emaillog == 2) {
 	                                $this->maildata[] = array(
@@ -7710,23 +7708,23 @@ class HTML_facileFormsProcessor {
         $this->collectSubmitdata($cbResult);
 
         if (!$halt) {
-            
+
             require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
             require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
             require_once(JPATH_SITE.'/administrator/components/com_breezingforms/libraries/crosstec/functions/helpers.php');
 
             $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             $rootMdata = $dataObject['properties'];
-            
+
             if(JRequest::getVar('ff_applic','') != 'mod_facileforms' && JRequest::getInt('ff_frame', 0) != 1 && bf_is_mobile())
             {
                     $is_device = true;
                     $this->isMobile = isset($rootMdata['mobileEnabled']) && isset($rootMdata['forceMobile']) && $rootMdata['mobileEnabled'] && $rootMdata['forceMobile'] ? true : ( isset($rootMdata['mobileEnabled']) && isset($rootMdata['forceMobile']) && $rootMdata['mobileEnabled'] && JFactory::getSession()->get('com_breezingforms.mobile', false) ? true : false );
             }else
                 $this->isMobile = false;
-            
-            
-            
+
+
+
             for ($i = 0; $i < $this->rowcount; $i++) {
                 $row = $this->rows[$i];
                 if ($row->type == "Captcha") {
@@ -7740,49 +7738,49 @@ class HTML_facileFormsProcessor {
                     break;
                 } else
                 if ($row->type == "ReCaptcha") {
-                    
+
                     // assuming the new recaptcha if the response is given
-                    
+
                     if( JRequest::getVar('g-recaptcha-response','') != '' ){
-                        
+
                         require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Decoder.php');
                         require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
 
                         $areas = Zend_Json::decode($this->formrow->template_areas);
-                        
+
                         foreach ($areas As $area) {
                             foreach ($area['elements'] As $element) {
                                 if ($element['bfType'] == 'ReCaptcha') {
-                                    
+
                                     if(!class_exists('ReCaptcha')){
                                         require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/recaptcha/newrecaptchalib.php');
                                     }
-                                    
+
                                     $reCaptcha = new ReCaptcha($element['privkey']);
-                                    
+
                                     $resp = @$reCaptcha->verifyResponse(
                                         $_SERVER["REMOTE_ADDR"],
                                         JRequest::getVar('g-recaptcha-response','')
                                     );
-                                    
+
                                     if ($resp != null && $resp->success) {
-                                        
+
                                         // all good
-                                        
+
                                     } else {
-                                        
+
                                         $halt = true;
                                         $this->status = _FF_STATUS_CAPTCHA_FAILED;
                                         exit;
                                     }
-                                    
+
                                     break;
                                 }
                             }
                         }
-                        
+
                     } else {
-                        
+
                         // classic
                         if (!JFactory::getSession()->get('bfrecapsuccess', false)) {
                             $halt = true;
@@ -7790,9 +7788,9 @@ class HTML_facileFormsProcessor {
                             exit;
                         }
                         JFactory::getSession()->set('bfrecapsuccess', false);
-                        
+
                     }
-                    
+
                     break;
                 }
             }
@@ -7863,15 +7861,16 @@ class HTML_facileFormsProcessor {
                             if ($this->formrow->mb_emailntf > 0 && ( $cbEmailNotifications || $cbEmailUpdateNotifications )) { // CONTENTBUILDER
                                 $this->sendMailbackNotification();
                             }
-                                     
-                            // DROPBOX
+
+                            // DROPBOX request v2 API and PDF,CSV, XML upload
                             if(version_compare(phpversion(), '5.3.0', '>=') && $this->formrow->dropbox_submission_enabled){
                                 if( $this->formrow->dropbox_email ){
                                     try{
-                                       require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
-                                       $space = "Dropbox\\Client";
-                                       $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
-                                        
+                                       require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/v2/autoload.php';
+                                       // $space = "Dropbox\\Client";
+                                       // $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
+                                       Alorel\Dropbox\Operation\AbstractOperation::setDefaultToken($this->formrow->dropbox_email);
+
                                        $dropbox_types = explode(',', $this->formrow->dropbox_submission_types);
                                        foreach($dropbox_types As $dropbox_type){
                                            $dropbox_file = '';
@@ -7882,25 +7881,29 @@ class HTML_facileFormsProcessor {
                                            }
                                            if($dropbox_file != ''){
                                                 try{
-                                                    $f = fopen($dropbox_file, "rb");
-                                                    $space = "Dropbox\\WriteMode";
-                                                    $dbxClient->uploadFile('/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($dropbox_file), call_user_func($space.'::add'), $f);
-                                                    fclose($f);
+
+                                                    $upload = new Alorel\Dropbox\Operation\Files\Upload();
+                                                    $file_to_upload = fopen($dropbox_file, "rb");
+                                                    $upload->raw(
+                                                        '/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($dropbox_file),
+                                                        $file_to_upload
+                                                    );
+                                                    fclose($file_to_upload);
                                                 }catch(Exception $e){}
                                            }
                                        }
-                                        
+
                                     }catch(Exception $e){}
                                 }
                             }
-                            
+
                             $this->sendMailChimpNotification();
                             $this->sendSalesforceNotification();
-                            
+
                             JPluginHelper::importPlugin('breezingforms_addons');
                             $dispatcher = JDispatcher::getInstance();
                             $dispatcher->trigger('onPropertiesExecute', array($this));
-                            
+
                             $tickets = JFactory::getSession()->get('bfFlashUploadTickets', array());
                             mt_srand();
                             if (isset($tickets[JRequest::getVar('bfFlashUploadTicket', mt_rand(0, mt_getrandmax()))])) {
@@ -7912,13 +7915,13 @@ class HTML_facileFormsProcessor {
                 } // if
             } // if
             // handle End Submit piece
-            
+
             JFactory::getDbo()->setQuery("SELECT MAX(id) FROM #__facileforms_records");
             $lastid = JFactory::getDbo()->loadResult();
             $_SESSION['virtuemart_bf_id'] = $lastid;
             $session = JFactory::getSession();
             $session->set( 'virtuemart_bf_id', $lastid );
-            
+
             $code = '';
             switch ($this->formrow->piece4cond) {
                 case 1: // library
@@ -8270,7 +8273,7 @@ class HTML_facileFormsProcessor {
                         break;
 
                     case 'Sofortueberweisung':
-
+                        
                         foreach ($areas As $area) {
                             foreach ($area['elements'] As $element) {
                                 if ($element['internalType'] == 'bfSofortueberweisung') {
@@ -8407,16 +8410,16 @@ class HTML_facileFormsProcessor {
                     }
                 }
             }
-            
+
             if( $cbResult['data']['force_login'] ){
-                
+
                 jimport('joomla.version');
                 $version = new JVersion();
                 $is15 = true;
                 if (version_compare($version->getShortVersion(), '1.6', '>=')) {
                     $is15 = false;
                 }
-                
+
                 if( !JFactory::getUser()->get('id', 0) ){
                     if(!$is15){
                         JFactory::getApplication()->redirect(JRoute::_('index.php?option=com_users&view=login&Itemid='.JRequest::getInt('Itemid', 0), false));
@@ -8440,17 +8443,17 @@ class HTML_facileFormsProcessor {
             else if( trim($cbResult['data']['force_url']) ){
                JFactory::getApplication()->redirect(trim($cbResult['data']['force_url']));
             }
-            
+
             JFactory::getApplication()->redirect(JRoute::_('index.php?option=com_contentbuilder&controller=details&Itemid='.JRequest::getInt('Itemid',0).'&backtolist=' . JRequest::getInt('backtolist', 0) . '&id=' . $cbResult['data']['id'] . '&record_id=' . $cbRecordId . '&limitstart=' . JRequest::getInt('limitstart', 0) . '&filter_order=' . JRequest::getCmd('filter_order'), false), BFText::_('COM_CONTENTBUILDER_SAVED'));
         }
 
         if (!$paymentAction) {
- 
+
            if( defined('CRBCBF_INLINE') ){
-               
+
                 return;
            }
-            
+
            if(!defined('VMBFCF_RUNNING')){
                 $ob = 0;
                 while (@ob_get_level() > 0 && $ob <= 32) {
@@ -8463,7 +8466,7 @@ class HTML_facileFormsProcessor {
                     <head></head>
                     <body>';
             }
-            
+
             if ($message == '')
                 $message = $this->message;
             else {
@@ -8562,7 +8565,7 @@ class HTML_facileFormsProcessor {
                 indentc(1) . '// -->' . nl() .
                 '</script>' . nl();
             } // if
-            
+
             if(!defined('VMBFCF_RUNNING')){
                 $c = @ob_get_contents();
                 @ob_end_clean();
@@ -8570,7 +8573,7 @@ class HTML_facileFormsProcessor {
 
                 echo '</body>
                       </html>';
-                
+
             }
         }
 
@@ -8578,11 +8581,11 @@ class HTML_facileFormsProcessor {
         unset($_SESSION['ff_editablePlg' . JRequest::getInt('ff_contentid', 0) . $this->form_id]);
         JFactory::getSession()->set('ff_editableMod' . JRequest::getInt('ff_module_id', 0) . $this->form_id, 0);
         JFactory::getSession()->set('ff_editable_overrideMod' . JRequest::getInt('ff_module_id', 0) . $this->form_id, 0);
-    
+
         if(!defined('VMBFCF_RUNNING')){
             exit;
         }
-        
+
     }
 
 // submit
