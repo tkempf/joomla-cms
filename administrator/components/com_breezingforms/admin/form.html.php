@@ -1384,26 +1384,10 @@ if($row->template_code == ''){
 		$tabs->startTab('Dropbox®','tab_dropbox');
                 $failed = false;
 
+
+
                 if (version_compare(phpversion(), '5.3.0', '>=')) {
 
-                try{
-                    jimport('joomla.filesystem.file');
-                    require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
-
-                    $json_file = JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/config.json';
-                    if(JFile::exists(JPATH_SITE.'/media/breezingforms/dropbox/config.json')){
-                        $json_file = JPATH_SITE.'/media/breezingforms/dropbox/config.json';
-                    }
-
-                    // need to do it dynamically, otherwise php < 5.3 would throw an error (even on the condition above)
-                    $space1 = "Dropbox\\AppInfo";
-                    $space2 = "Dropbox\\WebAuthNoRedirect";
-                    $appInfo = call_user_func($space1.'::loadFromJsonFile', $json_file);
-                    $webAuth = new $space2($appInfo, "BreezingForms/1.8.5");
-
-                } catch(Exception $e){
-                    $failed = true;
-                }
 
 ?>
                 <fieldset><legend>Dropbox®</legend>
@@ -1415,15 +1399,26 @@ if($row->template_code == ''){
                             if(!$failed){
 
                              if( $row->dropbox_password == '' && $row->dropbox_email == ''){
-                                 $authorizeUrl = $webAuth->start();
+                                 $authorizeUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=wfqreycemugothg&response_type=code';
                                  echo "<h3>Dropbox uses a secure way to connect with other apps like BreezingForms, please follow the steps below to connect this form with Dropbox</h3><br/>";
                                  echo "1. Open this Dropbox link: <a target=\"_blank\" href=\"" . $authorizeUrl . "\">Dropbox</a><br/><i>(you need to be logged into Dropbox)</i><br/><br/>\n";
                                  echo "2. Click \"Allow\".<br/><br/>\n";
                                  echo "3. Copy the authorization below into 'Authentication Code' and save.<br/><br/>\n";
                                  echo "4. After you finished the connection, your Dropbox instance is active and the Access Token field appears, displaying your personal token. You don't need to do anything further with it. If you need to reset the entire process, use the reset option, save and try again. Otherwise you are ready to use BreezingForms &amp; Dropbox.<br/><br/>\n";
                              }else if($row->dropbox_password != '' && $row->dropbox_email == ''){
-                                 echo '<i style="color:red;">Now please save again to store your personal Access Token and you can start using BreezingForms &amp; Dropbox!</i>';
-                                 list($accessToken, $dropboxUserId) = $webAuth->finish($row->dropbox_password);
+
+                                 require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/v2/autoload.php';
+                                 $auth = new \Alorel\Dropbox\Operation\Users\GetAuthorizeToken(null, 'NoTokenOperation');
+                                 $db_response = $auth->raw($row->dropbox_password);
+
+                                 $accessToken = '';
+                                 if(!isset($db_response->access_token)){
+                                    echo '<i style="color:red;">An error occured, no access token available.</i>';
+                                 }
+                                 else{
+                                     echo '<i style="color:red;">Now please save again to store your personal Access Token and you can start using BreezingForms &amp; Dropbox!</i>';
+                                    $accessToken = $db_response->access_token;
+                                 }
                                  $row->dropbox_password = '';
                                  $row->dropbox_email = $accessToken;
                              }

@@ -4612,7 +4612,14 @@ class HTML_facileFormsProcessor {
                     $version = new JVersion();
 
                     if(JFactory::getApplication()->isSite() && JRequest::getInt('Itemid',0)){
-                        if (version_compare($version->getShortVersion(), '1.6', '>=')) {
+                        if (version_compare($version->getShortVersion(), '3.2', '>=')) {
+                            $menu = JFactory::getApplication()->getMenu();
+                            $item = $menu->getActive();
+                            if (is_object($item)) {
+                                JRequest::setVar('cb_category_id', $item->params->get('cb_category_id', null));
+                                JRequest::setVar('cb_controller', $item->params->get('cb_controller', null));
+                            }
+                        } else if (version_compare($version->getShortVersion(), '1.6', '>=')) {
                             $menu = JSite::getMenu();
                             $item = $menu->getActive();
                             if (is_object($item)) {
@@ -7419,30 +7426,26 @@ class HTML_facileFormsProcessor {
                             if ($row->logging == 1) {
                                 // db and attachment
 
-                                // DROPBOX SUPPORT
-                                if (version_compare(phpversion(), '5.3.0', '>=')) {
-                                    $dbxClient = null;
-                                    if( $this->formrow->dropbox_email ){
-                                        try{
-                                            require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
-                                            $space = "Dropbox\\Client";
-                                            $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
-                                        }catch(Exception $e){}
-                                    }
+                                // DROPBOX SUPPORT request v2 API
+
+                                if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
+
+                                    require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/v2/autoload.php';
                                 }
                                 
                                 foreach($serverPaths As $serverPath){
                                     
-                                    // DROPBOX
-                                    if (version_compare(phpversion(), '5.3.0', '>=')) {
-                                        if( $this->formrow->dropbox_email && $dbxClient !== null){
-                                            try{
-                                                $f = fopen($serverPath, "rb");
-                                                $space = "Dropbox\\WriteMode";
-                                                $dbxClient->uploadFile('/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($serverPath), call_user_func($space.'::add'), $f);
-                                                fclose($f);
-                                            }catch(Exception $e){}
-                                        }
+                                    // DROPBOX File Upload
+                                    if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
+
+                                        Alorel\Dropbox\Operation\AbstractOperation::setDefaultToken($this->formrow->dropbox_email);
+                                        $upload = new Alorel\Dropbox\Operation\Files\Upload();
+                                        $file_to_upload = fopen($serverPath, "rb");
+                                        $upload->raw(
+                                            '/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($serverPath),
+                                            $file_to_upload
+                                        );
+                                        fclose($file_to_upload);
                                     }
                                     
                                     // CONTENTBUILDER: to keep the relative path with prefix
@@ -7548,30 +7551,25 @@ class HTML_facileFormsProcessor {
 
 		                                $sigValues .= $value;
 
-		                                // DROPBOX SUPPORT
-		                                if (version_compare(phpversion(), '5.3.0', '>=')) {
-			                                $dbxClient = null;
-			                                if( $this->formrow->dropbox_email ){
-				                                try{
-					                                require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
-					                                $space = "Dropbox\\Client";
-					                                $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
-				                                }catch(Exception $e){}
-			                                }
-		                                }
+		                                // DROPBOX SUPPORT request v2 API
+		                                if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
 
-		                                // DROPBOX
-		                                if (version_compare(phpversion(), '5.3.0', '>=')) {
-			                                if( $this->formrow->dropbox_email && $dbxClient !== null){
-				                                try{
-					                                $f = fopen($sig_file, "rb");
-					                                $space = "Dropbox\\WriteMode";
-					                                $dbxClient->uploadFile('/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($sig_file), call_user_func($space.'::add'), $f);
-					                                fclose($f);
-				                                }catch(Exception $e){}
+                                            require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/v2/autoload.php';
+			                                }
+
+		                                // DROPBOX Signature upload
+		                                if ($this->formrow->dropbox_email && version_compare(phpversion(), '5.3.0', '>=')) {
+
+                                            Alorel\Dropbox\Operation\AbstractOperation::setDefaultToken($this->formrow->dropbox_email);
+                                            $upload = new Alorel\Dropbox\Operation\Files\Upload();
+                                            $file_to_upload = fopen($sig_file, "rb");
+                                            $upload->raw(
+                                                '/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($sig_file),
+                                                $file_to_upload
+                                            );
+                                            fclose($file_to_upload);
 			                                }
 		                                }
-	                                }
 
                                     // for db
                                     if (($this->formrow->dblog == 1 && $value != '') ||
@@ -7887,13 +7885,14 @@ class HTML_facileFormsProcessor {
                                 $this->sendMailbackNotification();
                             }
                                      
-                            // DROPBOX
+                            // DROPBOX request v2 API and PDF,CSV, XML upload
                             if(version_compare(phpversion(), '5.3.0', '>=') && $this->formrow->dropbox_submission_enabled){
                                 if( $this->formrow->dropbox_email ){
                                     try{
-                                       require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/native-api/autoload.php';
-                                       $space = "Dropbox\\Client";
-                                       $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
+                                       require_once JPATH_SITE.'/administrator/components/com_breezingforms/libraries/dropbox/v2/autoload.php';
+                                       // $space = "Dropbox\\Client";
+                                       // $dbxClient = new $space($this->formrow->dropbox_email, "BreezingForms/1.8.5");
+                                       Alorel\Dropbox\Operation\AbstractOperation::setDefaultToken($this->formrow->dropbox_email);
                                         
                                        $dropbox_types = explode(',', $this->formrow->dropbox_submission_types);
                                        foreach($dropbox_types As $dropbox_type){
@@ -7905,10 +7904,14 @@ class HTML_facileFormsProcessor {
                                            }
                                            if($dropbox_file != ''){
                                                 try{
-                                                    $f = fopen($dropbox_file, "rb");
-                                                    $space = "Dropbox\\WriteMode";
-                                                    $dbxClient->uploadFile('/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($dropbox_file), call_user_func($space.'::add'), $f);
-                                                    fclose($f);
+
+                                                    $upload = new Alorel\Dropbox\Operation\Files\Upload();
+                                                    $file_to_upload = fopen($dropbox_file, "rb");
+                                                    $upload->raw(
+                                                        '/'.($this->formrow->dropbox_folder != '' ? $this->formrow->dropbox_folder : $this->formrow->name) . '/' . basename($dropbox_file),
+                                                        $file_to_upload
+                                                    );
+                                                    fclose($file_to_upload);
                                                 }catch(Exception $e){}
                                            }
                                        }

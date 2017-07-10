@@ -7,15 +7,24 @@ mysql_query('SET CHARACTER SET utf8') or die(mysql_error());
 $arr = array();
 $table="plz_nb_".strtolower(mysql_real_escape_string($_POST['energieart']));
 $plz= mysql_real_escape_string($_POST['plz']);
-//$table="plz_nb_strom";
-//$plz="89547";
-$rs = mysql_query("SELECT DISTINCT *
+$rs = mysql_query("SELECT DISTINCT *, '' as nbunknown
 					FROM $table
 					WHERE plz='$plz'
 					AND ({$table}.gueltigab <= CURRENT_DATE())
 					AND ({$table}.gueltigbis >= CURRENT_DATE())
-					ORDER BY gemeinde,ort,netzbetreiber") or die(mysql_error());
+					ORDER BY ort,netzentgelt DESC,netzentgeltwaerme DESC,netzbetreiber") or die(mysql_error());
+$lastobj->ort='';
+$found=false;
 while($obj = mysql_fetch_object($rs)) {
+	if($lastobj->ort==$obj->ort and !$found){
+		$lastobj->nbunknown='Netzbetreiber ist mir nicht bekannt';
+		array_splice($arr,-1,0,array($lastobj));
+		$found=true;
+	}
+	else{
+		$found=false;
+	}	
 	$arr[] = $obj;
+	$lastobj = clone $obj;
 }
 echo '{"netzbetreiber":'.json_encode($arr).'}';

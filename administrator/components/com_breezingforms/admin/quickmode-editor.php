@@ -89,7 +89,7 @@ function setIntro0(){
 	'.$intro0.'
         var testEditor = '.$editor->getContent('bfEditor').'
         
-        if( testEditor == "<div>\"+item.properties[key]+\"</div>" || testEditor == "<p>\"+item.properties[key]+\"</p>" || testEditor == "\"+item.properties[key]+\"" || testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[\'pageIntro'.$active_language_code.'\']</div>" ){
+        if( testEditor == "+item.properties[key]+" || testEditor == "<div>\"+item.properties[key]+\"</div>" || testEditor == "<p>\"+item.properties[key]+\"</p>" || testEditor == "\"+item.properties[key]+\"" || testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[\'pageIntro'.$active_language_code.'\']</div>" ){
             setTimeout("setIntro00()",250);
         }
 }
@@ -99,7 +99,13 @@ function setIntro00(){
     if(typeof item.properties[key] == "undefined"){
         item.properties[key] = "";
     }
-    '.$intro00.'
+    var testEditor = '.$editor->getContent('bfEditor').'
+    if( testEditor == "+item.properties[key]+" ){
+        ' . $editor->setContent('bfEditor','item.properties[key]') . '
+    }
+    else{
+    ' . $intro00 . '
+    }
 }
 function setDescription0(){
         var key = "description'.$active_language_code.'";
@@ -110,7 +116,7 @@ function setDescription0(){
 	'.$description0.'
         var testEditor = '.$editor->getContent('bfEditor').'
             
-        if( testEditor == "<div>\"+item.properties[key]+\"</div>" || testEditor == "<p>\"+item.properties[key]+\"</p>" || testEditor == "\"+item.properties[key]+\"" || testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[key]</div>"){
+        if( testEditor == "+item.properties[key]+" || testEditor == "<div>\"+item.properties[key]+\"</div>" || testEditor == "<p>\"+item.properties[key]+\"</p>" || testEditor == "\"+item.properties[key]+\"" || testEditor == "item.properties[key]" || testEditor == "<p>item.properties[key]</p>" || testEditor == "<div>item.properties[key]</div>"){
         
             setTimeout("setDescription00()",250);
         }
@@ -121,7 +127,13 @@ function setDescription00(){
     if(typeof item.properties[key] == "undefined"){
         item.properties[key] = "";
     }
-    '.$description00.'
+    var testEditor = '.$editor->getContent('bfEditor').'
+    if( testEditor == "+item.properties[key]+" ){
+        ' . $editor->setContent('bfEditor','item.properties[key]') . '
+    }
+    else{
+        '.$description00.'
+    }
 }
 function setIntro(){
         var key = "pageIntro'.$active_language_code.'";

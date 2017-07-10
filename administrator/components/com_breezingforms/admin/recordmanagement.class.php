@@ -317,7 +317,7 @@ class bfRecordManagement {
 				<option value="EUC-JP">EUC-JP</option>
 			</select><br>            
 		<?php echo BFText::_('COM_BREEZINGFORMS_CSV_ENCODING_MSG') . '<br><br>'; ?>
-			<input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+			<input type="hidden" name="form_id" value="<?php echo JRequest::getInt('form_selection',0);?>" />
 		<?php echo BFText::_('COM_BREEZINGFORMS_UPLOAD_MSG'); ?> <input type="file" name="csv_file" accept=".csv" />
 			<input type="submit" value="<?php echo BFText::_('COM_BREEZINGFORMS_UPLOAD_FILE_MSG'); ?>" />
 		</form>
@@ -401,6 +401,9 @@ class bfRecordManagement {
 			return;
 		}
 
+		$db->setQuery("Select `title`,`name` From #__facileforms_forms Where id = " . JRequest::getInt('form_id',0));
+		$the_form = $db->loadObject();
+
 		$recordcolumns = 'id, submitted, form, title, name, ip, browser, opsys, provider, viewed, exported, archived, user_id, username, user_full_name, paypal_tx_id, paypal_payment_date, paypal_testaccount, paypal_download_tries';
 		$columns = explode(', ', strtolower($recordcolumns));
 
@@ -409,7 +412,6 @@ class bfRecordManagement {
 
 			$first = true;
 
-			$formname = '';
 
 			for ($i = 0; $i < count($columns); $i++) {
 
@@ -428,15 +430,31 @@ class bfRecordManagement {
 					if (in_array($columns[$i], $title)) {
 						if ($columns[$i] === 'title') {
 							$j = array_search($columns[$i], $title);
-							$query = $query . $db->Quote($record[$j]) . ', ' . $db->Quote($record[$j]);
-							$formname = $record[$j];
+							$query = $query . $db->Quote($record[$j]);
 							$i++;
-						} else {
+						}
+						else if ($columns[$i] === 'name') {
+							$j = array_search($columns[$i], $title);
+							$query = $query . $db->Quote($record[$j]);
+							$i++;
+						}
+						else {
 							$j = array_search($columns[$i], $title);
 							$query = $query . $db->Quote($record[$j]);
 						}
 					} else {
-						$query = $query . '""';
+
+						$value = '';
+						switch($columns[$i]){
+							case 'title': $value = $the_form->title; break;
+							case 'name': $value = $the_form->name; break;
+							case 'submitted': $value = date('Y-m-d H:i:s'); break;
+							case 'ip': $value = $_SERVER['REMOTE_ADDR']; break;
+							case 'user_id': $value = JFactory::getUser()->get('id',0); break;
+							case 'username': $value = JFactory::getUser()->get('username',''); break;
+						}
+
+						$query = $query . '"'.$value.'"';
 					}
 				}
 
@@ -477,6 +495,7 @@ class bfRecordManagement {
 				$query = $query . ' ,';
 				$query = $query . $db->Quote($record[$i]);
 				$query = $query . ')';
+
 				$db->setQuery($query);
 				$db->query();
 
@@ -484,6 +503,7 @@ class bfRecordManagement {
 			}
 		} // End Insert
 		// Start Cleanup
+
 		$query = 'SELECT id FROM #__facileforms_records WHERE title = "" AND name = ""';
 		$db->setQuery($query);
 		$delID = $db->loadAssocList();
@@ -1084,7 +1104,9 @@ class bfRecordManagement {
                                                 fields: detail_fields
                                             }, 
                                             function (data) { //opened handler
-                                            data.childTable.jtable("load");
+                                            setTimeout(function(){
+                                                data.childTable.jtable("load");
+                                            }, 500);
                                         });
                                     }
                                 });
@@ -1155,7 +1177,10 @@ class bfRecordManagement {
                     jQuery("#bfRecordsTableContainer").jtable({});
                     jQuery("#bfRecordsTableContainer").jtable("destroy");
                     jQuery("#bfRecordsTableContainer").jtable(default_object);
-                    jQuery("#bfRecordsTableContainer").jtable("load");
+                    
+                    setTimeout(function(){
+                        jQuery("#bfRecordsTableContainer").jtable("load");
+                    }, 500);
                     
                     // populating available fields options
                     
@@ -1574,7 +1599,10 @@ class bfRecordManagement {
                     }else{
                         jQuery("#bfRecordsTableContainer").jtable(default_object);
                     }
-                    jQuery("#bfRecordsTableContainer").jtable("load");
+                    
+                    setTimeout(function(){
+                        jQuery("#bfRecordsTableContainer").jtable("load");
+                    }, 500);
                     
                 }
 
