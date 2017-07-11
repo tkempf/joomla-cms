@@ -70,14 +70,14 @@ $img->image_width = 230;
 $img->image_height = 80;
 $img->perturbation = 0.9;
 
-$img->image_bg_color = new Securimage_Color("#E7E7E7");
-$img->text_color = new Securimage_Color("#13244E");
-$img->line_color = new Securimage_Color("#6AC123");
-$img->noise_color = new Securimage_Color("#13244E");
+$img->image_bg_color = new Securimage_Color("#6495ED");
+$img->text_color = new Securimage_Color("#B0E0E6");
+$img->line_color = new Securimage_Color("#B0E0E6");
+$img->noise_color = new Securimage_Color("#B0E0E6");
 
 $img->use_transparent_text = false;
 $img->text_transparency_percentage = 60; // 100 = completely transparent
-$img->num_lines = 8;
+$img->num_lines = 15;
 $img->image_signature = '';
 $img->use_wordlist = true;
 
