@@ -5375,6 +5375,27 @@ class HTML_facileFormsProcessor {
             }
         }
 
+        /*
+        $customSender = false;
+        $sender = JRequest::getVar('mailbackSender', array());
+
+        for ($i = 0; $i < $this->rowcount; $i++) {
+            $row = $this->rows[$i];
+            $mb = JRequest::getVar('ff_nm_' . $row->name, '');
+            if ($row->mailback == 1) {
+                $mbCnt = count($mb);
+                for ($x = 0; $x < $mbCnt; $x++) {
+                    if (isset($mb[$x]) && trim($mb[$x]) != '' && bf_is_email(trim($mb[$x]))) {
+
+                        if (isset($sender[$row->name]) && !$customSender) {
+                            $alt_sender = trim($mb[$x]);
+                            $customSender = true;
+                        }
+                    }
+                }
+            }
+        }*/
+
 	    $recipients = $cleaned_recipients;
 	    $recipientsSize = count($recipients);
         
@@ -5950,8 +5971,10 @@ class HTML_facileFormsProcessor {
             require_once(JPATH_SITE . '/administrator/components/com_breezingforms/libraries/Zend/Json/Encoder.php');
             $dataObject = Zend_Json::decode( bf_b64dec($this->formrow->template_code) );
             $rootMdata = $dataObject['properties'];
-            $language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
                            
+	        $default = JComponentHelper::getParams( 'com_languages' )->get( 'site' );
+            $language_tag = JFactory::getLanguage()->getTag() != $default ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
+
             /* translatables */
             if(isset($rootMdata['title_translation'.$language_tag]) && $rootMdata['title_translation'.$language_tag] != ''){
                 return $rootMdata['title_translation'.$language_tag];
@@ -5981,7 +6004,8 @@ class HTML_facileFormsProcessor {
                     $version = new JVersion();
                     if(version_compare($version->getShortVersion(), '2.5', '>=')){
                         jimport( 'joomla.application.component.helper' );
-                        $language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
+	                    $default = JComponentHelper::getParams( 'com_languages' )->get( 'site' );
+                        $language_tag = JFactory::getLanguage()->getTag() != $default ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
                         if (trim($name) == trim($dataObject['properties']['bfName']) && isset($dataObject['properties'][$field.'_translation'.$language_tag]) && $dataObject['properties'][$field.'_translation'.$language_tag] != '') {
                             $res = addslashes($dataObject['properties'][$field.'_translation'.$language_tag]);
                             return;
