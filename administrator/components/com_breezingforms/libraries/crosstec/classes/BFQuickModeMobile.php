@@ -52,7 +52,8 @@ class BFQuickModeMobile{
                 $version = new JVersion();
                 
                 if(version_compare($version->getShortVersion(), '2.5', '>=')){
-                    $this->language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
+			$default = JComponentHelper::getParams( 'com_languages' )->get( 'site' );
+			$this->language_tag = JFactory::getLanguage()->getTag() != $default ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
                 }
             
                 $head = JFactory::getDocument()->getHeadData();

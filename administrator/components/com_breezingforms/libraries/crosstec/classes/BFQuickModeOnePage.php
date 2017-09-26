@@ -115,9 +115,9 @@ class BFQuickModeOnePage {
 		jimport( 'joomla.version' );
 		$version = new JVersion();
 
-		if ( version_compare( $version->getShortVersion(), '2.5', '>=' ) )
-		{
-			$this->language_tag = JFactory::getLanguage()->getTag() != JFactory::getLanguage()->getDefault() ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
+		if (version_compare($version->getShortVersion(), '2.5', '>=')) {
+			$default = JComponentHelper::getParams( 'com_languages' )->get( 'site' );
+			$this->language_tag = JFactory::getLanguage()->getTag() != $default ? JFactory::getLanguage()->getTag() : 'zz-ZZ';
 		}
 
 		JFactory::getDocument()->addScriptDeclaration( '<!--' );
@@ -2999,7 +2999,7 @@ display:none;
 			foreach ( $this->htmltextareas As $htmltextarea )
 			{
 				$htmltextarea_out .= 'JQuery("[name=\"' . $htmltextarea . '\"]").val(JQuery.trim(JQuery("[name=\"' . $htmltextarea . '\"]").val())+" ");' . "\n";
-				$htmltextarea_out .= 'bf_htmltextareas.push("' . rtrim( trim( $editor->getContent( $htmltextarea ) ), ';' ) . '")' . "\n";
+				$htmltextarea_out .= 'bf_htmltextareas.push("' . addslashes(rtrim( trim( $editor->getContent( $htmltextarea ) ), ';' )) . '")' . "\n";
 				$htmltextarea_out .= 'bf_htmltextareanames.push("' . $htmltextarea . '")' . "\n";
 			}
 			echo '<script type="text/javascript">
