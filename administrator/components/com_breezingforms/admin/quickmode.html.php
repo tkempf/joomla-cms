@@ -3307,8 +3307,9 @@ class QuickModeHtml {
 		<?php
 		jimport( 'joomla.application.component.helper' );
 		$default = JComponentHelper::getParams( 'com_languages' )->get( 'site' );
+
 		if ( $formId > 0 && version_compare( $version->getShortVersion(), '2.5', '>=' ) && count( JLanguageHelper::getLanguages() ) > 1 ) {
-			if ( $active_language_code != '' && $active_language_code != JFactory::getLanguage()->getDefault() ) {
+			if ( $active_language_code != '' && $active_language_code != $default ) {
 				?>
 				<script type="text/javascript">
 					JQuery(document).ready(function () {
@@ -3320,11 +3321,11 @@ class QuickModeHtml {
 			?>
 			<div
 				onclick="location.href='index.php?option=com_breezingforms&format=html&act=quickmode&formName=translationtest&form=<?php echo $formId ?>&active_language_code='"
-				class="bfLanguageButton<?php echo $active_language_code == JFactory::getLanguage()->getDefault() || $active_language_code == '' ? ' bfLanguageButtonActive' : '' ?>"><?php echo JFactory::getLanguage()->getDefault(); ?></div>
+				class="bfLanguageButton<?php echo $active_language_code == $default || $active_language_code == '' ? ' bfLanguageButtonActive' : '' ?>"><?php echo $default; ?></div>
 			<?php
 			$languages = JLanguageHelper::getLanguages();
 			foreach ( $languages As $language ) {
-				if ( $language->lang_code != JFactory::getLanguage()->getDefault() ) {
+				if ( $language->lang_code != $default ) {
 					?>
 					<div
 						onclick="location.href='index.php?option=com_breezingforms&format=html&act=quickmode&formName=translationtest&form=<?php echo $formId ?>&active_language_code=<?php echo $language->lang_code; ?>'"
