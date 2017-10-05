@@ -41,23 +41,33 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
 define('DS', DIRECTORY_SEPARATOR);
 
-if (file_exists(dirname(__FILE__) . '/../../../../../defines.php')) {
-	include_once dirname(__FILE__) . '/../../../../../defines.php';
+if (file_exists(dirname(__FILE__) . '/../../../../defines.php')) {
+    include_once dirname(__FILE__) . '/../../../../defines.php';
 }
 
 if (!defined('_JDEFINES')) {
-	define('JPATH_BASE', dirname(__FILE__) . '/../../../../../');
-	require_once JPATH_BASE.'/includes/defines.php';
+    define('JPATH_BASE', dirname(__FILE__) . '/../../../../');
+    require_once JPATH_BASE.'/includes/defines.php';
 }
 
 require_once JPATH_BASE.'/includes/framework.php';
 /* To use Joomla's Database Class */
-require_once ( JPATH_BASE .DS.'libraries'.DS.'joomla'.DS.'factory.php' );
+
+jimport('joomla.version');
+$version = new JVersion();
+if (version_compare($version->getShortVersion(), '3.8', '<')) {
+    require_once( JPATH_BASE . DS . 'libraries' . DS . 'joomla' . DS . 'factory.php' );
+}
+else{
+    require_once( JPATH_BASE . DS . 'libraries' . DS . 'src' . DS . 'Factory.php' );
+}
 
 // Instantiate the application.
-$app = JFactory::getApplication('administrator');
+$app = JFactory::getApplication('site');
 
 ob_end_clean();
+
+defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
 include JPATH_SITE . DS . 'components' . DS . 'com_breezingforms' . DS . 'images' . DS . 'captcha' . DS . 'securimage.php';
 

@@ -10,7 +10,7 @@ defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
 global $ff_version, $ff_resnames, $ff_request, $ff_target;
 
-$ff_version = '1.9.0 Stable (build 926)';
+$ff_version = '1.9.0 Stable (build 928)';
 $ff_target  = 0;
 
 $ff_resnames = array(
@@ -134,10 +134,13 @@ function initFacileForms()
 
 
 	if (!isset($ff_mossite)) {
-		if ($ff_config->livesite) {
-			$ff_mossite = str_replace('\\','/', JURI::root());
+		if ($ff_config->livesite == 0) {
+			//$ff_mossite = str_replace('\\','/', JURI::root());
+			$ff_mossite = JUri::root();
 		} else {
 			$s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+			$s = !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) ? 's' : $s;
+
 			$protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
 			$protocol = substr($protocol, 0, strpos($protocol, '/')).$s;
 			$port = ":".$_SERVER["SERVER_PORT"];

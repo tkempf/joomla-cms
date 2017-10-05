@@ -3141,7 +3141,7 @@ class HTML_facileFormsProcessor {
                                             ';
                                 }
 
-                                require_once(JPATH_COMPONENT_ADMINISTRATOR . DS . 'classes' . DS . 'contentbuilder_helpers.php');
+                                require_once(JPATH_SITE . DS . 'administrator' . DS . 'components' . DS . 'com_contentbuilder' .  DS . 'classes' . DS . 'contentbuilder_helpers.php');
                                 $cbOut = '';
                                 $cbFiles = explode("\n", str_replace("\r", "", $cbEntry->recValue));
                                 $i = 0;
@@ -8249,10 +8249,15 @@ class HTML_facileFormsProcessor {
                                         if ($options['testaccount']) {
                                             $html .= "<input type=\"hidden\" name=\"test_ipn\" value=\"1\"/>";
                                         }
+
+	                                    $html .= "<input type=\"hidden\" name=\"return\" value=\"" . $returnurl . "\"/>";
+
                                     } else {
+
                                         $html .= "<input type=\"hidden\" name=\"notify_url\" value=\"" . $returnurl . "\"/>";
+	                                    $html .= "<input type=\"hidden\" name=\"return\" value=\"" . $returnurl . "\"/>";
                                     }
-	                                $html .= "<input type=\"hidden\" name=\"return\" value=\"" . ( $options['thankYouPage'] ? $options['thankYouPage'] : $returnurl  ) . "\"/>";
+
                                     $html .= "<input type=\"hidden\" name=\"cancel_return\" value=\"" . $cancelurl . "\"/>";
                                     $html .= "<input type=\"hidden\" name=\"rm\" value=\"2\"/>";
                                     $html .= "<input type=\"hidden\" name=\"lc\" value=\"" . $options['locale'] . "\"/>";

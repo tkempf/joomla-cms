@@ -52,7 +52,15 @@ if (!defined('_JDEFINES')) {
 
 require_once JPATH_BASE.'/includes/framework.php';
 /* To use Joomla's Database Class */
-require_once ( JPATH_BASE .DS.'libraries'.DS.'joomla'.DS.'factory.php' );
+
+jimport('joomla.version');
+$version = new JVersion();
+if (version_compare($version->getShortVersion(), '3.8', '<')) {
+	require_once( JPATH_BASE . DS . 'libraries' . DS . 'joomla' . DS . 'factory.php' );
+}
+else{
+	require_once( JPATH_BASE . DS . 'libraries' . DS . 'src' . DS . 'Factory.php' );
+}
 
 // Instantiate the application.
 $app = JFactory::getApplication('site');
