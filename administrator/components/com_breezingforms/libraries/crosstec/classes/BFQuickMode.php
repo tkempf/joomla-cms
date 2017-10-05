@@ -1688,10 +1688,15 @@ display:none;
                                                 if(isset($mdata['newCaptcha']) && $mdata['newCaptcha']){
                                                     
                                                     $http = 'http';
-                                                    if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) != 'off')) {
+								if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) != 'off') || isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
                                                         $http .= 's';
                                                     }
                                                     $lang = JRequest::getVar('lang','');
+
+                                $getLangTag = JFactory::getLanguage()->getTag();
+                                $getLangSlug = explode('-', $getLangTag);
+                                $reCaptchaLang = 'hl='. $getLangSlug[0];
+
                                                     if($lang != ''){
                                                         $lang = ',lang: '.json_encode($lang).'';
                                                     }
@@ -1718,7 +1723,7 @@ display:none;
 														}).length;
 														
 														if (rc_loaded === 0) {
-                                                        JQuery.getScript("'.$http.'://www.google.com/recaptcha/api.js?onload=onloadBFNewRecaptchaCallback&render=explicit");
+															JQuery.getScript("'.$http.'://www.google.com/recaptcha/api.js?'.$reCaptchaLang.'&onload=onloadBFNewRecaptchaCallback&render=explicit");
 														}
                                                     });
                                                     -->
